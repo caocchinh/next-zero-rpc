@@ -1,21 +1,13 @@
 import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
 import { ApiErrorPayload, InferApiResponse, isApiErrorPayload } from "./errors";
 
-type HttpMethod =
-  | "GET"
-  | "POST"
-  | "PUT"
-  | "DELETE"
-  | "PATCH"
-  | "HEAD"
-  | "OPTIONS";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
 
 export async function apiFetch<
   Path extends string,
-  MatchedRoute extends keyof KnownRoutes =
-    FindMatchingRoute<Path> extends keyof KnownRoutes
-      ? FindMatchingRoute<Path>
-      : never,
+  MatchedRoute extends keyof KnownRoutes = FindMatchingRoute<Path> extends keyof KnownRoutes
+    ? FindMatchingRoute<Path>
+    : never,
   Method extends Extract<keyof KnownRoutes[MatchedRoute], HttpMethod> = Extract<
     keyof KnownRoutes[MatchedRoute],
     HttpMethod
@@ -73,8 +65,7 @@ export async function apiFetch(
           ? payload
           : ({
               code: "system:unknown-error",
-              message:
-                "An error occurred but the server returned an unrecognized format.",
+              message: "An error occurred but the server returned an unrecognized format.",
             } as ApiErrorPayload),
       ];
     }
@@ -87,8 +78,7 @@ export async function apiFetch(
       null,
       {
         code: "system:unknown-error",
-        message:
-          error instanceof Error ? error.message : "A network error occurred.",
+        message: error instanceof Error ? error.message : "A network error occurred.",
       } as ApiErrorPayload,
     ];
   }
