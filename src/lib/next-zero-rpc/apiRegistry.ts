@@ -6,6 +6,11 @@ import type * as AuthLoginRoute from "@/app/api/auth/login/route";
 // /api/checkin
 import type * as CheckinVerifyRoute from "@/app/api/checkin/verify/route";
 
+// /api/extreme
+import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
+import type * as ExtremeComplexTypesRoute from "@/app/api/extreme/complex-types/route";
+import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
+
 // /api/orders
 import type * as OrdersCheckoutRoute from "@/app/api/orders/checkout/route";
 
@@ -22,6 +27,11 @@ export type KnownRoutes = {
 
   // /api/checkin
   "/api/checkin/verify": typeof CheckinVerifyRoute;
+
+  // /api/extreme
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
+  "/api/extreme/complex-types": typeof ExtremeComplexTypesRoute;
+  "/api/extreme/methods": typeof ExtremeMethodsRoute;
 
   // /api/orders
   "/api/orders/checkout": typeof OrdersCheckoutRoute;

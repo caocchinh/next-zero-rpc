@@ -1,9 +1,16 @@
+"use client";
 import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function TestApi() {
+  const [logs, setLogs] = useState<string[]>([]);
+
+  const addLog = (msg: string) => setLogs((prev) => [...prev, msg]);
+
   useEffect(() => {
     async function test() {
+      addLog("Starting simple API tests...");
+
       // 1. Test POST /api/auth/login
       const [loginRes, loginErr] = await apiFetch("/api/auth/login", {
         method: "POST",
@@ -11,13 +18,13 @@ export default function TestApi() {
       });
 
       if (loginRes) {
-        console.log("Token:", loginRes.data?.token); // Should be type safe
-        console.log("User:", loginRes.data?.user.email); // Should be type safe
+        addLog(
+          `Login Success: Token: ${loginRes.data?.token.substring(0, 10)}... User: ${loginRes.data?.user.email}`,
+        );
       }
 
       if (loginErr) {
-        // loginErr.code should be "validation:missing-required-fields" | "auth:invalid-student-credentials" | "validation:invalid-payload"
-        console.log("Error:", loginErr.code);
+        addLog(`Login Error: ${loginErr.code}`);
       }
 
       // 2. Test GET /api/users/[userId]
@@ -26,7 +33,7 @@ export default function TestApi() {
       });
 
       if (userRes) {
-        console.log("User Name:", userRes.data?.name); // Type safe
+        addLog(`User Fetch Success: Name: ${userRes.data?.name}`);
       }
 
       // 3. Test DELETE /api/users/[userId] -> 204 No Content
@@ -36,7 +43,7 @@ export default function TestApi() {
 
       // deleteRes is undefined here but we check if it succeeded
       if (!deleteErr) {
-        console.log("User deleted successfully");
+        addLog("User Delete Success: 204 No Content handled gracefully");
       }
 
       // 4. Test POST /api/orders/checkout
@@ -46,12 +53,23 @@ export default function TestApi() {
       });
 
       if (orderRes) {
-        console.log("Order ID:", orderRes.data?.orderId);
+        addLog(`Order Checkout Success: Order ID: ${orderRes.data?.orderId}`);
       }
+
+      addLog("Finished simple API tests.");
     }
 
     test();
   }, []);
 
-  return <div>Testing API</div>;
+  return (
+    <div className="w-full overflow-x-auto rounded-lg border bg-gray-900 p-4 font-mono text-xs text-white">
+      <h3 className="mb-2 font-bold">Standard API Type Tests</h3>
+      <ul className="space-y-1">
+        {logs.map((log, i) => (
+          <li key={i} className="whitespace-pre-wrap">{`> ${log}`}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }

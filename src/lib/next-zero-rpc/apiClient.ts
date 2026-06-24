@@ -1,5 +1,5 @@
 import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
-import { ApiErrorPayload, InferApiResponse, isApiErrorPayload } from "./errors";
+import { ApiErrorPayload, InferApiResponse, isApiErrorPayload } from "./responses";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
 
