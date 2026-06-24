@@ -3,22 +3,24 @@ import { ApiErrorPayload, InferApiResponse, isApiErrorPayload } from "./response
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
 
+type ResolveRoute<Path extends string> = FindMatchingRoute<Path> extends keyof KnownRoutes
+  ? FindMatchingRoute<Path>
+  : never;
+
+type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
+
+type RouteResult<Path extends string, M extends HttpMethod> = InferApiResponse<
+  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]],
+  ApiErrorPayload
+>;
+
 export async function apiFetch<
   Path extends string,
-  MatchedRoute extends keyof KnownRoutes = FindMatchingRoute<Path> extends keyof KnownRoutes
-    ? FindMatchingRoute<Path>
-    : never,
-  Method extends Extract<keyof KnownRoutes[MatchedRoute], HttpMethod> = Extract<
-    keyof KnownRoutes[MatchedRoute],
-    HttpMethod
-  >,
+  Method extends RouteMethods<Path> = RouteMethods<Path>,
 >(
   path: Path extends CheckPath<Path> ? Path : CheckPath<Path>,
   options: RequestInit & { method: Method },
-): Promise<
-  | [InferApiResponse<KnownRoutes[MatchedRoute][Method], ApiErrorPayload>, null]
-  | [null, ApiErrorPayload]
->;
+): Promise<[RouteResult<Path, Method>, null] | [null, ApiErrorPayload]>;
 
 export async function apiFetch(
   path: string,

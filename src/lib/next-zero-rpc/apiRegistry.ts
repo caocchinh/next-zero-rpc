@@ -43,9 +43,18 @@ export type KnownRoutes = {
   "/api/users/[userId]": typeof UsersUserIdRoute;
 };
 // --- END GENERATED API REGISTRY ---
+
 type Split<S extends string> = S extends `${infer Head}/${infer Tail}`
   ? [Head, ...Split<Tail>]
   : [S];
+
+type MatchSegment<P extends string, K extends string> = K extends `[${string}]`
+  ? P extends ""
+    ? false
+    : true
+  : K extends P
+    ? true
+    : false;
 
 type MatchSegments<P extends string[], K extends string[]> = K extends []
   ? P extends []
@@ -53,15 +62,12 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
     : false
   : K extends [`[...${string}]`]
     ? true
-    : K extends [infer KHead extends string, ...infer KTail extends string[]]
-      ? P extends [infer PHead extends string, ...infer PTail extends string[]]
-        ? KHead extends `[${string}]`
-          ? PHead extends ""
-            ? false
-            : MatchSegments<PTail, KTail>
-          : KHead extends PHead
-            ? MatchSegments<PTail, KTail>
-            : false
+    : [P, K] extends [
+          [infer PH extends string, ...infer PT extends string[]],
+          [infer KH extends string, ...infer KT extends string[]],
+        ]
+      ? MatchSegment<PH, KH> extends true
+        ? MatchSegments<PT, KT>
         : false
       : false;
 
@@ -76,5 +82,5 @@ export type FindMatchingRoute<Path extends string> = {
 export type CheckPath<Path extends string> = Path extends ""
   ? keyof KnownRoutes
   : FindMatchingRoute<Path> extends never
-    ? `Error: Route '${Path}' is invalid or does not exist`
+    ? keyof KnownRoutes
     : Path;

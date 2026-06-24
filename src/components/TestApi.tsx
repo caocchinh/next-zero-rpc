@@ -68,7 +68,9 @@ export default function TestApi() {
       <h3 className="mb-2 font-bold text-green-400">Standard API Type Tests</h3>
       <ul className="space-y-4">
         {logs.map((log, i) => (
-          <li key={i} className="whitespace-pre-wrap border-b border-gray-700 pb-2">{log}</li>
+          <li key={i} className="border-b border-gray-700 pb-2 whitespace-pre-wrap">
+            {log}
+          </li>
         ))}
       </ul>
     </div>
