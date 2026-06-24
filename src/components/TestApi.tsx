@@ -18,13 +18,9 @@ export default function TestApi() {
       });
 
       if (loginRes) {
-        addLog(
-          `Login Success: Token: ${loginRes.data?.token.substring(0, 10)}... User: ${loginRes.data?.user.email}`,
-        );
-      }
-
-      if (loginErr) {
-        addLog(`Login Error: ${loginErr.code}`);
+        addLog(`[POST /api/auth/login] Success:\n${JSON.stringify(loginRes.data, null, 2)}`);
+      } else if (loginErr) {
+        addLog(`[POST /api/auth/login] Error:\n${JSON.stringify(loginErr, null, 2)}`);
       }
 
       // 2. Test GET /api/users/[userId]
@@ -33,7 +29,9 @@ export default function TestApi() {
       });
 
       if (userRes) {
-        addLog(`User Fetch Success: Name: ${userRes.data?.name}`);
+        addLog(`[GET /api/users/123] Success:\n${JSON.stringify(userRes.data, null, 2)}`);
+      } else if (userErr) {
+        addLog(`[GET /api/users/123] Error:\n${JSON.stringify(userErr, null, 2)}`);
       }
 
       // 3. Test DELETE /api/users/[userId] -> 204 No Content
@@ -41,9 +39,10 @@ export default function TestApi() {
         method: "DELETE",
       });
 
-      // deleteRes is undefined here but we check if it succeeded
       if (!deleteErr) {
-        addLog("User Delete Success: 204 No Content handled gracefully");
+        addLog(`[DELETE /api/users/123] Success:\n204 No Content (Response: ${typeof deleteRes})`);
+      } else {
+        addLog(`[DELETE /api/users/123] Error:\n${JSON.stringify(deleteErr, null, 2)}`);
       }
 
       // 4. Test POST /api/orders/checkout
@@ -53,7 +52,9 @@ export default function TestApi() {
       });
 
       if (orderRes) {
-        addLog(`Order Checkout Success: Order ID: ${orderRes.data?.orderId}`);
+        addLog(`[POST /api/orders/checkout] Success:\n${JSON.stringify(orderRes.data, null, 2)}`);
+      } else if (orderErr) {
+        addLog(`[POST /api/orders/checkout] Error:\n${JSON.stringify(orderErr, null, 2)}`);
       }
 
       addLog("Finished simple API tests.");
@@ -64,10 +65,10 @@ export default function TestApi() {
 
   return (
     <div className="w-full overflow-x-auto rounded-lg border bg-gray-900 p-4 font-mono text-xs text-white">
-      <h3 className="mb-2 font-bold">Standard API Type Tests</h3>
-      <ul className="space-y-1">
+      <h3 className="mb-2 font-bold text-green-400">Standard API Type Tests</h3>
+      <ul className="space-y-4">
         {logs.map((log, i) => (
-          <li key={i} className="whitespace-pre-wrap">{`> ${log}`}</li>
+          <li key={i} className="whitespace-pre-wrap border-b border-gray-700 pb-2">{log}</li>
         ))}
       </ul>
     </div>

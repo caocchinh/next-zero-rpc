@@ -197,25 +197,24 @@
         </h1>
         <p>Project type checking results</p>
       </div>
-      <div class="status-badge status-error">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> 1 Error
+      <div class="status-badge status-success">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Passed
       </div>
     </div>
     <div class="content">
       
-        <div class="output-container">
-          <div class="output-header">
-            <div class="mac-btn mac-close"></div>
-            <div class="mac-btn mac-min"></div>
-            <div class="mac-btn mac-max"></div>
+        <div class="success-message">
+          <div class="success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
           </div>
-          <div class="output">src/components/TestApi.tsx(49,13): error TS2322: Type &apos;string&apos; is not assignable to type &apos;number&apos;.<br/></div>
+          <div class="success-text">No type errors found!</div>
+          <p style="color: var(--text-muted); font-size: 0.875rem;">Your codebase is fully typed and ready to go.</p>
         </div>
       
     </div>
     <div class="timestamp">
       <span>Command: <code>tsc --noEmit</code></span>
-      <span>Generated at: 6/24/2026, 9:57:59 PM</span>
+      <span>Generated at: 6/24/2026, 10:00:04 PM</span>
     </div>
   </div>
 </body>

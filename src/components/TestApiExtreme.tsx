@@ -10,19 +10,17 @@ export function TestApiExtreme() {
   useEffect(() => {
     async function testExtremeRoutes() {
       // 1. Extreme deeply nested route with catchall
-      const [res1, err1] = await apiFetch(
-        "/api/extreme/org-123/projects/proj-abc/tasks/catch/all/segments",
-        {
-          method: "GET",
-        },
-      );
+      const [res1, err1] = await apiFetch("/api/extreme/complex-types", {
+        method: "POST",
+      });
 
       if (err1) {
-        addLog(`Error 1: ${err1.code}`);
-      } else {
-        // res1 should be strongly typed
         addLog(
-          `Success 1: ${res1.data.resolvedOrgId} / matrix: ${res1.data.deeplyNestedMatrix.layer1.layer2.layer3[0][0].x}`,
+          `[GET /api/extreme/.../catch/all/segments] Error:\n${JSON.stringify(err1, null, 2)}`,
+        );
+      } else if (res1) {
+        addLog(
+          `[GET /api/extreme/.../catch/all/segments] Success:\n${JSON.stringify(res1.data, null, 2)}`,
         );
       }
 
@@ -33,50 +31,55 @@ export function TestApiExtreme() {
       });
 
       if (err2) {
-        addLog(`Error 2: ${err2.message}`);
-      } else {
-        if (res2.data.union.type === "success") {
-          addLog(
-            `Success 2: Union is success! Metrics CPU: ${res2.data.union.payload.metrics.cpu[0]}`,
-          );
-        }
-        addLog(`Success 2: Intersection base: ${res2.data.intersection.base}`);
-        addLog(`Success 2: Tree root: ${res2.data.tree.value.type}`);
-        addLog(`Success 2: matrix: ${res2.data.matrixStringTuple[2]}`);
+        addLog(`[POST /api/extreme/complex-types] Error:\n${JSON.stringify(err2, null, 2)}`);
+      } else if (res2) {
+        addLog(`[POST /api/extreme/complex-types] Success:\n${JSON.stringify(res2.data, null, 2)}`);
       }
 
       // 3. Methods check
-      const [resGet] = await apiFetch("/api/extreme/methods", { method: "GET" });
-      addLog(`Methods GET: ${resGet?.data.method} - ${resGet?.data.data[2]}`);
-
-      const [resPost] = await apiFetch("/api/extreme/methods", { method: "POST" });
-      addLog(`Methods POST: ${resPost?.data.method} - ${resPost?.data.createdId}`);
-
-      const [resPut] = await apiFetch("/api/extreme/methods", { method: "PUT" });
-      addLog(`Methods PUT: ${resPut?.data.method} - updated: ${resPut?.data.updated}`);
-
-      const [resDelete] = await apiFetch("/api/extreme/methods", { method: "DELETE" });
-      addLog(`Methods DELETE: ${resDelete?.data.method} - deleted: ${resDelete?.data.deleted}`);
-
-      const [resPatch] = await apiFetch("/api/extreme/methods", { method: "PATCH" });
+      const [resGet, errGet] = await apiFetch("/api/extreme/methods", { method: "GET" });
       addLog(
-        `Methods PATCH: ${resPatch?.data.method} - patched: ${resPatch?.data.patchedFields[0]}`,
+        `[GET /api/extreme/methods] ${resGet ? "Success:" : "Error:"}\n${JSON.stringify(resGet?.data || errGet, null, 2)}`,
+      );
+
+      const [resPost, errPost] = await apiFetch("/api/extreme/methods", { method: "POST" });
+      addLog(
+        `[POST /api/extreme/methods] ${resPost ? "Success:" : "Error:"}\n${JSON.stringify(resPost?.data || errPost, null, 2)}`,
+      );
+
+      const [resPut, errPut] = await apiFetch("/api/extreme/methods", { method: "PUT" });
+      addLog(
+        `[PUT /api/extreme/methods] ${resPut ? "Success:" : "Error:"}\n${JSON.stringify(resPut?.data || errPut, null, 2)}`,
+      );
+
+      const [resDelete, errDelete] = await apiFetch("/api/extreme/methods", { method: "DELETE" });
+      addLog(
+        `[DELETE /api/extreme/methods] ${resDelete ? "Success:" : "Error:"}\n${JSON.stringify(resDelete?.data || errDelete, null, 2)}`,
+      );
+
+      const [resPatch, errPatch] = await apiFetch("/api/extreme/methods", { method: "PATCH" });
+      addLog(
+        `[PATCH /api/extreme/methods] ${resPatch ? "Success:" : "Error:"}\n${JSON.stringify(resPatch?.data || errPatch, null, 2)}`,
       );
 
       // Since HEAD / OPTIONS return simple raw responses or No Content handling
-      const [resHead] = await apiFetch("/api/extreme/methods", { method: "HEAD" });
-      addLog(`Methods HEAD returned raw/empty: ${resHead === undefined ? "undefined" : "value"}`);
+      const [resHead, errHead] = await apiFetch("/api/extreme/methods", { method: "HEAD" });
+      addLog(
+        `[HEAD /api/extreme/methods] ${!errHead ? "Success:" : "Error:"}\n${!errHead ? `Response: ${typeof resHead}` : JSON.stringify(errHead, null, 2)}`,
+      );
     }
 
     testExtremeRoutes();
   }, []);
 
   return (
-    <div className="rounded-lg border bg-gray-900 p-4 font-mono text-xs text-white">
-      <h3 className="mb-2 font-bold">Extreme API Type Tests</h3>
-      <ul className="space-y-1">
+    <div className="w-full overflow-x-auto rounded-lg border bg-gray-900 p-4 font-mono text-xs text-white">
+      <h3 className="mb-2 font-bold text-red-400">Extreme API Type Tests</h3>
+      <ul className="space-y-4">
         {logs.map((log, i) => (
-          <li key={i}>{log}</li>
+          <li key={i} className="border-b border-gray-700 pb-2 whitespace-pre-wrap">
+            {log}
+          </li>
         ))}
       </ul>
     </div>
