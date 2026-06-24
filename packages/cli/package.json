@@ -1,0 +1,31 @@
+{
+  "name": "next-zero-rpc",
+  "version": "0.1.0",
+  "description": "Type-safe fetch for Next.js — zero runtime, zero config, zero dependencies.",
+  "keywords": [
+    "nextjs",
+    "typescript",
+    "rpc",
+    "type-safe",
+    "fetch",
+    "api",
+    "codegen"
+  ],
+  "license": "MIT",
+  "author": "caocchinh",
+  "type": "module",
+  "bin": {
+    "next-zero-rpc": "./bin/cli.mjs"
+  },
+  "files": [
+    "bin/",
+    "templates/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caocchinh/next-zero-rpc"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

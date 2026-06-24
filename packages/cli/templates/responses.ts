@@ -1,91 +1,44 @@
 /**
- * Error constants for consistent error handling across the application
+ * next-zero-rpc — Response helpers for API routes and server actions.
+ * Customize the error codes below to match your application's domain.
  */
 
 import { NextResponse } from "next/server";
 
 type PrefixedError<T extends string> = `${T}:${string}`;
 
-export const AUTH_ERRORS = [
-  "auth:not-logged-in",
-  "auth:session-verification-failed",
-  "auth:unauthorized",
-  "auth:forbidden",
-  "auth:not-vinschool-domain",
-  "auth:not-student",
-  "auth:invalid-student-credentials",
-  "auth:teacher-verification-fetch-failed",
-] as const satisfies PrefixedError<"auth">[];
-
-export const ORDER_ERRORS = [
-  "order:not-found",
-  "order:duplicate-order",
-  "order:submission-failed",
-  "order:status-conflict",
-  "order:expired",
-  "order:underpayment",
-  "order:already-approved",
-  "order:invalid-ticket-type",
-  "order:tickets-sold-out",
-  "order:tier-not-found",
-  "order:max-tickets-reached",
-  "order:invalid-buyer-type",
-  "order:sales-info-fetch-failed",
-  "order:ticket-info-fetch-failed",
-  "order:event-info-fetch-failed",
-] as const satisfies PrefixedError<"order">[];
-
-export const HOLD_ERRORS = [
-  "hold:creation-failed",
-  "hold:release-failed",
-  "hold:active-hold-exists",
-  "hold:no-active-hold",
-  "hold:recovery-failed",
-] as const satisfies PrefixedError<"hold">[];
-
-export const IDENTITY_ERRORS = [
-  "identity:not-verified",
-  "identity:upload-failed",
-  "identity:already-submitted",
-  "identity:invalid-file-type",
-  "identity:file-size-too-large",
-  "identity:file-upload-failed",
-] as const satisfies PrefixedError<"identity">[];
+// ─── Define your error codes here ───────────────────────────────────────────
+// Add, remove, or rename error codes to match your application's domain.
+// Each array must satisfy the PrefixedError<"prefix"> constraint.
 
 export const SYSTEM_ERRORS = [
-  "system:cache-error",
-  "system:database-error",
   "system:internal-server-error",
   "system:unknown-error",
-  "system:cleanup-failed",
-  "system:student-list-fetch-failed",
-  "system:r2-credentials-missing",
+  "system:database-error",
 ] as const satisfies PrefixedError<"system">[];
+
+export const AUTH_ERRORS = [
+  "auth:unauthorized",
+  "auth:forbidden",
+  "auth:not-logged-in",
+] as const satisfies PrefixedError<"auth">[];
 
 export const VALIDATION_ERRORS = [
   "validation:missing-required-fields",
   "validation:invalid-payload",
   "validation:rate-limit-exceeded",
-  "validation:already-checked-in",
 ] as const satisfies PrefixedError<"validation">[];
 
-export const CHECKIN_ERRORS = [
-  "checkin:already-checked-in",
-  "checkin:invalid-session",
-  "checkin:no-ticket",
-  "checkin:not-verified",
-] as const satisfies PrefixedError<"checkin">[];
+// ─── Combine all error codes ────────────────────────────────────────────────
+// Add your custom error arrays here when you create them.
 
-// Combined error codes for routing and user feedback
 export const ERROR_CODES = [
-  ...AUTH_ERRORS,
-  ...ORDER_ERRORS,
-  ...HOLD_ERRORS,
-  ...IDENTITY_ERRORS,
   ...SYSTEM_ERRORS,
+  ...AUTH_ERRORS,
   ...VALIDATION_ERRORS,
-  ...CHECKIN_ERRORS,
 ] as const;
+
+// ─── HTTP Status Codes ──────────────────────────────────────────────────────
 
 export const HTTP_STATUS_SUCCESS = {
   OK: 200,
@@ -111,6 +64,8 @@ export const HTTP_STATUS_ERROR = {
   GATEWAY_TIMEOUT: 504,
 } as const;
 
+// ─── Derived Types ──────────────────────────────────────────────────────────
+
 export type ErrorCode = (typeof ERROR_CODES)[number];
 
 export type SuccessHttpStatusCode = (typeof HTTP_STATUS_SUCCESS)[keyof typeof HTTP_STATUS_SUCCESS];
@@ -120,10 +75,11 @@ type ErrorMessages = {
   [K in ErrorCode]: `error:${K}`;
 };
 
-// User-friendly error messages dynamically generated
 export const ERROR_MESSAGES = Object.fromEntries(
   ERROR_CODES.map((code) => [code, `error:${code}`]),
 ) as ErrorMessages;
+
+// ─── Payload Types ──────────────────────────────────────────────────────────
 
 export interface ApiErrorPayload {
   code: ErrorCode;
@@ -133,9 +89,13 @@ export interface ApiErrorPayload {
 
 export type ApiSuccessPayload<T> = T extends void | undefined ? { data?: never } : { data: T };
 
+// ─── API Route Helpers ──────────────────────────────────────────────────────
+
 /**
- * Helper function to create consistent API error responses and success responses to the client
+ * Create a consistent API error response.
  *
+ * @example
+ * return createApiError("auth:unauthorized", HTTP_STATUS_ERROR.UNAUTHORIZED);
  */
 export function createApiError(
   code: ErrorCode,
@@ -156,6 +116,13 @@ export function createApiError(
   );
 }
 
+/**
+ * Create a consistent API success response.
+ *
+ * @example
+ * return createApiSuccess({ users: [...] });
+ * return createApiSuccess(undefined, HTTP_STATUS_SUCCESS.NO_CONTENT);
+ */
 export function createApiSuccess<T>(
   data?: T,
   statusCode: SuccessHttpStatusCode = HTTP_STATUS_SUCCESS.OK,
@@ -170,8 +137,10 @@ export function createApiSuccess<T>(
   );
 }
 
+// ─── Type Inference ─────────────────────────────────────────────────────────
+
 /**
- * Helper function to infer the response type from an API function.
+ * Infer the success response type from an API route handler function.
  * Filters out ApiErrorPayload to only return the success payload.
  */
 export type InferApiResponse<T, E = never> = T extends (...args: never[]) => infer R
@@ -181,7 +150,7 @@ export type InferApiResponse<T, E = never> = T extends (...args: never[]) => inf
   : never;
 
 /**
- * Type guard to check if an unknown payload is an ApiErrorPayload
+ * Type guard to check if an unknown payload is an ApiErrorPayload.
  */
 export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload {
   if (!payload || typeof payload !== "object") return false;
@@ -195,8 +164,10 @@ export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload 
   );
 }
 
+// ─── Server Action Helpers ──────────────────────────────────────────────────
+
 /**
- * Error object structure for server actions
+ * Error object structure for server actions.
  */
 export interface ServiceError {
   message: string;
@@ -210,7 +181,10 @@ export interface ServiceError {
 type ServiceResponse<S, E = ServiceError> = [S, null] | [null, E];
 
 /**
- * Helper function to create consistent server action error responses to the client
+ * Create a consistent server action error response.
+ *
+ * @example
+ * return createServiceError("validation:invalid-payload");
  */
 export function createServiceError(
   code: ErrorCode,
@@ -229,7 +203,11 @@ export function createServiceError(
 }
 
 /**
- * Helper function to create consistent server action success responses to the client
+ * Create a consistent server action success response.
+ *
+ * @example
+ * return createServiceSuccess({ id: "123", name: "John" });
+ * return createServiceSuccess(); // void success
  */
 export function createServiceSuccess<T>(data?: T): ServiceResponse<T, null> {
   if (data === undefined) {
@@ -239,13 +217,12 @@ export function createServiceSuccess<T>(data?: T): ServiceResponse<T, null> {
 }
 
 /**
- * Error class for business logic violations that should NOT be retried
+ * Error class for business logic violations that should NOT be retried.
  */
 export class BusinessLogicError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "BusinessLogicError";
-    // Ensure the prototype is set correctly for instanceof checks
     Object.setPrototypeOf(this, BusinessLogicError.prototype);
   }
 }
