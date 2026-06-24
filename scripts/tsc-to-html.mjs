@@ -6,28 +6,38 @@ import open from "open";
 import path from "path";
 
 const convert = new Convert({
-  fg: "#333",
-  bg: "#f5f5f5",
+  fg: "#e2e8f0",
+  bg: "#0f172a",
   newline: true,
   escapeXML: true,
   stream: false,
 });
 
 try {
-  // eslint-disable-next-line sonarjs/no-os-command-from-path
-  execSync("tsc --noEmit ", {
+  execSync("npx tsc --noEmit", {
     encoding: "utf-8",
     stdio: ["pipe", "pipe", "pipe"],
   });
 
-  generateHTML("No TypeScript errors found! ✅", true);
+  generateHTML("No TypeScript errors found! ✅", true, 0);
 } catch (error) {
   // TSC returns non-zero exit code when there are errors
   const output = error.stdout || error.stderr || error.message;
-  generateHTML(output, false);
+  
+  // Try to parse error count from output
+  let errorCount = 0;
+  const match = output.match(/Found (\d+) error/);
+  if (match) {
+    errorCount = parseInt(match[1], 10);
+  } else {
+    // Fallback: count occurrences of "error TS"
+    errorCount = (output.match(/error TS\d+:/g) || []).length;
+  }
+  
+  generateHTML(output, false, errorCount);
 }
 
-function generateHTML(content, success) {
+function generateHTML(content, success, errorCount) {
   const htmlContent = convert.toHtml(content);
 
   const html = `<!DOCTYPE html>
@@ -35,8 +45,25 @@ function generateHTML(content, success) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TypeScript Type Check Results</title>
+  <title>TypeScript Diagnostics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --success-color: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --error-color: #ef4444;
+      --error-bg: rgba(239, 68, 68, 0.1);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+    }
+    
     * {
       margin: 0;
       padding: 0;
@@ -44,86 +71,204 @@ function generateHTML(content, success) {
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
-      line-height: 1.6;
+      font-family: var(--font-sans);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 1200px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     
     .header {
-      background: ${success ? "#10b981" : "#ef4444"};
-      color: white;
-      padding: 20px 30px;
-      border-bottom: 3px solid ${success ? "#059669" : "#dc2626"};
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(30, 41, 59, 0.5);
+    }
+    
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
     
     .header h1 {
-      font-size: 24px;
+      font-size: 1.25rem;
       font-weight: 600;
-      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .status-badge {
+      padding: 0.375rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .status-success {
+      background: var(--success-bg);
+      color: var(--success-color);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .status-error {
+      background: var(--error-bg);
+      color: var(--error-color);
+      border: 1px solid rgba(239, 68, 68, 0.2);
     }
     
     .header p {
-      opacity: 0.9;
-      font-size: 14px;
+      color: var(--text-muted);
+      font-size: 0.875rem;
     }
     
     .content {
-      padding: 30px;
+      padding: 2rem;
+      flex: 1;
     }
     
+    .output-container {
+      background: #0f172a;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .output-header {
+      background: #1e293b;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .mac-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .mac-close { background: #ff5f56; }
+    .mac-min { background: #ffbd2e; }
+    .mac-max { background: #27c93f; }
+    
     .output {
-      background: #1e1e1e;
-      color: #d4d4d4;
-      padding: 20px;
-      border-radius: 6px;
+      padding: 1.5rem;
       overflow-x: auto;
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.5;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #e2e8f0;
     }
     
     .success-message {
-      color: #10b981;
-      font-size: 18px;
-      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
       text-align: center;
-      padding: 40px;
+      gap: 1rem;
+    }
+    
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      color: var(--success-color);
+      background: var(--success-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .success-text {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-main);
     }
     
     .timestamp {
-      text-align: right;
-      color: #666;
-      font-size: 12px;
-      margin-top: 20px;
-      padding: 0 30px 20px;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border-color);
+      background: rgba(30, 41, 59, 0.5);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .timestamp code {
+      background: var(--border-color);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      color: var(--text-main);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>TypeScript Type Check Results</h1>
-      <p>${success ? "All type checks passed successfully" : "Type checking completed with errors"}</p>
+      <div class="header-left">
+        <h1>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #3178c6"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+          TypeScript Diagnostics
+        </h1>
+        <p>Project type checking results</p>
+      </div>
+      <div class="status-badge ${success ? 'status-success' : 'status-error'}">
+        ${success ? 
+          `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Passed` : 
+          `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> ${errorCount > 0 ? `${errorCount} Error${errorCount > 1 ? 's' : ''}` : 'Failed'}`
+        }
+      </div>
     </div>
     <div class="content">
-      ${
-        success
-          ? `<div class="success-message">${htmlContent}</div>`
-          : `<div class="output">${htmlContent}</div>`
-      }
+      ${success ? `
+        <div class="success-message">
+          <div class="success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+          <div class="success-text">No type errors found!</div>
+          <p style="color: var(--text-muted); font-size: 0.875rem;">Your codebase is fully typed and ready to go.</p>
+        </div>
+      ` : `
+        <div class="output-container">
+          <div class="output-header">
+            <div class="mac-btn mac-close"></div>
+            <div class="mac-btn mac-min"></div>
+            <div class="mac-btn mac-max"></div>
+          </div>
+          <div class="output">${htmlContent}</div>
+        </div>
+      `}
     </div>
     <div class="timestamp">
-      Generated: ${new Date().toLocaleString()}
+      <span>Command: <code>tsc --noEmit</code></span>
+      <span>Generated at: ${new Date().toLocaleString()}</span>
     </div>
   </div>
 </body>
