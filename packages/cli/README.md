@@ -440,7 +440,7 @@ Code generator and Next.js plugin:
 │                               │                                 │
 │                               ▼                                 │
 │  apiClient.ts ◄──── TypeScript infers paths, methods,           │
-│                     success types, AND error types               │
+│                     success types, AND error types              │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────────────────────────────────────────────┐
