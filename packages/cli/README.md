@@ -6,7 +6,7 @@ Type-safe fetch for Next.js — zero runtime, zero config, zero dependencies.
 npx next-zero-rpc init
 ```
 
-**That's it.** Four files. Full type safety. 2 KB runtime.
+**That's it.** Four files. Full type safety. 1.8 KB runtime.
 
 ## What it does
 
@@ -24,31 +24,35 @@ const [data, err] = await apiFetch("/api/users/123", { method: "DELETE" }); // �
 
 // ✅ Error type narrowing — err.code autocompletes only the errors THIS route can return
 if (err) {
-  switch (err.code) {
+  const code = err.code;
+  switch (code) {
     case "auth:forbidden": // ← only if this route uses createApiError("auth:forbidden", ...)
     case "system:database-error": // ← only if this route uses createApiError("system:database-error", ...)
+    case "system:unknown-error": // ← always included as a fallback from apiFetch itself
       break;
+    default:
+      assertNever(code); // ← TypeScript errors if you miss a case
   }
 }
 ```
 
 ### How it compares
 
-| Feature                    | next-zero-rpc       | tRPC        | raw fetch |
-| -------------------------- | ------------------- | ----------- | --------- |
-| Type-safe paths            | ✅                  | ✅          | ❌        |
-| Type-safe responses        | ✅                  | ✅          | ❌        |
-| Type-safe methods          | ✅                  | N/A         | ❌        |
-| **Error type narrowing**   | ✅                  | ❌          | ❌        |
-| Zero runtime cost          | ✅ (1.8 KB minified)| ❌ (~14 KB) | ✅        |
-| Zero config                | ✅                  | ❌          | ✅        |
-| Works with existing routes | ✅                  | ❌          | ✅        |
-| Dynamic params `[id]`      | ✅                  | ✅          | N/A       |
-| Catch-all `[...slug]`      | ✅                  | ✅          | N/A       |
-| Go-style error handling    | ✅                  | ❌          | ❌        |
-| Exhaustive error checking  | ✅                  | ❌          | ❌        |
-| Server action helpers      | ✅                  | ❌          | N/A       |
-| Dependencies               | 0                   | 5+          | 0         |
+| Feature                    | next-zero-rpc        | tRPC        | raw fetch |
+| -------------------------- | -------------------- | ----------- | --------- |
+| Type-safe paths            | ✅                   | ✅          | ❌        |
+| Type-safe responses        | ✅                   | ✅          | ❌        |
+| Type-safe methods          | ✅                   | N/A         | ❌        |
+| **Error type narrowing**   | ✅                   | ❌          | ❌        |
+| Zero runtime cost          | ✅ (1.8 KB minified) | ❌ (~14 KB) | ✅        |
+| Zero config                | ✅                   | ❌          | ✅        |
+| Works with existing routes | ✅                   | ❌          | ✅        |
+| Dynamic params `[id]`      | ✅                   | ✅          | N/A       |
+| Catch-all `[...slug]`      | ✅                   | ✅          | N/A       |
+| Go-style error handling    | ✅                   | ❌          | ❌        |
+| Exhaustive error checking  | ✅                   | ❌          | ❌        |
+| Server action helpers      | ✅                   | ❌          | N/A       |
+| Dependencies               | 0                    | 5+          | 0         |
 
 ## Philosophy
 
@@ -70,12 +74,12 @@ This copies 4 files into `lib/next-zero-rpc/` (or `src/lib/next-zero-rpc/` if yo
 
 | File                      | Purpose                             | Ships to browser?      |
 | ------------------------- | ----------------------------------- | ---------------------- |
-| `apiClient.ts`            | Type-safe fetch wrapper             | ✅ (0.6 KB minified)    |
+| `apiClient.ts`            | Type-safe fetch wrapper             | ✅ (0.6 KB minified)   |
 | `apiRegistry.ts`          | Auto-generated route type registry  | ❌ (types only)        |
-| `responses.ts`            | Error/success helpers + error codes | ✅ (1.2 KB minified)*  |
+| `responses.ts`            | Error/success helpers + error codes | ✅ (1.2 KB minified)\* |
 | `update-api-registry.mjs` | Code generator + Next.js plugin     | ❌ (dev only)          |
 
-*\* Only the `isApiErrorPayload` type guard and `ERROR_CODES` set are bundled to the client. The server helpers are dropped.*
+_\* Only the `isApiErrorPayload` type guard and `ERROR_CODES` set are bundled to the client. The server helpers are dropped._
 
 The CLI also:
 
@@ -127,7 +131,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ userI
   await db.users.delete(userId);
 
   // 204 No Content — no body per HTTP spec
-  return createApiSuccess(undefined, HTTP_STATUS_SUCCESS.NO_CONTENT);
+  return createApiSuccess();
 }
 ```
 
@@ -201,7 +205,8 @@ import { assertNever } from "@/lib/next-zero-rpc/responses";
 const [data, err] = await apiFetch("/api/users/123", { method: "GET" });
 
 if (err) {
-  switch (err.code) {
+  const code = err.code;
+  switch (code) {
     case "system:database-error":
       showToast("Database error, please try again");
       break;
@@ -209,7 +214,7 @@ if (err) {
       showToast("Something went wrong");
       break;
     default:
-      assertNever(err.code); // ← TypeScript errors if you miss a case
+      assertNever(code); // ← TypeScript errors if you miss a case
   }
   return;
 }
@@ -345,11 +350,6 @@ HTTP_STATUS_ERROR.GATEWAY_TIMEOUT; // 504
 | `createServiceSuccess<T>` | `(data?: T) → [T \| undefined, null]`                                          | Go-style success for server actions   |
 | `assertNever`             | `(value: never) → never`                                                       | Compile-time exhaustiveness guard     |
 
-#### Classes
-
-| Class                | Description                                                                                                               |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-
 ### `apiClient.ts`
 
 #### `apiFetch<Path, Method>(path, options)`
@@ -416,20 +416,20 @@ Code generator and Next.js plugin:
 │                     success types, AND error types               │
 └─────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────┐
-│                          Runtime (2 KB)                          │
-│                                                                 │
-│  apiFetch("/api/users/123", { method: "GET" })                  │
-│       │                                                         │
-│       ▼                                                         │
-│  fetch(path, options)                                           │
-│       │                                                         │
-│       ├─ 204?          → [undefined, null]                      │
-│       ├─ JSON + ok?    → [payload, null]                        │
-│       ├─ JSON + !ok?   → [null, ApiErrorPayload]  (narrowed)    │
-│       ├─ non-JSON?     → [text, null]                           │
-│       └─ network fail? → [null, { code: "system:unknown-error" }]│
-└─────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│                         Runtime (1.8 KB)                          │
+│                                                                   │
+│  apiFetch("/api/users/123", { method: "GET" })                    │
+│       │                                                           │
+│       ▼                                                           │
+│  fetch(path, options)                                             │
+│       │                                                           │
+│       ├─ 204?          → [undefined, null]                        │
+│       ├─ JSON + ok?    → [payload, null]                          │
+│       ├─ JSON + !ok?   → [null, ApiErrorPayload]  (narrowed)      │
+│       ├─ non-JSON?     → [text, null]                             │
+│       └─ network fail? → [null, { code: "system:unknown-error" }] │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
 1. The `withApiRegistry` plugin scans your `app/api/` directory for `route.ts` files
