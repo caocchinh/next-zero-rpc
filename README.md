@@ -38,29 +38,29 @@ if (err) {
 }
 ```
 
-### How it compares
+### The 2026 Ecosystem Comparison
 
-> The table below reflects the libraries as of mid-2025. tRPC and ts-rest are both also zero-dependency at their core — the differentiators here are _approach_ and _what you give up_, not dependency counts.
+| Feature                     | next-zero-rpc                          | tRPC                              | ts-rest                         | raw fetch         |
+| --------------------------- | -------------------------------------- | --------------------------------- | ------------------------------- | ----------------- |
+| Primary Philosophy          | Invisible type bridge                  | End-to-end framework              | Contract-first API              | Platform standard |
+| Source of Truth             | Next.js Route Handlers                 | tRPC Routers / Procedures         | Shared contract.ts file         | None              |
+| Type-safe paths & responses | ✅                                     | ✅                                | ✅                              | ❌                |
+| Per-route error narrowing   | ✅ (via TypeScript generics)           | ❌ (Global error shapes)          | ❌ (Standardized HTTP errors)   | ❌                |
+| Next.js App Router Native   | ✅ (Zero changes to standard handlers) | ❌ (Requires tRPC adapters)       | ❌ (Requires ts-rest adapters)  | ✅                |
+| Input Validation            | Bring-your-own                         | Built-in (Zod heavily favored)    | Built-in (Zod favored)          | Bring-your-own    |
+| OpenAPI Generation          | ❌                                     | ❌ (Requires third-party plugins) | ✅ (First-class citizen)        | ❌                |
+| Client Runtime Size         | ~1.8 KB                                | ~15 KB                            | ~3-5 KB                         | 0 KB              |
+| Server Actions Integration  | ✅ (Tuple-based Go-style returns)      | ✅ (Excellent RSC/Action support) | Partial (Focus remains on REST) | N/A               |
+| Non-TS Client Support       | ❌                                     | ❌                                | ✅ (Via standard REST/OpenAPI)  | ✅                |
+| Ecosystem & Community       | Niche / Lightweight                    | Massive / Enterprise-grade        | Very Strong / Standardized      | Ubiquitous        |
 
-| Feature                         | next-zero-rpc       | tRPC                 | ts-rest           | raw fetch |
-| ------------------------------- | ------------------- | -------------------- | ----------------- | --------- |
-| Type-safe paths                 | ✅                  | ✅                   | ✅                | ❌        |
-| Type-safe responses             | ✅                  | ✅                   | ✅                | ❌        |
-| Type-safe methods               | ✅                  | N/A (procedures)     | ✅                | ❌        |
-| **Per-route error narrowing**   | ✅                  | ❌                   | ❌                | ❌        |
-| Client runtime size             | ~1.8 KB             | ~15 KB               | comparable        | 0         |
-| Standard Next.js route handlers | ✅ (no changes)     | ❌ (use tRPC router) | ❌ (use contract) | ✅        |
-| Dynamic params `[id]`           | ✅                  | ✅                   | ✅                | N/A       |
-| Catch-all `[...slug]`           | ✅                  | ✅                   | ✅                | N/A       |
-| Go-style error handling         | ✅                  | ❌                   | ❌                | ❌        |
-| Exhaustive error checking       | ✅                  | ❌                   | ❌                | ❌        |
-| Server action helpers           | ✅                  | ❌                   | N/A               | N/A       |
-| Input validation built-in       | ❌ (bring your own) | ✅ (Zod pipeline)    | ✅ (Zod contract) | ❌        |
-| OpenAPI / non-TS client support | ❌                  | ❌ (plugin needed)   | ✅ (core feature) | ❌        |
-| Middleware / request pipeline   | ❌                  | ✅                   | partial           | ❌        |
-| Subscriptions / WebSockets      | ❌                  | ✅                   | ❌                | ❌        |
-| Ecosystem maturity              | early (v0.1.x)      | large                | solid             | N/A       |
-| Core runtime dependencies       | 0                   | 0                    | 0                 | 0         |
+#### Architectural Breakdown: Which to Choose?
+
+##### 1. next-zero-rpc (The Minimalist Bridge)
+
+- **Best for:** Teams deeply invested in the Next.js App Router who want type safety without adopting a new framework paradigm.
+- **The draw:** You write standard \`export async function GET(req)\` handlers. The library just quietly infers what you wrote. If you ever decide to remove the library, your backend code doesn't have to change at all.
+- **The trade-off:** You give up the robust middleware pipelines, batched requests, and automatic OpenAPI generation that larger ecosystems provide.
 
 ## When to use this
 
@@ -69,8 +69,6 @@ if (err) {
 - You're already writing plain Next.js App Router route handlers and want type-safe `fetch` calls _without restructuring your backend_ into tRPC procedures or ts-rest contracts
 - Per-route error code narrowing matters to you — this is genuinely not available in tRPC or ts-rest out of the box
 - You want a tiny client footprint (~1.8 KB) and zero ongoing npm dependencies
-- You're building a solo or small-team Next.js project and prefer to own a few simple files over maintaining a dependency
-
 
 ## Philosophy
 
@@ -259,7 +257,7 @@ const [data, err] = await apiFetch("/api/users/123?include=profile", { method: "
 
 ### Static vs Dynamic Route Precedence
 
-If you have overlapping static and dynamic routes (e.g., `/api/users/active` and `/api/users/[userId]`), `next-zero-rpc` correctly gives **exact static matches precedence** over dynamic segments at compile time. 
+If you have overlapping static and dynamic routes (e.g., `/api/users/active` and `/api/users/[userId]`), `next-zero-rpc` correctly gives **exact static matches precedence** over dynamic segments at compile time.
 
 ```typescript
 // Safely infers the type of the `active` route, completely ignoring the `[userId]` route

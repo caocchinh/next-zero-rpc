@@ -332,7 +332,8 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
             <span className="text-[#9cdcfe]">singleUser</span>
           </HoverTooltip>
           ,{" "}
-          <HoverTooltip tooltip={`const errSingle:
+          <HoverTooltip
+            tooltip={`const errSingle:
   ApiErrorPayload<"system:unknown-error"> |
   ApiErrorPayload<"system:database-error"> |
   null`}
