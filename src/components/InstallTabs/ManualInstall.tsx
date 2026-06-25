@@ -103,7 +103,7 @@ export function ManualInstall() {
             filename="package.json"
             code={`{
   "scripts": {
-    "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
+    "infer-api": "node src/lib/next-zero-rpc/update-api-registry.mjs"
   }
 }`}
           />
@@ -116,7 +116,7 @@ export function ManualInstall() {
             <code className="rounded bg-zinc-800 px-1 py-0.5 text-zinc-300">apiRegistry.ts</code>{" "}
             file.
           </p>
-          <CodeBlock filename="Terminal" code={`npm run infer\n# or\npnpm infer`} />
+          <CodeBlock filename="Terminal" code={`npm run infer-api\n# or\npnpm infer-api`} />
         </section>
 
         <section>

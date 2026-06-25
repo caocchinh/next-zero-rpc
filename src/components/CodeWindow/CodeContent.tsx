@@ -35,7 +35,7 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#6a9955]">{"// 1. Precise Error Type Narrowing"}</span>
           <br />
           <span className="text-[#569cd6]">const</span> [{" "}
-          <HoverTooltip tooltip="{ id: string; name: string } | null">
+          <HoverTooltip tooltip="{ id: string; name: string; role: string } | null">
             <span className="text-[#9cdcfe]">data</span>
           </HoverTooltip>
           ,{" "}

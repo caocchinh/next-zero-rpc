@@ -264,7 +264,7 @@ export async function GET(req: NextRequest, { params }: Params) {
   const { userId } = await params;
 
   if (userId === "not-found") {
-    return createApiError("system:database-error", 404, {
+    return createApiError("resource:not-found", 404, {
       userId: ["User not found in the database"],
     });
   }
