@@ -1,8 +1,8 @@
 // --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
 // Run your dev server or `node src/lib/next-zero-rpc/update-api-registry.mjs` to regenerate.
-// /api/bruh
-import type * as BruhRoute from "@/app/api/(skibidi)/bruh/route";
+// /api/status
+import type * as StatusRoute from "@/app/api/(core)/status/route";
 
 // /api/auth
 import type * as AuthLoginRoute from "@/app/api/auth/login/route";
@@ -20,8 +20,8 @@ export type KnownRoutes = {
   // /api/auth
   "/api/auth/login": typeof AuthLoginRoute;
 
-  // /api/bruh
-  "/api/bruh": typeof BruhRoute;
+  // /api/status
+  "/api/status": typeof StatusRoute;
 
   // /api/extreme
   "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;

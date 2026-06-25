@@ -3,7 +3,7 @@ import { assertNever } from "@/lib/next-zero-rpc/responses";
 
 export async function TypeInferenceDemo() {
   // 1. Basic Route: Hover over `err1.code` to see narrowed errors!
-  const [res1, err1] = await apiFetch("/api/bruh", { method: "GET" });
+  const [res1, err1] = await apiFetch("/api/status", { method: "GET" });
 
   if (err1) {
     switch (err1.code) {

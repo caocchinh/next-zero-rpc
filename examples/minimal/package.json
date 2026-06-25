@@ -2,7 +2,8 @@
   "name": "next-zero-rpc-minimal",
   "private": true,
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+    "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
   },
   "dependencies": {
     "next": "14.2.0",
