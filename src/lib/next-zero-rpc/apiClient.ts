@@ -37,9 +37,6 @@ type RouteErrorResult<Path extends string, M extends HttpMethod> = InferErrorApi
   ApiErrorPayload<ErrorCode>
 >;
 
-/** Errors produced by apiFetch itself (network failures, malformed JSON, etc.) */
-type ApiFetchError = ApiErrorPayload<"system:unknown-error">;
-
 export async function apiFetch<
   Path extends string,
   Method extends RouteMethods<Path> = RouteMethods<Path>,
@@ -47,7 +44,8 @@ export async function apiFetch<
   path: Path extends CheckPath<Path> ? Path : CheckPath<Path>,
   options: RequestInit & { method: Method },
 ): Promise<
-  [RouteSuccessResult<Path, Method>, null] | [null, RouteErrorResult<Path, Method> | ApiFetchError]
+  | [RouteSuccessResult<Path, Method>, null]
+  | [null, RouteErrorResult<Path, Method> | ApiErrorPayload<"system:unknown-error">]
 >;
 
 export async function apiFetch(
