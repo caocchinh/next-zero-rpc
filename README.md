@@ -46,7 +46,7 @@ if (err) {
 | **Error type narrowing**   | ✅                   | ❌          | ❌        |
 | Zero runtime cost          | ✅ (1.8 KB minified) | ❌ (~14 KB) | ✅        |
 | Zero config                | ✅                   | ❌          | ✅        |
-| Works with existing routes | ✅                   | ❌          | ✅        |
+| Standard API routes        | ✅                   | ❌          | ✅        |
 | Dynamic params `[id]`      | ✅                   | ✅          | N/A       |
 | Catch-all `[...slug]`      | ✅                   | ✅          | N/A       |
 | Go-style error handling    | ✅                   | ❌          | ❌        |
@@ -56,8 +56,10 @@ if (err) {
 
 ## Philosophy
 
-**Zero code changes.** You write standard Next.js API route handlers — no decorators, no schema registrations, no new abstractions. The codegen reads what already exists and builds the type bridge automatically.
+**You own the code, not the library.** `next-zero-rpc` is not a locked-in framework—it's a philosophy, a paradigm, and a set of methods for doing things. When you run `init`, we give you four files. From that moment on, they are *yours* to modify, extend, or delete.
 
+- **Zero vendor lock-in** — There is no black-box `node_modules` dependency dictating your architecture. You own the fetch client, the error codes, and the registry generator.
+- **Zero boilerplate** — You write standard Next.js API route handlers using simple response helpers — no decorators, no schema registrations, no complex abstractions. The codegen reads what already exists and builds the type bridge automatically.
 - **Not a framework** — It's a type bridge. It infers what your route handlers return and gives your client code full type safety over those responses.
 - **Validation is yours** — Input validation (Zod, Valibot, Arktype, manual checks) stays inside your route handler where it belongs. This library doesn't impose a validation layer — that's a feature, not a gap.
 - **Non-invasive** — Unlike tRPC or ts-rest, you don't adopt a new API definition pattern. Your routes are regular Next.js routes. The library is invisible.
