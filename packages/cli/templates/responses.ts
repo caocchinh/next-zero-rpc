@@ -159,21 +159,23 @@ export function createApiError<C extends ErrorCode>(
  * return createApiSuccess({ users: [...] });
  * return createApiSuccess(undefined, HTTP_STATUS_SUCCESS.NO_CONTENT);
  */
-export function createApiSuccess<T>(data: T, statusCode?: SuccessHttpStatusCode): NextResponse<T>;
+export function createApiSuccess<T>(
+  data: T,
+  statusCode?: Exclude<SuccessHttpStatusCode, typeof HTTP_STATUS_SUCCESS.NO_CONTENT>,
+): NextResponse<T>;
 export function createApiSuccess(
   data?: undefined,
   statusCode?: typeof HTTP_STATUS_SUCCESS.NO_CONTENT,
 ): NextResponse<undefined>;
 export function createApiSuccess<T>(
   data?: T,
-  statusCode: SuccessHttpStatusCode = HTTP_STATUS_SUCCESS.OK,
+  statusCode?: SuccessHttpStatusCode,
 ): NextResponse<T | undefined> {
-  // 204 No Content must not have a body per HTTP spec
-  if (statusCode === HTTP_STATUS_SUCCESS.NO_CONTENT) {
-    return new NextResponse(null, { status: 204 }) as NextResponse<T | undefined>;
+  if (data === undefined || statusCode === HTTP_STATUS_SUCCESS.NO_CONTENT) {
+    return new NextResponse(null, { status: statusCode ?? 204 });
   }
 
-  return NextResponse.json(data, { status: statusCode });
+  return NextResponse.json(data, { status: statusCode ?? 200 });
 }
 
 /**

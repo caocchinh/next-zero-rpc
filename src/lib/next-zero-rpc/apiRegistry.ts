@@ -7,6 +7,9 @@ import type * as BruhRoute from "@/app/api/(skibidi)/bruh/route";
 // /api/auth
 import type * as AuthLoginRoute from "@/app/api/auth/login/route";
 
+// /api/debug-truthiness
+import type * as DebugTruthinessRoute from "@/app/api/debug-truthiness/route";
+
 // /api/extreme
 import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
 import type * as ExtremeComplexTypesRoute from "@/app/api/extreme/complex-types/route";
@@ -22,6 +25,9 @@ export type KnownRoutes = {
 
   // /api/bruh
   "/api/bruh": typeof BruhRoute;
+
+  // /api/debug-truthiness
+  "/api/debug-truthiness": typeof DebugTruthinessRoute;
 
   // /api/extreme
   "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;

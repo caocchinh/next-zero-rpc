@@ -273,11 +273,22 @@ await apiFetch("/api/auth/login", { method: "DELETE" }); // ❌ compile error
 return createApiSuccess({ id: "123", name: "John" });
 
 // Without data (204) → NextResponse<undefined>
-return createApiSuccess(undefined, HTTP_STATUS_SUCCESS.NO_CONTENT);
+return createApiSuccess();
+
+// Without data (explicit 200 OK) → NextResponse<undefined>
+return createApiSuccess(undefined, HTTP_STATUS_SUCCESS.OK);
 
 // The overload enforces: if statusCode is NO_CONTENT, data must be undefined
 return createApiSuccess({ id: "123" }, HTTP_STATUS_SUCCESS.NO_CONTENT); // ← type error
 ```
+
+### Safely Handling Empty Responses
+
+The `apiClient.ts` uses an incredibly robust approach to handle empty API responses, leveraging how Next.js and JavaScript parse JSON primitives.
+
+If a route needs to return a `204 No Content` or an empty `200 OK`, `createApiSuccess(undefined)` intelligently evaluates to `new NextResponse(null)` to completely strip the HTTP body, avoiding Next.js `Response.json(undefined)` serialization crashes.
+
+On the client side, `apiFetch` reads `res.text()` before attempting to parse JSON. Because valid JSON primitives like `0`, `null`, `false`, or `""` serialize into strings with a length > 0 (e.g. `"0"`, `'""'`), they evaluate to _truthy_ and are safely passed into `JSON.parse`. Only a genuinely empty HTTP body resolves to an empty string (`""`), which evaluates to _falsy_, allowing the client to safely resolve `payload = undefined` without throwing a JSON syntax error.
 
 ## API Reference
 

@@ -42,7 +42,9 @@ export function updateApiRegistry() {
     const posixRouteDir = routeDir.split(path.sep).join("/");
 
     // Construct route path, ignoring Next.js route groups like (groupName)
-    const urlSegments = posixRouteDir.split("/").filter(segment => !(segment.startsWith("(") && segment.endsWith(")")));
+    const urlSegments = posixRouteDir
+      .split("/")
+      .filter((segment) => !(segment.startsWith("(") && segment.endsWith(")")));
     const urlRouteDir = urlSegments.join("/");
     const routePath = urlRouteDir === "" || urlRouteDir === "." ? "/api" : `/api/${urlRouteDir}`;
 

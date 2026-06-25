@@ -55,33 +55,34 @@ export async function apiFetch(
   try {
     const res = await fetch(path, options);
 
-    // 1. Handle 204 No Content gracefully
-    if (res.status === 204) {
-      return [undefined, null];
-    }
+    // 1. Read the body as text first to safely handle empty responses.
+    const text = await res.text();
 
-    // 2. Parse the payload safely based on Content-Type
     let payload;
-    const contentType = res.headers.get("content-type");
-
-    if (contentType && contentType.includes("application/json")) {
-      try {
-        payload = await res.json();
-      } catch {
-        return [
-          null,
-          {
-            code: "system:unknown-error",
-            message: "Server returned malformed JSON.",
-          },
-        ];
-      }
+    // An empty HTTP body resolves to an empty string "" (falsy).
+    // Valid JSON primitives like `0`, `null`, `false`, or `""` serialize to 
+    // length > 0 strings (e.g. `"0"`, `"null"`, `'""'`), which are all truthy.
+    // This perfectly catches empty responses (like 204) while preserving valid JSON.
+    if (!text) {
+      payload = undefined;
     } else {
-      // For non-JSON responses, try returning text or null
-      try {
-        payload = await res.text();
-      } catch {
-        payload = null;
+      // 2. Parse the payload safely based on Content-Type
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          payload = JSON.parse(text);
+        } catch {
+          return [
+            null,
+            {
+              code: "system:unknown-error",
+              message: "Server returned malformed JSON.",
+            },
+          ];
+        }
+      } else {
+        // For non-JSON responses, return the raw text
+        payload = text;
       }
     }
 
