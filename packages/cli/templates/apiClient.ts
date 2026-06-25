@@ -37,8 +37,6 @@ type RouteErrorResult<Path extends string, M extends HttpMethod> = InferErrorApi
   ApiErrorPayload<ErrorCode>
 >;
 
-/** Errors produced by apiFetch itself (network failures, malformed JSON, etc.) */
-
 export async function apiFetch<
   Path extends string,
   Method extends RouteMethods<Path> = RouteMethods<Path>,
