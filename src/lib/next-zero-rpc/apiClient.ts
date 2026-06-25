@@ -7,33 +7,29 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTION
 // ─── Type Inference ─────────────────────────────────────────────────────────
 
 /**
- * Infer the success response type from an API route handler function.
- * Filters out ApiErrorPayload to only return the success payload.
+ * Extracts the inner payload type U from a route handler returning NextResponse<U>.
  */
-type InferSuccessApiResponse<T, E = never> = T extends (...args: never[]) => infer R
+type UnwrapNextResponse<T> = T extends (...args: never[]) => infer R
   ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
-    ? Exclude<U, E>
-    : never
-  : never;
-
-type InferErrorApiResponse<T, E = never> = T extends (...args: never[]) => infer R
-  ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
-    ? Extract<U, E>
+    ? U
     : never
   : never;
 
 type ResolveRoute<Path extends string> =
   FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
 
+type RouteHandler<Path extends string, M extends HttpMethod> =
+  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]];
+
 type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
 
-type RouteSuccessResult<Path extends string, M extends HttpMethod> = InferSuccessApiResponse<
-  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]],
+type RouteSuccessResult<Path extends string, M extends HttpMethod> = Exclude<
+  UnwrapNextResponse<RouteHandler<Path, M>>,
   ApiErrorPayload<ErrorCode>
 >;
 
-type RouteErrorResult<Path extends string, M extends HttpMethod> = InferErrorApiResponse<
-  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]],
+type RouteErrorResult<Path extends string, M extends HttpMethod> = Extract<
+  UnwrapNextResponse<RouteHandler<Path, M>>,
   ApiErrorPayload<ErrorCode>
 >;
 
