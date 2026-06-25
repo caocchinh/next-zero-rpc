@@ -10,14 +10,24 @@ export default function Home() {
         <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
           next-zero-rpc // v0.1.5
         </div>
-        <a
-          href="https://github.com/caocchinh/next-zero-rpc"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-mono text-sm tracking-widest uppercase transition-colors hover:text-[oklch(0.6_0.2_40)]"
-        >
-          GitHub ↗
-        </a>
+        <div className="flex items-center gap-6">
+          <a
+            href="https://www.npmjs.com/package/next-zero-rpc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-sm tracking-widest uppercase transition-colors hover:text-[oklch(0.5_0.22_25)]"
+          >
+            npm ↗
+          </a>
+          <a
+            href="https://github.com/caocchinh/next-zero-rpc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-sm tracking-widest uppercase transition-colors hover:text-[oklch(0.6_0.2_40)]"
+          >
+            GitHub ↗
+          </a>
+        </div>
       </header>
 
       <main className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col">
