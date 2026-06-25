@@ -43,7 +43,7 @@ export function TreeItem({
             (isFile ? (
               <FileIcon className="h-3.5 w-3.5" />
             ) : (
-              <FolderOpen className="h-3.5 w-3.5 text-blue-400" />
+              <FolderOpen className="h-3.5 w-3.5 text-zinc-400" />
             ))}
         </span>
         <span className="truncate">{node.name}</span>

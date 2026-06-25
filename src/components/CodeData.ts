@@ -481,11 +481,30 @@ const [ resGet, errGet ] = await apiFetch("/api/extreme/methods", { method: "GET
 
 export const API_REGISTRY_CODE = `// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
-// Run your dev server or \`node lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
+// Run your dev server or \`node src/lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
+// /api/auth
+import type * as AuthLoginRoute from "@/app/api/auth/login/route";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+// /api/extreme
+import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
+import type * as ExtremeComplexTypesRoute from "@/app/api/extreme/complex-types/route";
+import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
+
+// /api/users
+import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
+
 export type KnownRoutes = {
-  // Routes will be auto-populated here
+  // Static Routes & Autocomplete Hints
+  // /api/auth
+  "/api/auth/login": typeof AuthLoginRoute;
+
+  // /api/extreme
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
+  "/api/extreme/complex-types": typeof ExtremeComplexTypesRoute;
+  "/api/extreme/methods": typeof ExtremeMethodsRoute;
+
+  // /api/users
+  "/api/users/[userId]": typeof UsersUserIdRoute;
 };
 // --- END GENERATED API REGISTRY ---
 

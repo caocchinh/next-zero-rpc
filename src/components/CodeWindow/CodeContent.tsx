@@ -1,7 +1,7 @@
 "use client";
 
 import { FileIcon } from "lucide-react";
-import { HoverTooltip, AutocompleteTooltip } from "./HoverTooltip";
+import { AutocompleteTooltip, HoverTooltip } from "./HoverTooltip";
 import { PlainEditor } from "./PlainEditor";
 import { TAB_DATA } from "./data";
 import { TabId } from "./types";
@@ -80,7 +80,9 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#c586c0]">break</span>;
           <br />
           {"    "}
-          <span className="text-[#6a9955]">{"// Intentionally missing 'system:unknown-error' to show TS error"}</span>
+          <span className="text-[#6a9955]">
+            {"// Intentionally missing 'system:unknown-error' to show TS error"}
+          </span>
           <br />
           {"    "}
           <span className="text-[#c586c0]">default</span>:
@@ -93,8 +95,7 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           >
             code
           </HoverTooltip>
-          );{" "}
-          <span className="text-[#6a9955]">{"// TS Error if you miss a case!"}</span>
+          ); <span className="text-[#6a9955]">{"// TS Error if you miss a case!"}</span>
           <br />
           {"  }"}
           <br />
@@ -122,11 +123,13 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
               "/api/extreme/methods",
               "/api/orders/checkout",
               "/api/system/health",
-              "/api/users/[userId]"
+              "/api/users/[userId]",
             ]}
             selectedIndex={0}
           >
-            <span className="text-[#ce9178] cursor-text bg-white/10 rounded-[2px]">&quot;&quot;</span>
+            <span className="cursor-text rounded-[2px] bg-white/10 text-[#ce9178]">
+              &quot;&quot;
+            </span>
           </AutocompleteTooltip>
           );
           <br />
@@ -136,16 +139,17 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
           <span className="text-[#ce9178]">&quot;/api/users/34&quot;</span>, {"{"} method:{" "}
-          <AutocompleteTooltip
-            items={["DELETE", "GET", "PUT"]}
-            selectedIndex={0}
-          >
-            <span className="text-[#ce9178] cursor-text bg-white/10 rounded-[2px]">&quot;&quot;</span>
+          <AutocompleteTooltip items={["DELETE", "GET", "PUT"]} selectedIndex={0}>
+            <span className="cursor-text rounded-[2px] bg-white/10 text-[#ce9178]">
+              &quot;&quot;
+            </span>
           </AutocompleteTooltip>
           {" }"});
           <br />
           <br />
-          <span className="text-[#6a9955]">{"// 3. Invalid Route (TypeScript catches typos!)"}</span>
+          <span className="text-[#6a9955]">
+            {"// 3. Invalid Route (TypeScript catches typos!)"}
+          </span>
           <br />
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
@@ -158,16 +162,14 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           , {"{"} method: <span className="text-[#ce9178]">&quot;DELETE&quot;</span> {"}"});
           <br />
           <br />
-          <span className="text-[#6a9955]">{"// 4. Invalid Method (TypeScript catches wrong methods!)"}</span>
+          <span className="text-[#6a9955]">
+            {"// 4. Invalid Method (TypeScript catches wrong methods!)"}
+          </span>
           <br />
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
-          <span className="text-[#ce9178]">&quot;/api/extreme/methods&quot;</span>, {"{"}{" "}
-          method:{" "}
-          <HoverTooltip
-            tooltip={`Type '"POST"' is not assignable to type '"GET"'.`}
-            isError
-          >
+          <span className="text-[#ce9178]">&quot;/api/extreme/methods&quot;</span>, {"{"} method:{" "}
+          <HoverTooltip tooltip={`Type '"POST"' is not assignable to type '"GET"'.`} isError>
             <span className="text-[#ce9178]">&quot;POST&quot;</span>
           </HoverTooltip>
           {" }"});
@@ -247,16 +249,17 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
             <span className="text-[#9cdcfe]">res3</span>
           </HoverTooltip>
           ,{" "}
-          <HoverTooltip
-            tooltip={`const err3: ApiErrorPayload<"system:unknown-error"> | null`}
-          >
+          <HoverTooltip tooltip={`const err3: ApiErrorPayload<"system:unknown-error"> | null`}>
             <span className="text-[#9cdcfe]">err3</span>
           </HoverTooltip>{" "}
           ] = <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
           <br />
           {"  "}
-          <span className="text-[#ce9178]">&quot;/api/extreme/acme/projects/xyz/tasks/a/b/c&quot;</span>,
+          <span className="text-[#ce9178]">
+            &quot;/api/extreme/acme/projects/xyz/tasks/a/b/c&quot;
+          </span>
+          ,
           <br />
           {"  {"} method: <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"}
           <br />
@@ -275,20 +278,17 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
             <span className="text-[#9cdcfe]">resGet</span>
           </HoverTooltip>
           ,{" "}
-          <HoverTooltip
-            tooltip={`const errGet: ApiErrorPayload<"system:unknown-error"> | null`}
-          >
+          <HoverTooltip tooltip={`const errGet: ApiErrorPayload<"system:unknown-error"> | null`}>
             <span className="text-[#9cdcfe]">errGet</span>
           </HoverTooltip>{" "}
           ] = <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
-          <span className="text-[#ce9178]">&quot;/api/extreme/methods&quot;</span>, {"{"}{" "}
-          method: <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
+          <span className="text-[#ce9178]">&quot;/api/extreme/methods&quot;</span>, {"{"} method:{" "}
+          <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
         </pre>
       </div>
     );
   }
-
 
   const tabData = TAB_DATA[activeTab];
   if (tabData && tabData.code) {

@@ -4,12 +4,7 @@ import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import {
-  API_CLIENT_CODE,
-  API_REGISTRY_CODE,
-  RESPONSES_CODE,
-  UPDATE_REGISTRY_CODE,
-} from "../CodeData";
+import { API_CLIENT_CODE, RESPONSES_CODE, UPDATE_REGISTRY_CODE } from "../CodeData";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -78,16 +73,7 @@ export function ManualInstall() {
         </section>
 
         <section>
-          <h3 className="font-medium text-zinc-200">2. Create apiRegistry.ts</h3>
-          <p className="mt-1 text-sm text-zinc-400">
-            The central registry for your API routes. The type definitions map strings to the
-            correct route shapes.
-          </p>
-          <CodeBlock filename="lib/next-zero-rpc/apiRegistry.ts" code={API_REGISTRY_CODE} />
-        </section>
-
-        <section>
-          <h3 className="font-medium text-zinc-200">3. Create apiClient.ts</h3>
+          <h3 className="font-medium text-zinc-200">2. Create apiClient.ts</h3>
           <p className="mt-1 text-sm text-zinc-400">
             The type-safe fetch wrapper. It uses the registry to infer types based on the path and
             method.
@@ -96,7 +82,7 @@ export function ManualInstall() {
         </section>
 
         <section>
-          <h3 className="font-medium text-zinc-200">4. Create update-api-registry.mjs</h3>
+          <h3 className="font-medium text-zinc-200">3. Create update-api-registry.mjs</h3>
           <p className="mt-1 text-sm text-zinc-400">
             Next.js plugin and script to auto-generate the registry file by scanning your{" "}
             <code className="rounded bg-zinc-800 px-1 py-0.5 text-zinc-300">app/api</code>{" "}
@@ -109,7 +95,7 @@ export function ManualInstall() {
         </section>
 
         <section>
-          <h3 className="font-medium text-zinc-200">5. Update package.json</h3>
+          <h3 className="font-medium text-zinc-200">4. Update package.json</h3>
           <p className="mt-1 text-sm text-zinc-400">
             Add the inference script to your package.json scripts.
           </p>
@@ -117,10 +103,20 @@ export function ManualInstall() {
             filename="package.json"
             code={`{
   "scripts": {
-    "infer-api": "node src/lib/next-zero-rpc/update-api-registry.mjs"
+    "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
   }
 }`}
           />
+        </section>
+
+        <section>
+          <h3 className="font-medium text-zinc-200">5. Generate the registry</h3>
+          <p className="mt-1 text-sm text-zinc-400">
+            Run the inference script to generate your{" "}
+            <code className="rounded bg-zinc-800 px-1 py-0.5 text-zinc-300">apiRegistry.ts</code>{" "}
+            file.
+          </p>
+          <CodeBlock filename="Terminal" code={`npm run infer\n# or\npnpm infer`} />
         </section>
 
         <section>

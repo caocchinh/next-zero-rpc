@@ -4,19 +4,10 @@
 // /api/auth
 import type * as AuthLoginRoute from "@/app/api/auth/login/route";
 
-// /api/checkin
-import type * as CheckinVerifyRoute from "@/app/api/checkin/verify/route";
-
 // /api/extreme
 import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
 import type * as ExtremeComplexTypesRoute from "@/app/api/extreme/complex-types/route";
 import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
-
-// /api/orders
-import type * as OrdersCheckoutRoute from "@/app/api/orders/checkout/route";
-
-// /api/system
-import type * as SystemHealthRoute from "@/app/api/system/health/route";
 
 // /api/users
 import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
@@ -26,19 +17,10 @@ export type KnownRoutes = {
   // /api/auth
   "/api/auth/login": typeof AuthLoginRoute;
 
-  // /api/checkin
-  "/api/checkin/verify": typeof CheckinVerifyRoute;
-
   // /api/extreme
   "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
   "/api/extreme/complex-types": typeof ExtremeComplexTypesRoute;
   "/api/extreme/methods": typeof ExtremeMethodsRoute;
-
-  // /api/orders
-  "/api/orders/checkout": typeof OrdersCheckoutRoute;
-
-  // /api/system
-  "/api/system/health": typeof SystemHealthRoute;
 
   // /api/users
   "/api/users/[userId]": typeof UsersUserIdRoute;
