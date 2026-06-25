@@ -135,19 +135,17 @@ export default function Home() {
         </section>
 
         {/* Simulator & Code Section */}
-        <section className="grid grid-cols-1 border-b border-[oklch(0.85_0.01_250)] xl:grid-cols-12">
-          <div className="flex flex-col justify-center border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:col-span-4 xl:border-r xl:border-b-0 xl:p-20">
+        <section className="flex flex-col border-b border-[oklch(0.85_0.01_250)]">
+          <div className="flex flex-col border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
             <div className="mb-8 inline-block">
               <span className="border border-[oklch(0.6_0.2_40)] px-3 py-1 font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
                 Simulation
               </span>
             </div>
             <h2 className="mb-8 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter uppercase">
-              Witness
-              <br />
-              The Magic
+              Witness The Magic
             </h2>
-            <p className="text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
+            <p className="max-w-2xl text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
               Hover over the variables in{" "}
               <span className="mx-1 bg-[oklch(0.85_0.01_250)] px-2 py-1 font-mono text-sm text-[oklch(0.15_0.01_250)]">
                 client.tsx
@@ -156,14 +154,14 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="relative flex items-center justify-center overflow-hidden bg-[oklch(0.95_0.01_250)] p-4 md:p-12 lg:p-20 xl:col-span-8">
+          <div className="relative flex w-full items-center justify-center overflow-hidden bg-[oklch(0.95_0.01_250)] p-4 md:p-12 lg:p-20 xl:p-24">
             {/* Abstract geometric background elements for brutalist feel */}
             <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 border-b border-l border-[oklch(0.85_0.01_250)] opacity-50"></div>
             <div className="pointer-events-none absolute bottom-10 left-10 font-mono text-[10rem] leading-none font-black text-[oklch(0.85_0.01_250)] select-none">
               {"//"}
             </div>
 
-            <div className="relative z-10 w-full max-w-6xl border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
+            <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
               <CodeWindow />
             </div>
           </div>

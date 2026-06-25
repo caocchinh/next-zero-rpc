@@ -28,7 +28,7 @@ export function CodeWindow() {
   };
 
   return (
-    <div className="flex h-[600px] w-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-[#1e1e1e] font-sans shadow-2xl">
+    <div className="flex h-[800px] w-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-[#1e1e1e] font-sans shadow-2xl">
       {/* Title Bar */}
       <div className="flex flex-none items-center justify-between border-b border-zinc-800 bg-[#323233] px-4 py-2">
         <div className="flex gap-2">
