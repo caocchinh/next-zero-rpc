@@ -18,8 +18,8 @@ type UnwrapNextResponse<T> = T extends (...args: never[]) => infer R
 type ResolveRoute<Path extends string> =
   FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
 
-type RouteHandler<Path extends string, M extends HttpMethod> =
-  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]];
+type RouteHandler<Path extends string, M extends HttpMethod> = KnownRoutes[ResolveRoute<Path>][M &
+  keyof KnownRoutes[ResolveRoute<Path>]];
 
 type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
 
@@ -56,7 +56,7 @@ export async function apiFetch(
 
     let payload;
     // An empty HTTP body resolves to an empty string "" (falsy).
-    // Valid JSON primitives like `0`, `null`, `false`, or `""` serialize to 
+    // Valid JSON primitives like `0`, `null`, `false`, or `""` serialize to
     // length > 0 strings (e.g. `"0"`, `"null"`, `'""'`), which are all truthy.
     // This perfectly catches empty responses (like 204) while preserving valid JSON.
     if (!text) {

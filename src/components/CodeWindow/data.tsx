@@ -108,7 +108,9 @@ export const FILE_TREE: FileNode[] = [
                                             id: "app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route.ts",
                                             name: "route.ts",
                                             type: "file",
-                                            icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
+                                            icon: (
+                                              <Terminal className="h-3.5 w-3.5 text-green-400" />
+                                            ),
                                           },
                                         ],
                                       },

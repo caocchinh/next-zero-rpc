@@ -40,30 +40,57 @@ if (err) {
 
 ### How it compares
 
-| Feature                   | next-zero-rpc        | tRPC        | raw fetch |
-| ------------------------- | -------------------- | ----------- | --------- |
-| Type-safe paths           | ✅                   | ✅          | ❌        |
-| Type-safe responses       | ✅                   | ✅          | ❌        |
-| Type-safe methods         | ✅                   | N/A         | ❌        |
-| **Error type narrowing**  | ✅                   | ❌          | ❌        |
-| Zero runtime cost         | ✅ (1.8 KB minified) | ❌ (~14 KB) | ✅        |
-| Zero config               | ✅                   | ❌          | ✅        |
-| Standard API routes       | ✅                   | ❌          | ✅        |
-| Dynamic params `[id]`     | ✅                   | ✅          | N/A       |
-| Catch-all `[...slug]`     | ✅                   | ✅          | N/A       |
-| Go-style error handling   | ✅                   | ❌          | ❌        |
-| Exhaustive error checking | ✅                   | ❌          | ❌        |
-| Server action helpers     | ✅                   | ❌          | N/A       |
-| Dependencies              | 0                    | 5+          | 0         |
+> The table below reflects the libraries as of mid-2025. tRPC and ts-rest are both also zero-dependency at their core — the differentiators here are _approach_ and _what you give up_, not dependency counts.
+
+| Feature                         | next-zero-rpc       | tRPC                 | ts-rest           | raw fetch |
+| ------------------------------- | ------------------- | -------------------- | ----------------- | --------- |
+| Type-safe paths                 | ✅                  | ✅                   | ✅                | ❌        |
+| Type-safe responses             | ✅                  | ✅                   | ✅                | ❌        |
+| Type-safe methods               | ✅                  | N/A (procedures)     | ✅                | ❌        |
+| **Per-route error narrowing**   | ✅                  | ❌                   | ❌                | ❌        |
+| Client runtime size             | ~1.8 KB             | ~15 KB               | comparable        | 0         |
+| Standard Next.js route handlers | ✅ (no changes)     | ❌ (use tRPC router) | ❌ (use contract) | ✅        |
+| Dynamic params `[id]`           | ✅                  | ✅                   | ✅                | N/A       |
+| Catch-all `[...slug]`           | ✅                  | ✅                   | ✅                | N/A       |
+| Go-style error handling         | ✅                  | ❌                   | ❌                | ❌        |
+| Exhaustive error checking       | ✅                  | ❌                   | ❌                | ❌        |
+| Server action helpers           | ✅                  | ❌                   | N/A               | N/A       |
+| Input validation built-in       | ❌ (bring your own) | ✅ (Zod pipeline)    | ✅ (Zod contract) | ❌        |
+| OpenAPI / non-TS client support | ❌                  | ❌ (plugin needed)   | ✅ (core feature) | ❌        |
+| Middleware / request pipeline   | ❌                  | ✅                   | partial           | ❌        |
+| Subscriptions / WebSockets      | ❌                  | ✅                   | ❌                | ❌        |
+| Ecosystem maturity              | early (v0.1.x)      | large                | solid             | N/A       |
+| Core runtime dependencies       | 0                   | 0                    | 0                 | 0         |
+
+## When to use this
+
+**Use `next-zero-rpc` when:**
+
+- You're already writing plain Next.js App Router route handlers and want type-safe `fetch` calls _without restructuring your backend_ into tRPC procedures or ts-rest contracts
+- Per-route error code narrowing matters to you — this is genuinely not available in tRPC or ts-rest out of the box
+- You want a tiny client footprint (~1.8 KB) and zero ongoing npm dependencies
+- You're building a solo or small-team Next.js project and prefer to own a few simple files over maintaining a dependency
+
+**Consider tRPC instead when:**
+
+- You want a battle-tested ecosystem with React Query integration, batching, subscriptions, and middleware — tRPC has all of this
+- You're on a team and want community support, Stack Overflow answers, and plugins maintained by others
+- Input validation baked into the request pipeline (not just inside handlers) is important to you
+
+**Consider ts-rest instead when:**
+
+- You need OpenAPI docs or non-TypeScript consumers (mobile apps, third-party integrations) — this is ts-rest's core strength
+- You want a formal contract object that both your server and client are verified against
+- REST shape (not RPC) is a requirement
 
 ## Philosophy
 
 **You own the code, not the library.** `next-zero-rpc` is not a locked-in framework—it's a philosophy, a paradigm, and a set of methods for doing things. When you run `init`, we give you four files. From that moment on, they are _yours_ to modify, extend, or delete.
 
-- **Zero vendor lock-in** — There is no black-box `node_modules` dependency dictating your architecture. You own the fetch client, the error codes, and the registry generator.
+- **Zero vendor lock-in** — There is no black-box `node_modules` dependency dictating your architecture. You own the fetch client, the error codes, and the registry generator. If the maintainer disappears tomorrow, you're not blocked.
 - **Zero boilerplate** — You write standard Next.js API route handlers using simple response helpers — no decorators, no schema registrations, no complex abstractions. The codegen reads what already exists and builds the type bridge automatically.
 - **Not a framework** — It's a type bridge. It infers what your route handlers return and gives your client code full type safety over those responses.
-- **Validation is yours** — Input validation (Zod, Valibot, Arktype, manual checks) stays inside your route handler where it belongs. This library doesn't impose a validation layer — that's a feature, not a gap.
+- **Validation is yours** — Input validation (Zod, Valibot, Arktype, manual checks) stays inside your route handler where it belongs. This library doesn't impose a validation layer — that's a deliberate design choice.
 - **Non-invasive** — Unlike tRPC or ts-rest, you don't adopt a new API definition pattern. Your routes are regular Next.js routes. The library is invisible.
 
 ## Setup
@@ -177,7 +204,7 @@ This works because:
 
 1. `createApiError` is generic: `createApiError<C extends ErrorCode>(code: C, ...) → NextResponse<ApiErrorPayload<C>>`
 2. TypeScript infers the literal `C` from each call site in your handler
-3. `InferErrorApiResponse` extracts the union of all `ApiErrorPayload<C>` types from the handler's return type
+3. `UnwrapNextResponse` extracts the union of all `ApiErrorPayload<C>` types from the handler's return type
 4. The client sees only those specific error codes
 
 ### Go-Style Tuple Returns
@@ -369,15 +396,15 @@ HTTP_STATUS_ERROR.GATEWAY_TIMEOUT; // 504
 
 #### Functions
 
-| Function                  | Signature                                                                      | Description                           |
-| ------------------------- | ------------------------------------------------------------------------------ | ------------------------------------- |
-| `createApiError<C>`       | `(code: C, statusCode, options?) → NextResponse<ApiErrorPayload<C>>`           | Create a typed API error response     |
-| `createApiSuccess<T>`     | `(data: T, statusCode?) → NextResponse<T>`                                     | Create a typed API success response   |
-| `createApiSuccess`        | `(undefined, NO_CONTENT) → NextResponse<undefined>`                            | Overload for 204 No Content           |
-| `isApiErrorPayload`       | `(payload: unknown) → payload is ApiErrorPayload<ErrorCode>`                   | Runtime type guard for error payloads |
-| `createServiceError`      | `(code, options?) → [null, ServiceError]`                                      | Go-style error for server actions     |
-| `createServiceSuccess<T>` | `(data?: T) → [T \| undefined, null]`                                          | Go-style success for server actions   |
-| `assertNever`             | `(value: never) → never`                                                       | Compile-time exhaustiveness guard     |
+| Function                  | Signature                                                            | Description                           |
+| ------------------------- | -------------------------------------------------------------------- | ------------------------------------- |
+| `createApiError<C>`       | `(code: C, statusCode, options?) → NextResponse<ApiErrorPayload<C>>` | Create a typed API error response     |
+| `createApiSuccess<T>`     | `(data: T, statusCode?) → NextResponse<T>`                           | Create a typed API success response   |
+| `createApiSuccess`        | `(undefined, NO_CONTENT) → NextResponse<undefined>`                  | Overload for 204 No Content           |
+| `isApiErrorPayload`       | `(payload: unknown) → payload is ApiErrorPayload<ErrorCode>`         | Runtime type guard for error payloads |
+| `createServiceError`      | `(code, options?) → [null, ServiceError]`                            | Go-style error for server actions     |
+| `createServiceSuccess<T>` | `(data?: T) → [T \| undefined, null]`                                | Go-style success for server actions   |
+| `assertNever`             | `(value: never) → never`                                             | Compile-time exhaustiveness guard     |
 
 ### `apiClient.ts`
 
@@ -515,7 +542,7 @@ Since you own all the source files, you can customize anything:
 
 [![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
 
-Opens [`examples/minimal`](https://github.com/caocchinh/next-zero-rpc/tree/main/examples/minimal) — a self-contained Next.js app with a working `apiFetch` client and two example API routes.
+Opens [`examples/minimal`](./examples/minimal) — a self-contained Next.js app with a working `apiFetch` client and two example API routes.
 
 ### Run locally
 
@@ -538,11 +565,11 @@ npx next-zero-rpc --help       # Show help
 
 ## Requirements
 
-| Requirement | Minimum Version | Reason |
-| ----------- | --------------- | ------ |
-| Next.js | **14.0** | App Router (stable since 14.0) |
-| TypeScript | **4.9** | `satisfies` keyword used in `responses.ts` |
-| Node.js | **18** | Native `fetch` API required by `apiFetch` |
+| Requirement | Minimum Version | Reason                                     |
+| ----------- | --------------- | ------------------------------------------ |
+| Next.js     | **14.0**        | App Router (stable since 14.0)             |
+| TypeScript  | **4.9**         | `satisfies` keyword used in `responses.ts` |
+| Node.js     | **18**          | Native `fetch` API required by `apiFetch`  |
 
 ## License
 

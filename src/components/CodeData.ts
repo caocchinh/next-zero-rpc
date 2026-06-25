@@ -229,7 +229,6 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 }
 `;
 
-
 export const LIB_NEXT_ZERO_RPC_APICLIENT_TS_CODE = `import { NextResponse } from "next/server";
 import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
 import { ApiErrorPayload, ErrorCode, isApiErrorPayload } from "./responses";
@@ -908,4 +907,3 @@ export function withApiRegistry(nextConfig = {}) {
   return nextConfig;
 }
 `;
-
