@@ -46,8 +46,13 @@ ${BOLD}What it does:${RESET}
     • responses.ts         — Error/success response helpers
     • update-api-registry.mjs — Code generator + Next.js plugin
 
+  Also registers ${CYAN}next-zero-rpc-ts-plugin${RESET} in your tsconfig.json:
+    • Ctrl+Click on ${CYAN}apiFetch("/api/users/34")${RESET} → opens the matching route.ts
+    • Hover tooltip shows which route.ts file will handle the request
+
 ${DIM}Zero dependencies. Zero runtime overhead. Full type safety.${RESET}
 `;
+
 
 function detectProjectRoot() {
   const cwd = process.cwd();
@@ -143,6 +148,50 @@ async function init(flags) {
     warn(`Could not update package.json: ${e.message}`);
   }
 
+  // Patch tsconfig.json to register the TS Language Service Plugin
+  // This enables Ctrl+Click on apiFetch route strings to jump to route.ts
+  try {
+    const tsconfigPath = path.join(root, "tsconfig.json");
+    if (fs.existsSync(tsconfigPath)) {
+      const raw = fs.readFileSync(tsconfigPath, "utf-8");
+      // Strip JS-style comments before parsing (tsconfig allows comments, JSON.parse does not)
+      const stripped = raw.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
+      const tsconfig = JSON.parse(stripped);
+
+      if (!tsconfig.compilerOptions) tsconfig.compilerOptions = {};
+      if (!tsconfig.compilerOptions.plugins) tsconfig.compilerOptions.plugins = [];
+
+      const plugins = tsconfig.compilerOptions.plugins;
+      const alreadyRegistered = plugins.some(
+        (p) => p.name === "next-zero-rpc-ts-plugin",
+      );
+
+      if (alreadyRegistered) {
+        log(`${DIM}next-zero-rpc-ts-plugin already registered in tsconfig.json${RESET}`);
+      } else {
+        plugins.push({ name: "next-zero-rpc-ts-plugin" });
+        // Write back preserving the structure (without stripping comments from the real file)
+        // We re-parse from the original to be safe, just injecting the plugin entry
+        const updatedRaw = raw.replace(
+          /"plugins"\s*:\s*\[/,
+          `"plugins": [\n      { "name": "next-zero-rpc-ts-plugin" },`,
+        );
+        // If no plugins array exists, we add one before the closing brace of compilerOptions
+        const finalContent = updatedRaw === raw
+          ? raw.replace(
+              /"compilerOptions"\s*:\s*\{/,
+              `"compilerOptions": {\n    "plugins": [{ "name": "next-zero-rpc-ts-plugin" }],`,
+            )
+          : updatedRaw;
+
+        fs.writeFileSync(tsconfigPath, finalContent, "utf-8");
+        success(`Registered ${BOLD}next-zero-rpc-ts-plugin${RESET}${GREEN} in tsconfig.json ${DIM}(Ctrl+Click → route.ts)${RESET}`);
+      }
+    }
+  } catch (e) {
+    warn(`Could not patch tsconfig.json: ${e.message}`);
+  }
+
   log("");
 
   if (written === 0 && skipped > 0) {
@@ -178,6 +227,7 @@ async function init(flags) {
   );
   log("");
   log(`${DIM}The registry auto-updates when you create/delete route.ts files.${RESET}`);
+  log(`${DIM}Ctrl+Click any route string in apiFetch() to jump to the route.ts handler.${RESET}`);
   log("");
 }
 

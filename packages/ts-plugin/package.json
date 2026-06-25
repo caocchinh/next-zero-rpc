@@ -1,0 +1,40 @@
+{
+  "name": "next-zero-rpc-ts-plugin",
+  "version": "0.1.8",
+  "description": "TypeScript Language Service Plugin for next-zero-rpc — Ctrl+Click apiFetch routes to jump to route.ts",
+  "keywords": [
+    "typescript",
+    "language-server",
+    "plugin",
+    "nextjs",
+    "next-zero-rpc",
+    "goto-definition",
+    "dx"
+  ],
+  "license": "MIT",
+  "author": "caocchinh",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "dev": "tsc --project tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caocchinh/next-zero-rpc.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/caocchinh/next-zero-rpc/issues"
+  },
+  "homepage": "https://github.com/caocchinh/next-zero-rpc#readme"
+}
