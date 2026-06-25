@@ -132,19 +132,21 @@ export interface ApiErrorPayload<C extends ErrorCode> {
  *
  * @example
  * return createApiError("auth:unauthorized", HTTP_STATUS_ERROR.UNAUTHORIZED);
- * return createApiError("auth:unauthorized", 401, undefined, "Custom message");
+ * return createApiError("auth:unauthorized", 401, { message: "Custom message" });
  */
 export function createApiError<C extends ErrorCode>(
   code: C,
   statusCode: ErrorHttpStatusCode,
-  details?: Record<string, string[]>,
-  message?: string,
+  options?: {
+    details?: Record<string, string[]>;
+    message?: string;
+  },
 ): NextResponse<ApiErrorPayload<C>> {
   return NextResponse.json(
     {
       code,
-      details,
-      message,
+      details: options?.details,
+      message: options?.message,
     },
     {
       status: statusCode,
@@ -208,19 +210,21 @@ type ServiceResponse<S, E = ServiceError> = [S, null] | [null, E];
  *
  * @example
  * return createServiceError("validation:invalid-payload");
- * return createServiceError("validation:invalid-payload", undefined, "Custom message");
+ * return createServiceError("validation:invalid-payload", { message: "Custom message" });
  */
 export function createServiceError(
   code: ErrorCode,
-  details?: Record<string, string[]>,
-  message?: string,
+  options?: {
+    details?: Record<string, string[]>;
+    message?: string;
+  },
 ): ServiceResponse<null, ServiceError> {
   return [
     null,
     {
       code,
-      details,
-      message: message ?? code,
+      details: options?.details,
+      message: options?.message ?? code,
     },
   ];
 }
@@ -265,7 +269,9 @@ export async function GET(req: NextRequest, { params }: Params) {
 
   if (userId === "not-found") {
     return createApiError("resource:not-found", 404, {
-      userId: ["User not found in the database"],
+      details: {
+        userId: ["User not found in the database"],
+      },
     });
   }
 
@@ -301,7 +307,9 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
   if (userId === "admin") {
     return createApiError("auth:forbidden", 403, {
-      userId: ["Cannot delete admin user"],
+      details: {
+        userId: ["Cannot delete admin user"],
+      },
     });
   }
 

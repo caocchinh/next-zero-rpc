@@ -369,11 +369,11 @@ HTTP_STATUS_ERROR.GATEWAY_TIMEOUT; // 504
 
 | Function                  | Signature                                                                      | Description                           |
 | ------------------------- | ------------------------------------------------------------------------------ | ------------------------------------- |
-| `createApiError<C>`       | `(code: C, statusCode, details?, message?) → NextResponse<ApiErrorPayload<C>>` | Create a typed API error response     |
+| `createApiError<C>`       | `(code: C, statusCode, options?) → NextResponse<ApiErrorPayload<C>>`           | Create a typed API error response     |
 | `createApiSuccess<T>`     | `(data: T, statusCode?) → NextResponse<T>`                                     | Create a typed API success response   |
 | `createApiSuccess`        | `(undefined, NO_CONTENT) → NextResponse<undefined>`                            | Overload for 204 No Content           |
 | `isApiErrorPayload`       | `(payload: unknown) → payload is ApiErrorPayload<ErrorCode>`                   | Runtime type guard for error payloads |
-| `createServiceError`      | `(code, details?, message?) → [null, ServiceError]`                            | Go-style error for server actions     |
+| `createServiceError`      | `(code, options?) → [null, ServiceError]`                                      | Go-style error for server actions     |
 | `createServiceSuccess<T>` | `(data?: T) → [T \| undefined, null]`                                          | Go-style success for server actions   |
 | `assertNever`             | `(value: never) → never`                                                       | Compile-time exhaustiveness guard     |
 
@@ -480,7 +480,7 @@ export async function getUser(userId: string) {
   const user = await db.users.find(userId);
 
   if (!user) {
-    return createServiceError("resource:not-found", undefined, "User not found");
+    return createServiceError("resource:not-found", { message: "User not found" });
   }
 
   return createServiceSuccess({ id: user.id, name: user.name });

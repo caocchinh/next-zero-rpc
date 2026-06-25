@@ -8,7 +8,9 @@ export async function GET(req: NextRequest, { params }: Params) {
 
   if (userId === "not-found") {
     return createApiError("system:database-error", 404, {
-      userId: ["User not found in the database"],
+      details: {
+        userId: ["User not found in the database"],
+      },
     });
   }
 
@@ -44,7 +46,9 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
   if (userId === "admin") {
     return createApiError("auth:forbidden", 403, {
-      userId: ["Cannot delete admin user"],
+      details: {
+        userId: ["Cannot delete admin user"],
+      },
     });
   }
 
