@@ -62,7 +62,6 @@ export function updateApiRegistry() {
     const importPath =
       posixRouteDir === "." ? "@/app/api/route" : `@/app/api/${posixRouteDir}/route`;
 
-
     routes.push({ importName, importPath, routePath });
   }
 

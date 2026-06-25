@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# next-zero-rpc
 
-## Getting Started
-
-First, run the development server:
+Type-safe fetch for Next.js — zero runtime, zero config, zero dependencies.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx next-zero-rpc init
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Four files. Full type safety. Error type narrowing. 1.8 KB runtime.**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quick Start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 1. Install into your Next.js project
+npx next-zero-rpc init
 
-## Learn More
+# 2. Add plugin to next.config.ts
+```
 
-To learn more about Next.js, take a look at the following resources:
+```typescript
+import { withApiRegistry } from "./src/lib/next-zero-rpc/update-api-registry.mjs";
+export default withApiRegistry(nextConfig);
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```typescript
+// 3. Write route handlers with typed responses
+import { createApiSuccess, createApiError, HTTP_STATUS_ERROR } from "@/lib/next-zero-rpc/responses";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+export async function GET(req: Request, { params }: { params: Promise<{ userId: string }> }) {
+  const { userId } = await params;
+  const user = await db.users.find(userId);
 
-## Deploy on Vercel
+  if (!user) return createApiError("resource:not-found", HTTP_STATUS_ERROR.NOT_FOUND);
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  return createApiSuccess({ id: user.id, name: user.name });
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```typescript
+// 4. Fetch with full type safety + error narrowing
+const [data, err] = await apiFetch("/api/users/123", { method: "GET" });
+
+if (err) {
+  // err.code narrows to ONLY the errors this route can return
+  switch (err.code) {
+    case "resource:not-found":
+      break;
+    case "system:unknown-error":
+      break;
+    default:
+      assertNever(err.code); // compile-time exhaustiveness check
+  }
+} else {
+  console.log(data.name); // ← fully typed
+}
+```
+
+## Documentation
+
+See the full documentation in [`packages/cli/README.md`](./packages/cli/README.md).
+
+## Development
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## License
+
+MIT

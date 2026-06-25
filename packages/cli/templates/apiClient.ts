@@ -46,7 +46,9 @@ export async function apiFetch<
 >(
   path: Path extends CheckPath<Path> ? Path : CheckPath<Path>,
   options: RequestInit & { method: Method },
-): Promise<[RouteSuccessResult<Path, Method>, null] | [null, RouteErrorResult<Path, Method> | ApiFetchError]>;
+): Promise<
+  [RouteSuccessResult<Path, Method>, null] | [null, RouteErrorResult<Path, Method> | ApiFetchError]
+>;
 
 export async function apiFetch(
   path: string,

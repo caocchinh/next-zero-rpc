@@ -184,7 +184,7 @@ export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload<
 
   const p = payload as Record<string, unknown>;
 
-  return typeof p.code === "string" && ERROR_CODE_SET.has(p.code) && typeof p.message === "string";
+  return typeof p.code === "string" && ERROR_CODE_SET.has(p.code);
 }
 
 // ─── Server Action Helpers ──────────────────────────────────────────────────
@@ -234,17 +234,6 @@ export function createServiceError(
  */
 export function createServiceSuccess<T>(data?: T): ServiceResponse<T | undefined, null> {
   return [data, null];
-}
-
-/**
- * Error class for business logic violations that should NOT be retried.
- */
-export class BusinessLogicError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "BusinessLogicError";
-    Object.setPrototypeOf(this, BusinessLogicError.prototype);
-  }
 }
 
 // ─── Exhaustive Check ───────────────────────────────────────────────────────
