@@ -5,12 +5,14 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[oklch(0.98_0.01_250)] font-sans text-[oklch(0.15_0.01_250)] selection:bg-[oklch(0.6_0.2_40)] selection:text-[oklch(0.98_0.01_250)]">
       {/* Top Nav/Border */}
-      <header className="flex items-end justify-between border-b border-[oklch(0.85_0.01_250)] px-6 py-5 md:px-12">
+      <header className="fixed top-0 z-50 flex w-full items-end justify-between border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.98_0.01_250)] px-6 py-5 md:px-12">
         <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
           next-zero-rpc // v0.1.0
         </div>
         <a
           href="https://github.com/caocchinh/next-zero-rpc"
+          target="_blank"
+          rel="noopener noreferrer"
           className="font-mono text-sm tracking-widest uppercase transition-colors hover:text-[oklch(0.6_0.2_40)]"
         >
           GitHub ↗
@@ -58,6 +60,8 @@ export default function Home() {
               </a>
               <a
                 href="https://github.com/caocchinh/next-zero-rpc"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-block border border-[oklch(0.85_0.01_250)] px-10 py-5 transition-colors hover:bg-[oklch(0.9_0.01_250)]"
               >
                 Read Source
@@ -82,6 +86,39 @@ export default function Home() {
               <div className="origin-left text-[clamp(4rem,6vw,7rem)] leading-none font-black tracking-tighter transition-transform group-hover:scale-105">
                 0.0
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Simulator & Code Section */}
+        <section className="flex flex-col border-b border-[oklch(0.85_0.01_250)]">
+          <div className="flex flex-col border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
+            <div className="mb-8 inline-block">
+              <span className="border border-[oklch(0.6_0.2_40)] px-3 py-1 font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
+                Simulation
+              </span>
+            </div>
+            <h2 className="mb-8 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter uppercase">
+              Witness The Magic
+            </h2>
+            <p className="max-w-2xl text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
+              Hover over the variables in{" "}
+              <span className="mx-1 bg-[oklch(0.85_0.01_250)] px-2 py-1 font-mono text-sm text-[oklch(0.15_0.01_250)]">
+                client.tsx
+              </span>{" "}
+              to observe absolute type inference across the network boundary.
+            </p>
+          </div>
+
+          <div className="relative flex w-full items-center justify-center overflow-hidden bg-[oklch(0.95_0.01_250)] p-4 md:p-12 lg:p-20 xl:p-24">
+            {/* Abstract geometric background elements for brutalist feel */}
+            <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 border-b border-l border-[oklch(0.85_0.01_250)] opacity-50"></div>
+            <div className="pointer-events-none absolute bottom-10 left-10 font-mono text-[10rem] leading-none font-black text-[oklch(0.85_0.01_250)] select-none">
+              {"//"}
+            </div>
+
+            <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
+              <CodeWindow />
             </div>
           </div>
         </section>
@@ -131,39 +168,6 @@ export default function Home() {
               Not a locked-in framework. It&apos;s a philosophy and a paradigm. We give you four
               files, you own them completely. No vendor lock-in.
             </p>
-          </div>
-        </section>
-
-        {/* Simulator & Code Section */}
-        <section className="flex flex-col border-b border-[oklch(0.85_0.01_250)]">
-          <div className="flex flex-col border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
-            <div className="mb-8 inline-block">
-              <span className="border border-[oklch(0.6_0.2_40)] px-3 py-1 font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-                Simulation
-              </span>
-            </div>
-            <h2 className="mb-8 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter uppercase">
-              Witness The Magic
-            </h2>
-            <p className="max-w-2xl text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
-              Hover over the variables in{" "}
-              <span className="mx-1 bg-[oklch(0.85_0.01_250)] px-2 py-1 font-mono text-sm text-[oklch(0.15_0.01_250)]">
-                client.tsx
-              </span>{" "}
-              to observe absolute type inference across the network boundary.
-            </p>
-          </div>
-
-          <div className="relative flex w-full items-center justify-center overflow-hidden bg-[oklch(0.95_0.01_250)] p-4 md:p-12 lg:p-20 xl:p-24">
-            {/* Abstract geometric background elements for brutalist feel */}
-            <div className="pointer-events-none absolute top-0 right-0 h-64 w-64 border-b border-l border-[oklch(0.85_0.01_250)] opacity-50"></div>
-            <div className="pointer-events-none absolute bottom-10 left-10 font-mono text-[10rem] leading-none font-black text-[oklch(0.85_0.01_250)] select-none">
-              {"//"}
-            </div>
-
-            <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
-              <CodeWindow />
-            </div>
           </div>
         </section>
 

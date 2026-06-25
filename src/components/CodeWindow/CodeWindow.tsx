@@ -62,6 +62,12 @@ export function CodeWindow() {
                 <div
                   key={tabId}
                   onClick={() => handleTabClick(tabId)}
+                  onMouseDown={(e) => {
+                    if (e.button === 1) {
+                      e.preventDefault();
+                      closeTab(e, tabId);
+                    }
+                  }}
                   className={`group flex min-w-[120px] cursor-pointer items-center justify-between gap-2 border-r border-zinc-800 px-3 py-2 text-xs ${
                     isActive
                       ? "bg-[#1e1e1e] text-blue-400"
@@ -89,7 +95,13 @@ export function CodeWindow() {
           <div className="flex flex-none items-center px-4 py-1.5 text-[11px] text-zinc-400">
             {activeTab && (
               <div className="flex items-center gap-1">
-                <span>{activeTab.includes("route.ts") ? "api/users/[userId]" : "components"}</span>
+                <span>
+                  {activeTab === "client.tsx"
+                    ? "components"
+                    : activeTab.includes("/")
+                      ? activeTab.substring(0, activeTab.lastIndexOf("/"))
+                      : "lib/next-zero-rpc"}
+                </span>
                 <ChevronRight className="h-3 w-3" />
                 <span>{TAB_DATA[activeTab]?.name}</span>
               </div>
