@@ -53,8 +53,8 @@ export default function Home() {
             <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
               <iframe
                 loading="lazy"
-                src="https://codesandbox.io/embed/github/caocchinh/next-zero-rpc/tree/main/examples/minimal?fontsize=14&hidenavigation=1&theme=dark&view=editor&hidedevtools=1&file=src/client.ts"
-                className="h-[800px] max-h-[90vh] w-full border-0 transition-opacity duration-1000 opacity-100 rounded-lg overflow-hidden shadow-[16px_16px_0_0_oklch(0.6_0.2_40)]"
+                src="https://stackblitz.com/github/caocchinh/next-zero-rpc/tree/main/examples/minimal?embed=1&file=src/client.ts&hideNavigation=1&theme=dark&view=editor&startScript=infer"
+                className="h-[800px] max-h-[90vh] w-full overflow-hidden rounded-lg border-0 opacity-100 shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-opacity duration-1000"
                 title="next-zero-rpc codebase"
                 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
                 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
