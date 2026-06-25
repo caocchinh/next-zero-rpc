@@ -1,0 +1,7 @@
+{
+  "installDependencies": true,
+  "startCommand": "pnpm install",
+  "env": {
+    "PNPM_VERSION": "11.5.0"
+  }
+}

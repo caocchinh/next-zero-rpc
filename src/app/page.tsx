@@ -1,5 +1,5 @@
-import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
+import { QuickStartCommand } from "@/components/QuickStartCommand";
 
 export default function Home() {
   return (
@@ -20,76 +20,6 @@ export default function Home() {
       </header>
 
       <main className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col">
-        {/* Hero Section */}
-        <section className="grid flex-1 grid-cols-1 border-b border-[oklch(0.85_0.01_250)] lg:grid-cols-12">
-          {/* Left Column (Text) */}
-          <div className="flex flex-col justify-center border-[oklch(0.85_0.01_250)] p-6 md:p-12 lg:col-span-8 lg:border-r lg:p-20 xl:p-24">
-            <div className="mb-12 inline-flex lg:mb-20">
-              <span className="bg-[oklch(0.15_0.01_250)] px-3 py-1 font-mono text-xs font-bold tracking-widest text-[oklch(0.98_0.01_250)] uppercase">
-                System Active
-              </span>
-            </div>
-
-            <h1 className="mb-10 text-[clamp(3.5rem,8vw,9rem)] leading-[0.85] font-black tracking-tighter uppercase">
-              <span className="block transition-transform duration-500 hover:translate-x-4">
-                Type-Safe
-              </span>
-              <span className="block transition-transform delay-75 duration-500 hover:translate-x-4">
-                Fetch.
-              </span>
-              <span className="block text-[oklch(0.6_0.2_40)] transition-transform delay-150 duration-500 hover:translate-x-4">
-                Zero
-              </span>
-              <span className="block text-[oklch(0.6_0.2_40)] transition-transform delay-200 duration-500 hover:translate-x-4">
-                Overhead.
-              </span>
-            </h1>
-
-            <p className="mb-16 max-w-2xl text-[clamp(1.1rem,2vw,1.5rem)] leading-snug font-medium text-[oklch(0.4_0.01_250)]">
-              Four files. Full type safety. Error type narrowing.{" "}
-              <span className="text-[oklch(0.15_0.01_250)]">1.8 KB runtime.</span> Stop wrestling
-              with complex RPC setups—just use standard Next.js route handlers.
-            </p>
-
-            <div className="flex flex-col items-start gap-6 font-mono text-sm font-bold tracking-wider uppercase sm:flex-row">
-              <a
-                href="#installation"
-                className="inline-block bg-[oklch(0.6_0.2_40)] px-10 py-5 text-[oklch(0.98_0.01_250)] transition-colors hover:bg-[oklch(0.15_0.01_250)]"
-              >
-                [ Initialize ]
-              </a>
-              <a
-                href="https://github.com/caocchinh/next-zero-rpc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block border border-[oklch(0.85_0.01_250)] px-10 py-5 transition-colors hover:bg-[oklch(0.9_0.01_250)]"
-              >
-                Read Source
-              </a>
-            </div>
-          </div>
-
-          {/* Right Column (Metrics/Stats) */}
-          <div className="flex flex-col lg:col-span-4">
-            <div className="group flex min-h-[300px] flex-1 flex-col justify-end border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.95_0.01_250)] p-8 md:p-12 lg:min-h-0 lg:p-16">
-              <div className="mb-4 font-mono text-sm tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-                / Runtime Cost
-              </div>
-              <div className="origin-left text-[clamp(4rem,6vw,7rem)] leading-none font-black tracking-tighter transition-transform group-hover:scale-105">
-                1.8 KB
-              </div>
-            </div>
-            <div className="group flex min-h-[300px] flex-1 flex-col justify-end border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:min-h-0 lg:border-b-0 lg:p-16">
-              <div className="mb-4 font-mono text-sm tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-                / Abstractions
-              </div>
-              <div className="origin-left text-[clamp(4rem,6vw,7rem)] leading-none font-black tracking-tighter transition-transform group-hover:scale-105">
-                0.0
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Simulator & Code Section */}
         <section className="flex flex-col border-b border-[oklch(0.85_0.01_250)]">
           <div className="flex flex-col border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
@@ -101,13 +31,16 @@ export default function Home() {
             <h2 className="mb-8 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter uppercase">
               Witness The Magic
             </h2>
-            <p className="max-w-2xl text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
+            <p className="mb-8 max-w-2xl text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
               Hover over the variables in{" "}
               <span className="mx-1 bg-[oklch(0.85_0.01_250)] px-2 py-1 font-mono text-sm text-[oklch(0.15_0.01_250)]">
                 client.tsx
               </span>{" "}
               to observe absolute type inference across the network boundary.
             </p>
+            <div className="w-full max-w-xl">
+              <QuickStartCommand />
+            </div>
           </div>
 
           <div className="relative flex w-full items-center justify-center overflow-hidden bg-[oklch(0.95_0.01_250)] p-4 md:p-12 lg:p-20 xl:p-24">
@@ -118,7 +51,14 @@ export default function Home() {
             </div>
 
             <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
-              <CodeWindow />
+              <iframe
+                loading="lazy"
+                src="https://stackblitz.com/github/caocchinh/next-zero-rpc?embed=1&file=src/components/TestApiExtreme.tsx&file=src/app/api/extreme/complex-types/route.ts&hideNavigation=1&terminalHeight=1&showSidebar=0&view=editor&theme=dark"
+                className="h-[800px] max-h-[90vh] w-full border-0 bg-[#1e1e1e] opacity-100 transition-opacity duration-1000"
+                title="next-zero-rpc codebase"
+                allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+                sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+              ></iframe>
             </div>
           </div>
         </section>

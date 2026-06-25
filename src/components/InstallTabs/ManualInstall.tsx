@@ -2,8 +2,6 @@
 
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { API_CLIENT_CODE, RESPONSES_CODE, UPDATE_REGISTRY_CODE } from "../CodeData";
 
 function CopyButton({ text }: { text: string }) {
@@ -25,29 +23,16 @@ function CopyButton({ text }: { text: string }) {
 }
 
 function CodeBlock({ filename, code }: { filename: string; code: string }) {
-  const ext = filename.split(".").pop();
-  const language = ext === "json" ? "json" : ext === "mjs" ? "javascript" : "typescript";
-
   return (
     <div className="relative mt-4 overflow-hidden rounded-xl border border-zinc-800 bg-[#1e1e1e] shadow-lg">
       <div className="flex items-center justify-between border-b border-zinc-800 bg-[#252526] px-4 py-2">
         <span className="font-mono text-xs text-zinc-400">{filename}</span>
         <CopyButton text={code} />
       </div>
-      <div className="relative max-h-[400px] overflow-y-auto bg-[#1e1e1e]">
-        <SyntaxHighlighter
-          language={language}
-          style={vscDarkPlus}
-          customStyle={{
-            margin: 0,
-            padding: "1rem",
-            background: "transparent",
-            fontSize: "13px",
-            lineHeight: "1.5rem",
-          }}
-        >
-          {code}
-        </SyntaxHighlighter>
+      <div className="relative max-h-[400px] overflow-x-auto overflow-y-auto bg-[#1e1e1e] p-4">
+        <pre className="font-mono text-[13px] leading-relaxed text-[#d4d4d4] selection:bg-[#264f78]">
+          <code>{code}</code>
+        </pre>
       </div>
     </div>
   );
