@@ -41,3 +41,10 @@ const [res3, err3] = await apiFetch("/api/extreme/acme/projects/xyz/tasks/a/b/c"
 
 // 7. Strict Method Matching
 const [resGet, errGet] = await apiFetch("/api/extreme/methods", { method: "GET" });
+
+// 8. Static vs Dynamic Route Precedence
+// The active route is matched exactly instead of falling into [userId]
+const [activeUsers, errActive] = await apiFetch("/api/users/active", { method: "GET" });
+
+// The dynamic route works as expected for other segments
+const [singleUser, errSingle] = await apiFetch("/api/users/123", { method: "GET" });

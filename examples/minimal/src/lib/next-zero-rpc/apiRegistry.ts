@@ -14,6 +14,7 @@ import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
 
 // /api/users
 import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
+import type * as UsersActiveRoute from "@/app/api/users/active/route";
 
 export type KnownRoutes = {
   // Static Routes & Autocomplete Hints
@@ -30,6 +31,7 @@ export type KnownRoutes = {
 
   // /api/users
   "/api/users/[userId]": typeof UsersUserIdRoute;
+  "/api/users/active": typeof UsersActiveRoute;
 };
 // --- END GENERATED API REGISTRY ---
 
@@ -62,11 +64,13 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
 
 type StripQuery<Path extends string> = Path extends `${infer Base}?${string}` ? Base : Path;
 
-export type FindMatchingRoute<Path extends string> = {
-  [K in keyof KnownRoutes & string]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
-    ? K
-    : never;
-}[keyof KnownRoutes & string];
+export type FindMatchingRoute<Path extends string> = Path extends keyof KnownRoutes
+  ? Path
+  : {
+      [K in keyof KnownRoutes & string]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
+        ? K
+        : never;
+    }[keyof KnownRoutes & string];
 
 export type CheckPath<Path extends string> = Path extends ""
   ? keyof KnownRoutes

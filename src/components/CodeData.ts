@@ -170,6 +170,19 @@ export async function OPTIONS() {
 }
 `;
 
+export const APP_API_USERS_ACTIVE_ROUTE_TS_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+
+export async function GET() {
+  return createApiSuccess({
+    activeUsers: [
+      { id: "active-1", name: "Alice", role: "admin" },
+      { id: "active-2", name: "Bob", role: "member" },
+    ],
+    count: 2,
+  });
+}
+`;
+
 export const APP_API_USERS_USERID_ROUTE_TS_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
 import { NextRequest } from "next/server";
 

@@ -122,6 +122,7 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
               "/api/extreme/methods",
               "/api/status",
               "/api/users/[userId]",
+              "/api/users/active",
             ]}
             selectedIndex={0}
           >
@@ -284,6 +285,63 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           ] = <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
           <span className="text-[#ce9178]">&quot;/api/extreme/methods&quot;</span>, {"{"} method:{" "}
+          <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
+          <br />
+          <br />
+          <span className="text-[#6a9955]">{"// 8. Static vs Dynamic Route Precedence"}</span>
+          <br />
+          <span className="text-[#6a9955]">
+            {"// The active route is matched exactly instead of falling into [userId]"}
+          </span>
+          <br />
+          <span className="text-[#569cd6]">const</span> [{" "}
+          <HoverTooltip
+            tooltip={`const activeUsers: {
+  activeUsers: {
+    id: string;
+    name: string;
+    role: string;
+  }[];
+  count: number;
+} | null`}
+          >
+            <span className="text-[#9cdcfe]">activeUsers</span>
+          </HoverTooltip>
+          ,{" "}
+          <HoverTooltip tooltip={`const errActive: ApiErrorPayload<"system:unknown-error"> | null`}>
+            <span className="text-[#9cdcfe]">errActive</span>
+          </HoverTooltip>{" "}
+          ] = <span className="text-[#c586c0]">await</span>{" "}
+          <span className="text-[#dcdcaa]">apiFetch</span>(
+          <span className="text-[#ce9178]">&quot;/api/users/active&quot;</span>, {"{"} method:{" "}
+          <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
+          <br />
+          <br />
+          <span className="text-[#6a9955]">
+            {"// The dynamic route works as expected for other segments"}
+          </span>
+          <br />
+          <span className="text-[#569cd6]">const</span> [{" "}
+          <HoverTooltip
+            tooltip={`const singleUser: {
+  id: string;
+  name: string;
+  role: string;
+} | null`}
+          >
+            <span className="text-[#9cdcfe]">singleUser</span>
+          </HoverTooltip>
+          ,{" "}
+          <HoverTooltip tooltip={`const errSingle:
+  ApiErrorPayload<"system:unknown-error"> |
+  ApiErrorPayload<"system:database-error"> |
+  null`}
+          >
+            <span className="text-[#9cdcfe]">errSingle</span>
+          </HoverTooltip>{" "}
+          ] = <span className="text-[#c586c0]">await</span>{" "}
+          <span className="text-[#dcdcaa]">apiFetch</span>(
+          <span className="text-[#ce9178]">&quot;/api/users/123&quot;</span>, {"{"} method:{" "}
           <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
         </pre>
       </div>

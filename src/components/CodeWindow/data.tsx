@@ -5,6 +5,7 @@ import {
   APP_API_EXTREME_COMPLEX_TYPES_ROUTE_TS_CODE,
   APP_API_EXTREME_METHODS_ROUTE_TS_CODE,
   APP_API_EXTREME_ORGID_PROJECTS_PROJECTID_TASKS_CATCHALL_ROUTE_TS_CODE,
+  APP_API_USERS_ACTIVE_ROUTE_TS_CODE,
   APP_API_USERS_USERID_ROUTE_TS_CODE,
   LIB_NEXT_ZERO_RPC_APICLIENT_TS_CODE,
   LIB_NEXT_ZERO_RPC_APIREGISTRY_TS_CODE,
@@ -156,6 +157,19 @@ export const FILE_TREE: FileNode[] = [
                     type: "folder",
                     children: [
                       {
+                        id: "active",
+                        name: "active",
+                        type: "folder",
+                        children: [
+                          {
+                            id: "app/api/users/active/route.ts",
+                            name: "route.ts",
+                            type: "file",
+                            icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
+                          },
+                        ],
+                      },
+                      {
                         id: "[userId]",
                         name: "[userId]",
                         type: "folder",
@@ -280,6 +294,12 @@ export const TAB_DATA: Record<
     name: "route.ts",
     icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
     code: APP_API_EXTREME_METHODS_ROUTE_TS_CODE,
+    language: "typescript",
+  },
+  "app/api/users/active/route.ts": {
+    name: "route.ts",
+    icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
+    code: APP_API_USERS_ACTIVE_ROUTE_TS_CODE,
     language: "typescript",
   },
   "app/api/users/[userId]/route.ts": {

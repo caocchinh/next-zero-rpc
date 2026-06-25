@@ -23,6 +23,7 @@ Or open it instantly in the browser:
 - Two API route handlers (`/api/status`, `/api/users/[userId]`) using `createApiSuccess` / `createApiError`
 - A client component using `apiFetch` with full path, method, and response type inference
 - Per-route error code narrowing — `err.code` autocompletes only what each route can return
+- Exact static route precedence over dynamic segments (e.g., `/api/users/active` vs `/api/users/[userId]`)
 - Go-style `[data, err]` tuple returns
 
 ## Full documentation

@@ -71,17 +71,6 @@ if (err) {
 - You want a tiny client footprint (~1.8 KB) and zero ongoing npm dependencies
 - You're building a solo or small-team Next.js project and prefer to own a few simple files over maintaining a dependency
 
-**Consider tRPC instead when:**
-
-- You want a battle-tested ecosystem with React Query integration, batching, subscriptions, and middleware — tRPC has all of this
-- You're on a team and want community support, Stack Overflow answers, and plugins maintained by others
-- Input validation baked into the request pipeline (not just inside handlers) is important to you
-
-**Consider ts-rest instead when:**
-
-- You need OpenAPI docs or non-TypeScript consumers (mobile apps, third-party integrations) — this is ts-rest's core strength
-- You want a formal contract object that both your server and client are verified against
-- REST shape (not RPC) is a requirement
 
 ## Philosophy
 
@@ -266,6 +255,18 @@ const [data, err] = await apiFetch("/api/extreme/org1/projects/proj1/tasks/a/b/c
 
 // Query strings are stripped before matching
 const [data, err] = await apiFetch("/api/users/123?include=profile", { method: "GET" });
+```
+
+### Static vs Dynamic Route Precedence
+
+If you have overlapping static and dynamic routes (e.g., `/api/users/active` and `/api/users/[userId]`), `next-zero-rpc` correctly gives **exact static matches precedence** over dynamic segments at compile time. 
+
+```typescript
+// Safely infers the type of the `active` route, completely ignoring the `[userId]` route
+const [activeUsers] = await apiFetch("/api/users/active", { method: "GET" });
+
+// Safely infers the type of the `[userId]` route
+const [singleUser] = await apiFetch("/api/users/123", { method: "GET" });
 ```
 
 ### Route Groups Support
