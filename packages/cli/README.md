@@ -38,25 +38,25 @@ if (err) {
 
 ### How it compares
 
-| Feature                    | next-zero-rpc        | tRPC        | raw fetch |
-| -------------------------- | -------------------- | ----------- | --------- |
-| Type-safe paths            | ✅                   | ✅          | ❌        |
-| Type-safe responses        | ✅                   | ✅          | ❌        |
-| Type-safe methods          | ✅                   | N/A         | ❌        |
-| **Error type narrowing**   | ✅                   | ❌          | ❌        |
-| Zero runtime cost          | ✅ (1.8 KB minified) | ❌ (~14 KB) | ✅        |
-| Zero config                | ✅                   | ❌          | ✅        |
-| Standard API routes        | ✅                   | ❌          | ✅        |
-| Dynamic params `[id]`      | ✅                   | ✅          | N/A       |
-| Catch-all `[...slug]`      | ✅                   | ✅          | N/A       |
-| Go-style error handling    | ✅                   | ❌          | ❌        |
-| Exhaustive error checking  | ✅                   | ❌          | ❌        |
-| Server action helpers      | ✅                   | ❌          | N/A       |
-| Dependencies               | 0                    | 5+          | 0         |
+| Feature                   | next-zero-rpc        | tRPC        | raw fetch |
+| ------------------------- | -------------------- | ----------- | --------- |
+| Type-safe paths           | ✅                   | ✅          | ❌        |
+| Type-safe responses       | ✅                   | ✅          | ❌        |
+| Type-safe methods         | ✅                   | N/A         | ❌        |
+| **Error type narrowing**  | ✅                   | ❌          | ❌        |
+| Zero runtime cost         | ✅ (1.8 KB minified) | ❌ (~14 KB) | ✅        |
+| Zero config               | ✅                   | ❌          | ✅        |
+| Standard API routes       | ✅                   | ❌          | ✅        |
+| Dynamic params `[id]`     | ✅                   | ✅          | N/A       |
+| Catch-all `[...slug]`     | ✅                   | ✅          | N/A       |
+| Go-style error handling   | ✅                   | ❌          | ❌        |
+| Exhaustive error checking | ✅                   | ❌          | ❌        |
+| Server action helpers     | ✅                   | ❌          | N/A       |
+| Dependencies              | 0                    | 5+          | 0         |
 
 ## Philosophy
 
-**You own the code, not the library.** `next-zero-rpc` is not a locked-in framework—it's a philosophy, a paradigm, and a set of methods for doing things. When you run `init`, we give you four files. From that moment on, they are *yours* to modify, extend, or delete.
+**You own the code, not the library.** `next-zero-rpc` is not a locked-in framework—it's a philosophy, a paradigm, and a set of methods for doing things. When you run `init`, we give you four files. From that moment on, they are _yours_ to modify, extend, or delete.
 
 - **Zero vendor lock-in** — There is no black-box `node_modules` dependency dictating your architecture. You own the fetch client, the error codes, and the registry generator.
 - **Zero boilerplate** — You write standard Next.js API route handlers using simple response helpers — no decorators, no schema registrations, no complex abstractions. The codegen reads what already exists and builds the type bridge automatically.

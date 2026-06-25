@@ -1,4 +1,4 @@
-import { CodeWindow } from "@/components/CodeWindow";
+import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
 
 export default function Home() {
@@ -113,7 +113,8 @@ export default function Home() {
               Boilerplate
             </h3>
             <p className="text-lg leading-relaxed text-[oklch(0.4_0.01_250)]">
-              Write standard Next.js API routes using simple response helpers. No decorators, no schema registrations, no complex abstractions.
+              Write standard Next.js API routes using simple response helpers. No decorators, no
+              schema registrations, no complex abstractions.
             </p>
           </div>
 
@@ -127,7 +128,8 @@ export default function Home() {
               The Code
             </h3>
             <p className="text-lg leading-relaxed text-[oklch(0.4_0.01_250)]">
-              Not a locked-in framework. It's a philosophy and a paradigm. We give you four files, you own them completely. No vendor lock-in.
+              Not a locked-in framework. It&apos;s a philosophy and a paradigm. We give you four
+              files, you own them completely. No vendor lock-in.
             </p>
           </div>
         </section>
@@ -161,7 +163,7 @@ export default function Home() {
               {"//"}
             </div>
 
-            <div className="relative z-10 w-full max-w-4xl border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
+            <div className="relative z-10 w-full max-w-6xl border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
               <CodeWindow />
             </div>
           </div>
@@ -181,8 +183,8 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex items-center p-4 md:p-12 lg:p-20 xl:col-span-8">
-            <div className="w-full max-w-4xl">
+          <div className="flex items-center justify-center p-4 md:p-12 lg:p-20 xl:col-span-8">
+            <div className="w-full max-w-6xl">
               <InstallTabs />
             </div>
           </div>

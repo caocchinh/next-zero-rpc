@@ -2,7 +2,14 @@
 
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { API_CLIENT_CODE, API_REGISTRY_CODE, RESPONSES_CODE, UPDATE_REGISTRY_CODE } from "./manual-files";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  API_CLIENT_CODE,
+  API_REGISTRY_CODE,
+  RESPONSES_CODE,
+  UPDATE_REGISTRY_CODE,
+} from "../CodeData";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -14,25 +21,38 @@ function CopyButton({ text }: { text: string }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }}
-      className="absolute right-4 top-4 rounded-md bg-zinc-800 p-2 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 transition"
+      className="rounded-md bg-zinc-800/80 p-1.5 text-zinc-400 transition hover:bg-zinc-700 hover:text-zinc-100"
       aria-label="Copy code"
     >
-      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
     </button>
   );
 }
 
 function CodeBlock({ filename, code }: { filename: string; code: string }) {
+  const ext = filename.split(".").pop();
+  const language = ext === "json" ? "json" : ext === "mjs" ? "javascript" : "typescript";
+
   return (
     <div className="relative mt-4 overflow-hidden rounded-xl border border-zinc-800 bg-[#1e1e1e] shadow-lg">
       <div className="flex items-center justify-between border-b border-zinc-800 bg-[#252526] px-4 py-2">
-        <span className="text-xs font-mono text-zinc-400">{filename}</span>
-      </div>
-      <div className="relative p-4 overflow-auto max-h-[400px]">
+        <span className="font-mono text-xs text-zinc-400">{filename}</span>
         <CopyButton text={code} />
-        <pre className="text-[13px] leading-6 font-mono text-zinc-300">
-          <code>{code}</code>
-        </pre>
+      </div>
+      <div className="relative max-h-[400px] overflow-y-auto bg-[#1e1e1e]">
+        <SyntaxHighlighter
+          language={language}
+          style={vscDarkPlus}
+          customStyle={{
+            margin: 0,
+            padding: "1rem",
+            background: "transparent",
+            fontSize: "13px",
+            lineHeight: "1.5rem",
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
       </div>
     </div>
   );
@@ -51,7 +71,8 @@ export function ManualInstall() {
         <section>
           <h3 className="font-medium text-zinc-200">1. Create responses.ts</h3>
           <p className="mt-1 text-sm text-zinc-400">
-            Contains error definitions and success/error helpers. You can customize the error codes to match your domain.
+            Contains error definitions and success/error helpers. You can customize the error codes
+            to match your domain.
           </p>
           <CodeBlock filename="lib/next-zero-rpc/responses.ts" code={RESPONSES_CODE} />
         </section>
@@ -59,7 +80,8 @@ export function ManualInstall() {
         <section>
           <h3 className="font-medium text-zinc-200">2. Create apiRegistry.ts</h3>
           <p className="mt-1 text-sm text-zinc-400">
-            The central registry for your API routes. The type definitions map strings to the correct route shapes.
+            The central registry for your API routes. The type definitions map strings to the
+            correct route shapes.
           </p>
           <CodeBlock filename="lib/next-zero-rpc/apiRegistry.ts" code={API_REGISTRY_CODE} />
         </section>
@@ -67,7 +89,8 @@ export function ManualInstall() {
         <section>
           <h3 className="font-medium text-zinc-200">3. Create apiClient.ts</h3>
           <p className="mt-1 text-sm text-zinc-400">
-            The type-safe fetch wrapper. It uses the registry to infer types based on the path and method.
+            The type-safe fetch wrapper. It uses the registry to infer types based on the path and
+            method.
           </p>
           <CodeBlock filename="lib/next-zero-rpc/apiClient.ts" code={API_CLIENT_CODE} />
         </section>
@@ -75,9 +98,14 @@ export function ManualInstall() {
         <section>
           <h3 className="font-medium text-zinc-200">4. Create update-api-registry.mjs</h3>
           <p className="mt-1 text-sm text-zinc-400">
-            Next.js plugin and script to auto-generate the registry file by scanning your <code className="text-zinc-300 bg-zinc-800 px-1 py-0.5 rounded">app/api</code> directory.
+            Next.js plugin and script to auto-generate the registry file by scanning your{" "}
+            <code className="rounded bg-zinc-800 px-1 py-0.5 text-zinc-300">app/api</code>{" "}
+            directory.
           </p>
-          <CodeBlock filename="lib/next-zero-rpc/update-api-registry.mjs" code={UPDATE_REGISTRY_CODE} />
+          <CodeBlock
+            filename="lib/next-zero-rpc/update-api-registry.mjs"
+            code={UPDATE_REGISTRY_CODE}
+          />
         </section>
 
         <section>

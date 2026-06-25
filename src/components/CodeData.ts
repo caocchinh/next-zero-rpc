@@ -255,6 +255,44 @@ export function assertNever(value: never): never {
 }
 `;
 
+export const ROUTE_TS_CODE = `import { createApiSuccess, createApiError } from "@/lib/next-zero-rpc/responses";
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const user = await db.users.find(params.id);
+
+  if (!user) {
+    return createApiError("resource:not-found", 404);
+  }
+
+  return createApiSuccess({ id: user.id, name: user.name });
+}
+`;
+
+export const CLIENT_TSX_CODE = `import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
+
+// 1. Precise Error Type Narrowing
+const [ data, err ] = await apiFetch("/api/users/123", { method: "GET" });
+
+if (err) {
+  // TypeScript narrows the error code specifically to this route!
+  switch (err.code) {
+    case "resource:not-found":
+      console.error("User not found!");
+      break;
+    case "system:unknown-error":
+      console.error("Network error");
+      break;
+    default:
+      assertNever(err.code); // TS Error if you miss a case!
+  }
+} else {
+  console.log(data.name);
+}
+
+// 2. Extreme Recursive Type Inference
+const [ res2, err2 ] = await apiFetch("/api/extreme/complex-types", { method: "POST" });
+`;
+
 export const API_REGISTRY_CODE = `// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
 // Run your dev server or \`node lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
