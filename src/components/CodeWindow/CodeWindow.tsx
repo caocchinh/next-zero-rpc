@@ -9,7 +9,7 @@ import { TabId } from "./types";
 
 export function CodeWindow() {
   const [activeTab, setActiveTab] = useState<TabId>("client.tsx");
-  const [openTabs, setOpenTabs] = useState<TabId[]>(["api/users/[id]/route.ts", "client.tsx"]);
+  const [openTabs, setOpenTabs] = useState<TabId[]>(["api/users/[userId]/route.ts", "client.tsx"]);
 
   const handleTabClick = (tabId: TabId) => {
     setActiveTab(tabId);
@@ -89,7 +89,7 @@ export function CodeWindow() {
           <div className="flex flex-none items-center px-4 py-1.5 text-[11px] text-zinc-400">
             {activeTab && (
               <div className="flex items-center gap-1">
-                <span>{activeTab.includes("route.ts") ? "api/users/[id]" : "components"}</span>
+                <span>{activeTab.includes("route.ts") ? "api/users/[userId]" : "components"}</span>
                 <ChevronRight className="h-3 w-3" />
                 <span>{TAB_DATA[activeTab]?.name}</span>
               </div>

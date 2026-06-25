@@ -6,6 +6,9 @@ import {
   ROUTE_TS_CODE,
   CLIENT_TSX_CODE,
   UPDATE_REGISTRY_CODE,
+  COMPLEX_TYPES_ROUTE_CODE,
+  METHODS_ROUTE_CODE,
+  CATCHALL_ROUTE_CODE,
 } from "../CodeData";
 import { FileNode, TabId } from "./types";
 
@@ -26,17 +29,91 @@ export const FILE_TREE: FileNode[] = [
             type: "folder",
             children: [
               {
+                id: "extreme",
+                name: "extreme",
+                type: "folder",
+                children: [
+                  {
+                    id: "complex-types",
+                    name: "complex-types",
+                    type: "folder",
+                    children: [
+                      {
+                        id: "api/extreme/complex-types/route.ts",
+                        name: "route.ts",
+                        type: "file",
+                        icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+                      },
+                    ],
+                  },
+                  {
+                    id: "methods",
+                    name: "methods",
+                    type: "folder",
+                    children: [
+                      {
+                        id: "api/extreme/methods/route.ts",
+                        name: "route.ts",
+                        type: "file",
+                        icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+                      },
+                    ],
+                  },
+                  {
+                    id: "[orgId]",
+                    name: "[orgId]",
+                    type: "folder",
+                    children: [
+                      {
+                        id: "projects",
+                        name: "projects",
+                        type: "folder",
+                        children: [
+                          {
+                            id: "[projectId]",
+                            name: "[projectId]",
+                            type: "folder",
+                            children: [
+                              {
+                                id: "tasks",
+                                name: "tasks",
+                                type: "folder",
+                                children: [
+                                  {
+                                    id: "[...catchall]",
+                                    name: "[...catchall]",
+                                    type: "folder",
+                                    children: [
+                                      {
+                                        id: "api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route.ts",
+                                        name: "route.ts",
+                                        type: "file",
+                                        icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
                 id: "users",
                 name: "users",
                 type: "folder",
                 children: [
                   {
-                    id: "[id]",
-                    name: "[id]",
+                    id: "[userId]",
+                    name: "[userId]",
                     type: "folder",
                     children: [
                       {
-                        id: "api/users/[id]/route.ts",
+                        id: "api/users/[userId]/route.ts",
                         name: "route.ts",
                         type: "file",
                         icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
@@ -108,7 +185,25 @@ export const TAB_DATA: Record<
   TabId,
   { name: string; icon: React.ReactNode; code?: string; language?: string }
 > = {
-  "api/users/[id]/route.ts": {
+  "api/extreme/complex-types/route.ts": {
+    name: "route.ts",
+    icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+    code: COMPLEX_TYPES_ROUTE_CODE,
+    language: "typescript",
+  },
+  "api/extreme/methods/route.ts": {
+    name: "route.ts",
+    icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+    code: METHODS_ROUTE_CODE,
+    language: "typescript",
+  },
+  "api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route.ts": {
+    name: "route.ts",
+    icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+    code: CATCHALL_ROUTE_CODE,
+    language: "typescript",
+  },
+  "api/users/[userId]/route.ts": {
     name: "route.ts",
     icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
     code: ROUTE_TS_CODE,

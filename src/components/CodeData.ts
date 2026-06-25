@@ -255,20 +255,197 @@ export function assertNever(value: never): never {
 }
 `;
 
-export const ROUTE_TS_CODE = `import { createApiSuccess, createApiError } from "@/lib/next-zero-rpc/responses";
+export const ROUTE_TS_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const user = await db.users.find(params.id);
+type Params = { params: Promise<{ userId: string }> };
 
-  if (!user) {
-    return createApiError("resource:not-found", 404);
+export async function GET(req: NextRequest, { params }: Params) {
+  const { userId } = await params;
+
+  if (userId === "not-found") {
+    return createApiError("system:database-error", 404, {
+      userId: ["User not found in the database"],
+    });
   }
 
-  return createApiSuccess({ id: user.id, name: user.name });
+  return createApiSuccess({
+    id: userId,
+    name: "John Doe",
+    role: "student",
+  });
+}
+
+export async function PUT(req: NextRequest, { params }: Params) {
+  const { userId } = await params;
+
+  try {
+    const body = await req.json();
+
+    if (!body.name) {
+      return createApiError("validation:missing-required-fields", 400);
+    }
+
+    return createApiSuccess({
+      id: userId,
+      name: body.name,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch {
+    return createApiError("validation:invalid-payload", 400);
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: Params) {
+  const { userId } = await params;
+
+  if (userId === "admin") {
+    return createApiError("auth:forbidden", 403, {
+      userId: ["Cannot delete admin user"],
+    });
+  }
+
+  // Returning 204 No Content
+  return createApiSuccess(undefined, 204);
+}
+`;
+
+export const COMPLEX_TYPES_ROUTE_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
+
+// We create insanely complicated types to test TypeScript's limits
+type DiscriminatedUnion =
+  | { type: "success"; payload: { id: string; metrics: Record<string, number[]> } }
+  | { type: "failure"; reason: string; code: number };
+
+type RecursiveTree<T> = {
+  value: T;
+  children?: RecursiveTree<T>[];
+};
+
+type IntersectionTest = { base: string } & ({ variantA: number } | { variantB: boolean });
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    if (body.triggerError) {
+      return createApiError("system:internal-server-error", 500);
+    }
+
+    const unionData: DiscriminatedUnion = {
+      type: "success",
+      payload: { id: "idx-999", metrics: { cpu: [10, 20, 30], mem: [50, 60] } },
+    };
+
+    const tree: RecursiveTree<DiscriminatedUnion> = {
+      value: unionData,
+      children: [
+        {
+          value: { type: "failure", reason: "timeout", code: 408 },
+          children: [],
+        },
+      ],
+    };
+
+    const intersection: IntersectionTest = {
+      base: "test",
+      variantB: true,
+    };
+
+    const payload = {
+      union: unionData,
+      tree,
+      intersection,
+      matrixStringTuple: ["a", "b", "c"] as const,
+      nullableField: null,
+      optionalField: undefined as string | undefined,
+      bigIntSimulate: "9007199254740991",
+    };
+
+    return createApiSuccess(payload);
+  } catch {
+    return createApiError("validation:invalid-payload", 400);
+  }
+}
+`;
+
+export const METHODS_ROUTE_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+
+export async function GET() {
+  const payload = { method: "GET" as const, data: [1, 2, 3] };
+  return createApiSuccess(payload);
+}
+
+export async function POST() {
+  const payload = { method: "POST" as const, createdId: 42 };
+  return createApiSuccess(payload);
+}
+
+export async function PUT() {
+  const payload = { method: "PUT" as const, updated: true };
+  return createApiSuccess(payload);
+}
+
+export async function DELETE() {
+  const payload = { method: "DELETE" as const, deleted: true };
+  return createApiSuccess(payload);
+}
+
+export async function PATCH() {
+  const payload = { method: "PATCH" as const, patchedFields: ["name"] };
+  return createApiSuccess(payload);
+}
+
+export async function HEAD() {
+  return new Response(null, { status: 200 });
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: { Allow: "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS" },
+  });
+}
+`;
+
+export const CATCHALL_ROUTE_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ orgId: string; projectId: string; catchall: string[] }> },
+) {
+  const p = await params;
+
+  const payload = {
+    resolvedOrgId: p.orgId,
+    resolvedProjectId: p.projectId,
+    dynamicSegments: p.catchall,
+    deeplyNestedMatrix: {
+      layer1: {
+        layer2: {
+          layer3: [
+            [
+              { x: 1, y: 2 },
+              { x: 3, y: 4 },
+            ],
+            [
+              { x: 5, y: 6 },
+              { x: 7, y: 8 },
+            ],
+          ] as const,
+        },
+      },
+    },
+  };
+
+  return createApiSuccess(payload);
 }
 `;
 
 export const CLIENT_TSX_CODE = `import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
+import { assertNever } from "@/lib/next-zero-rpc/responses";
 
 // 1. Precise Error Type Narrowing
 const [ data, err ] = await apiFetch("/api/users/123", { method: "GET" });
@@ -291,6 +468,15 @@ if (err) {
 
 // 2. Extreme Recursive Type Inference
 const [ res2, err2 ] = await apiFetch("/api/extreme/complex-types", { method: "POST" });
+
+// 3. Deeply Nested Catch-All Routes
+const [ res3, err3 ] = await apiFetch(
+  "/api/extreme/acme/projects/xyz/tasks/a/b/c",
+  { method: "GET" }
+);
+
+// 4. Strict Method Matching
+const [ resGet, errGet ] = await apiFetch("/api/extreme/methods", { method: "GET" });
 `;
 
 export const API_REGISTRY_CODE = `// --- BEGIN GENERATED API REGISTRY ---

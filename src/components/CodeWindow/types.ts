@@ -1,10 +1,13 @@
 export type TabId =
-  | "api/users/[id]/route.ts"
+  | "api/users/[userId]/route.ts"
   | "client.tsx"
   | "apiClient.ts"
   | "apiRegistry.ts"
   | "responses.ts"
-  | "update-api-registry.mjs";
+  | "update-api-registry.mjs"
+  | "api/extreme/complex-types/route.ts"
+  | "api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route.ts"
+  | "api/extreme/methods/route.ts";
 
 export type FileNode = {
   id: string;

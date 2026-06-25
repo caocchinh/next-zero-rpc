@@ -21,9 +21,7 @@ export function TestApiExtreme() {
           case "system:unknown-error":
             console.log("ok");
             break;
-          case "auth:forbidden":
-            console.log("ok2");
-            break;
+
           default:
             assertNever(code);
         }
