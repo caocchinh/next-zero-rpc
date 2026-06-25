@@ -15,38 +15,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
     );
   }
 
-  if (activeTab === "api/users/[id]/route.ts") {
-    return (
-      <div className="p-4 font-mono text-[13px] leading-6 text-[#d4d4d4] overflow-visible">
-        <pre className="overflow-visible whitespace-pre-wrap">
-          <span className="text-[#c586c0]">import</span> {"{ "}
-          <span className="text-[#9cdcfe]">createApiSuccess</span>,{" "}
-          <span className="text-[#9cdcfe]">createApiError</span>
-          {" } "}
-          <span className="text-[#c586c0]">from</span> <span className="text-[#ce9178]">&quot;@/lib/next-zero-rpc/responses&quot;</span>;
-          <br />
-          <br />
-          <span className="text-[#569cd6]">export</span> <span className="text-[#569cd6]">async</span> <span className="text-[#569cd6]">function</span> <span className="text-[#dcdcaa]">GET</span>
-          (req: Request, {"{ params }"}: {"{ params: { id: string } }"}) {"{"}
-          <br />
-          {"  "}<span className="text-[#569cd6]">const</span> user = <span className="text-[#c586c0]">await</span> db.users.<span className="text-[#dcdcaa]">find</span>(params.id);
-          <br />
-          <br />
-          {"  "}<span className="text-[#c586c0]">if</span> (!user) {"{"}
-          <br />
-          {"    "}<span className="text-[#c586c0]">return</span> <span className="text-[#dcdcaa]">createApiError</span>(<span className="text-[#ce9178]">&quot;resource:not-found&quot;</span>, <span className="text-[#b5cea8]">404</span>);
-          <br />
-          {"  }"}
-          <br />
-          <br />
-          {"  "}<span className="text-[#c586c0]">return</span> <span className="text-[#dcdcaa]">createApiSuccess</span>({"{"} id: user.id, name: user.name {"}"});
-          <br />
-          {"}"}
-        </pre>
-      </div>
-    );
-  }
-
   if (activeTab === "client.tsx") {
     return (
       <div className="p-4 font-mono text-[13px] leading-6 text-[#d4d4d4] overflow-visible">

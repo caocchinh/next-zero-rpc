@@ -77,12 +77,14 @@ export function CodeWindow() {
                     {tab.icon}
                     <span>{tab.name}</span>
                   </div>
-                  <X
+                  <div
                     onClick={(e) => closeTab(e, tabId)}
-                    className={`h-3 w-3 rounded hover:bg-zinc-700 ${
+                    className={`flex h-6 w-6 items-center justify-center rounded hover:bg-zinc-700 ${
                       isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                     }`}
-                  />
+                  >
+                    <X className="h-4 w-4" />
+                  </div>
                 </div>
               );
             })}

@@ -9,6 +9,7 @@ import {
   API_REGISTRY_CODE,
   RESPONSES_CODE,
   UPDATE_REGISTRY_CODE,
+  ROUTE_TS_CODE,
 } from "../CodeData";
 import { FileNode, TabId } from "./types";
 
@@ -114,6 +115,8 @@ export const TAB_DATA: Record<
   "api/users/[id]/route.ts": {
     name: "route.ts",
     icon: <Terminal className="h-3.5 w-3.5 text-blue-400" />,
+    code: ROUTE_TS_CODE,
+    language: "typescript",
   },
   "client.tsx": {
     name: "client.tsx",
