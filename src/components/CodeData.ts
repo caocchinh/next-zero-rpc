@@ -444,6 +444,17 @@ export async function GET(
 }
 `;
 
+export const BRUH_ROUTE_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+
+export async function GET() {
+  return createApiSuccess({
+    success: true,
+    message: "This route is inside a route group (skibidi)!",
+    data: "skibidi toilet",
+  });
+}
+`;
+
 export const CLIENT_TSX_CODE = `import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
 import { assertNever } from "@/lib/next-zero-rpc/responses";
 
@@ -477,6 +488,9 @@ const [ res3, err3 ] = await apiFetch(
 
 // 4. Strict Method Matching
 const [ resGet, errGet ] = await apiFetch("/api/extreme/methods", { method: "GET" });
+
+// 5. Route Groups Support
+const [ resBruh, errBruh ] = await apiFetch("/api/bruh", { method: "GET" });
 `;
 
 export const API_REGISTRY_CODE = `// --- BEGIN GENERATED API REGISTRY ---
@@ -484,6 +498,9 @@ export const API_REGISTRY_CODE = `// --- BEGIN GENERATED API REGISTRY ---
 // Run your dev server or \`node src/lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
 // /api/auth
 import type * as AuthLoginRoute from "@/app/api/auth/login/route";
+
+// /api/bruh
+import type * as BruhRoute from "@/app/api/(skibidi)/bruh/route";
 
 // /api/extreme
 import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
@@ -497,6 +514,9 @@ export type KnownRoutes = {
   // Static Routes & Autocomplete Hints
   // /api/auth
   "/api/auth/login": typeof AuthLoginRoute;
+
+  // /api/bruh
+  "/api/bruh": typeof BruhRoute;
 
   // /api/extreme
   "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
@@ -678,7 +698,7 @@ function detectBaseDir() {
 const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
 const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
-const BRACKET_DOT_REGEX = /[\\[\\].]/g;
+const BRACKET_DOT_REGEX = /[\[\].()]/g;
 
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
@@ -710,11 +730,13 @@ export function updateApiRegistry() {
     // Normalize path separators for Windows/Unix compatibility
     const posixRouteDir = routeDir.split(path.sep).join("/");
 
-    // Construct route path
-    const routePath = posixRouteDir === "." ? "/api" : \`/api/\${posixRouteDir}\`;
+    // Construct route path, ignoring Next.js route groups like (groupName)
+    const urlSegments = posixRouteDir.split("/").filter(segment => !(segment.startsWith("(") && segment.endsWith(")")));
+    const urlRouteDir = urlSegments.join("/");
+    const routePath = urlRouteDir === "" || urlRouteDir === "." ? "/api" : \`/api/\${urlRouteDir}\`;
 
     // Construct import name: e.g. /api/admin/prom/verifications/[id]/presign -> AdminPromVerificationsIdPresignRoute
-    const parts = posixRouteDir.split("/");
+    const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
       const cleanPart = parts[j].replace(BRACKET_DOT_REGEX, "");

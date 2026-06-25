@@ -2,6 +2,7 @@ import { Code2, FileJson, FileType, Terminal } from "lucide-react";
 import {
   API_CLIENT_CODE,
   API_REGISTRY_CODE,
+  BRUH_ROUTE_CODE,
   CATCHALL_ROUTE_CODE,
   COMPLEX_TYPES_ROUTE_CODE,
   METHODS_ROUTE_CODE,
@@ -27,6 +28,26 @@ export const FILE_TREE: FileNode[] = [
             name: "api",
             type: "folder",
             children: [
+              {
+                id: "(skibidi)",
+                name: "(skibidi)",
+                type: "folder",
+                children: [
+                  {
+                    id: "bruh",
+                    name: "bruh",
+                    type: "folder",
+                    children: [
+                      {
+                        id: "api/(skibidi)/bruh/route.ts",
+                        name: "route.ts",
+                        type: "file",
+                        icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
+                      },
+                    ],
+                  },
+                ],
+              },
               {
                 id: "extreme",
                 name: "extreme",
@@ -206,6 +227,12 @@ export const TAB_DATA: Record<
     name: "route.ts",
     icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
     code: ROUTE_TS_CODE,
+    language: "typescript",
+  },
+  "api/(skibidi)/bruh/route.ts": {
+    name: "route.ts",
+    icon: <Terminal className="h-3.5 w-3.5 text-green-400" />,
+    code: BRUH_ROUTE_CODE,
     language: "typescript",
   },
   "client.tsx": {

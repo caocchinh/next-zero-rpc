@@ -9,7 +9,7 @@ function detectBaseDir() {
 const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
 const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
-const BRACKET_DOT_REGEX = /[\[\].]/g;
+const BRACKET_DOT_REGEX = /[\[\].()]/g;
 
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
@@ -41,11 +41,13 @@ export function updateApiRegistry() {
     // Normalize path separators for Windows/Unix compatibility
     const posixRouteDir = routeDir.split(path.sep).join("/");
 
-    // Construct route path
-    const routePath = posixRouteDir === "." ? "/api" : `/api/${posixRouteDir}`;
+    // Construct route path, ignoring Next.js route groups like (groupName)
+    const urlSegments = posixRouteDir.split("/").filter(segment => !(segment.startsWith("(") && segment.endsWith(")")));
+    const urlRouteDir = urlSegments.join("/");
+    const routePath = urlRouteDir === "" || urlRouteDir === "." ? "/api" : `/api/${urlRouteDir}`;
 
     // Construct import name: e.g. /api/admin/prom/verifications/[id]/presign -> AdminPromVerificationsIdPresignRoute
-    const parts = posixRouteDir.split("/");
+    const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
       const cleanPart = parts[j].replace(BRACKET_DOT_REGEX, "");

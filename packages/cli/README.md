@@ -239,6 +239,20 @@ const [data, err] = await apiFetch("/api/extreme/org1/projects/proj1/tasks/a/b/c
 const [data, err] = await apiFetch("/api/users/123?include=profile", { method: "GET" });
 ```
 
+### Route Groups Support
+
+Next.js route groups like `(groupName)` are natively supported. They are automatically ignored in the URL path mapping and the generated TypeScript types, perfectly matching Next.js behavior:
+
+```typescript
+// File: app/api/(admin)/users/route.ts
+
+// The fetch URL correctly skips the (admin) group
+const [data, err] = await apiFetch("/api/users", { method: "GET" });
+```
+
+> [!NOTE]
+> **Conflict-safe:** You don't have to worry about multiple route groups accidentally mapping to the exact same generated TypeScript identifier. Next.js enforces uniqueness during development and at build time. It will automatically raise a `Conflicting routes at /api/...` error if you try to create two identical endpoints (e.g., `(admin)/users/route.ts` and `(public)/users/route.ts`).
+
 ### HTTP Method Validation
 
 TypeScript only allows methods that your route handler actually exports:

@@ -7,7 +7,8 @@ export type TabId =
   | "update-api-registry.mjs"
   | "api/extreme/complex-types/route.ts"
   | "api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route.ts"
-  | "api/extreme/methods/route.ts";
+  | "api/extreme/methods/route.ts"
+  | "api/(skibidi)/bruh/route.ts";
 
 export type FileNode = {
   id: string;

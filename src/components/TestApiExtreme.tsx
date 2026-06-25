@@ -11,8 +11,8 @@ export function TestApiExtreme() {
   useEffect(() => {
     async function testExtremeRoutes() {
       // 1. Extreme deeply nested route with catchall
-      const [res1, err1] = await apiFetch("/api/users/34", {
-        method: "DELETE",
+      const [res1, err1] = await apiFetch("/api/bruh", {
+        method: "GET",
       });
 
       if (err1) {
