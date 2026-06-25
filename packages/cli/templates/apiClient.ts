@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
-import { ApiErrorPayload, isApiErrorPayload } from "./responses";
+import { ApiErrorPayload, ErrorCode, isApiErrorPayload } from "./responses";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
 
@@ -10,9 +10,15 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTION
  * Infer the success response type from an API route handler function.
  * Filters out ApiErrorPayload to only return the success payload.
  */
-type InferApiResponse<T, E = never> = T extends (...args: never[]) => infer R
+type InferSuccessApiResponse<T, E = never> = T extends (...args: never[]) => infer R
   ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
     ? Exclude<U, E>
+    : never
+  : never;
+
+type InferErrorApiResponse<T, E = never> = T extends (...args: never[]) => infer R
+  ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
+    ? Extract<U, E>
     : never
   : never;
 
@@ -21,10 +27,18 @@ type ResolveRoute<Path extends string> =
 
 type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
 
-type RouteResult<Path extends string, M extends HttpMethod> = InferApiResponse<
+type RouteSuccessResult<Path extends string, M extends HttpMethod> = InferSuccessApiResponse<
   KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]],
-  ApiErrorPayload
+  ApiErrorPayload<ErrorCode>
 >;
+
+type RouteErrorResult<Path extends string, M extends HttpMethod> = InferErrorApiResponse<
+  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]],
+  ApiErrorPayload<ErrorCode>
+>;
+
+/** Errors produced by apiFetch itself (network failures, malformed JSON, etc.) */
+type ApiFetchError = ApiErrorPayload<"system:unknown-error">;
 
 export async function apiFetch<
   Path extends string,
@@ -32,7 +46,7 @@ export async function apiFetch<
 >(
   path: Path extends CheckPath<Path> ? Path : CheckPath<Path>,
   options: RequestInit & { method: Method },
-): Promise<[RouteResult<Path, Method>, null] | [null, ApiErrorPayload]>;
+): Promise<[RouteSuccessResult<Path, Method>, null] | [null, RouteErrorResult<Path, Method> | ApiFetchError]>;
 
 export async function apiFetch(
   path: string,
@@ -59,7 +73,7 @@ export async function apiFetch(
           {
             code: "system:unknown-error",
             message: "Server returned malformed JSON.",
-          } as ApiErrorPayload,
+          },
         ];
       }
     } else {
@@ -77,10 +91,10 @@ export async function apiFetch(
         null,
         isApiErrorPayload(payload)
           ? payload
-          : ({
+          : {
               code: "system:unknown-error",
               message: "An error occurred but the server returned an unrecognized format.",
-            } as ApiErrorPayload),
+            },
       ];
     }
 
@@ -93,7 +107,7 @@ export async function apiFetch(
       {
         code: "system:unknown-error",
         message: error instanceof Error ? error.message : "A network error occurred.",
-      } as ApiErrorPayload,
+      },
     ];
   }
 }

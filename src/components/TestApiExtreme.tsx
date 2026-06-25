@@ -1,5 +1,6 @@
 "use client";
 import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
+import { assertNever } from "@/lib/next-zero-rpc/responses";
 import { useEffect, useState } from "react";
 
 export function TestApiExtreme() {
@@ -10,9 +11,23 @@ export function TestApiExtreme() {
   useEffect(() => {
     async function testExtremeRoutes() {
       // 1. Extreme deeply nested route with catchall
-      const [res1, err1] = await apiFetch("/api/extreme/complex-types", {
-        method: "POST",
+      const [res1, err1] = await apiFetch("/api/users/34", {
+        method: "DELETE",
       });
+
+      if (err1) {
+        const code = err1.code;
+        switch (code) {
+          case "system:unknown-error":
+            console.log("ok");
+            break;
+          case "auth:forbidden":
+            console.log("ok2");
+            break;
+          default:
+            assertNever(code);
+        }
+      }
 
       if (err1) {
         addLog(

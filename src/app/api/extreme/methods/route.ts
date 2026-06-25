@@ -1,4 +1,28 @@
 import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import z from "zod";
+
+export const schemaFactory = {
+  GET: z.object({
+    method: z.literal("GET"),
+    data: z.array(z.number()),
+  }),
+  POST: z.object({
+    method: z.literal("POST"),
+    createdId: z.number(),
+  }),
+  PUT: z.object({
+    method: z.literal("PUT"),
+    updated: z.boolean(),
+  }),
+  DELETE: z.object({
+    method: z.literal("DELETE"),
+    deleted: z.boolean(),
+  }),
+  PATCH: z.object({
+    method: z.literal("PATCH"),
+    patchedFields: z.array(z.string()),
+  }),
+};
 
 export async function GET() {
   const payload = { method: "GET" as const, data: [1, 2, 3] };
@@ -7,6 +31,7 @@ export async function GET() {
 
 export async function POST() {
   const payload = { method: "POST" as const, createdId: 42 };
+
   return createApiSuccess(payload);
 }
 

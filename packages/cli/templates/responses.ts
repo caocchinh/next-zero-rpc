@@ -119,10 +119,10 @@ export type ErrorHttpStatusCode = (typeof HTTP_STATUS_ERROR)[keyof typeof HTTP_S
 
 // ─── Payload Types ──────────────────────────────────────────────────────────
 
-export interface ApiErrorPayload {
-  code: ErrorCode;
+export interface ApiErrorPayload<C extends ErrorCode> {
+  code: C;
   details?: Record<string, string[]>;
-  message: string;
+  message?: string;
 }
 
 // ─── API Route Helpers ──────────────────────────────────────────────────────
@@ -134,17 +134,17 @@ export interface ApiErrorPayload {
  * return createApiError("auth:unauthorized", HTTP_STATUS_ERROR.UNAUTHORIZED);
  * return createApiError("auth:unauthorized", 401, undefined, "Custom message");
  */
-export function createApiError(
-  code: ErrorCode,
+export function createApiError<C extends ErrorCode>(
+  code: C,
   statusCode: ErrorHttpStatusCode,
   details?: Record<string, string[]>,
   message?: string,
-): NextResponse<ApiErrorPayload> {
+): NextResponse<ApiErrorPayload<C>> {
   return NextResponse.json(
     {
       code,
       details,
-      message: message ?? code,
+      message,
     },
     {
       status: statusCode,
@@ -154,7 +154,6 @@ export function createApiError(
 
 /**
  * Create a consistent API success response.
- * Returns the payload directly — no `{ data }` wrapper.
  *
  * @example
  * return createApiSuccess({ users: [...] });
@@ -180,7 +179,7 @@ export function createApiSuccess<T>(
 /**
  * Type guard to check if an unknown payload is an ApiErrorPayload.
  */
-export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload {
+export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload<ErrorCode> {
   if (!payload || typeof payload !== "object") return false;
 
   const p = payload as Record<string, unknown>;
@@ -246,4 +245,21 @@ export class BusinessLogicError extends Error {
     this.name = "BusinessLogicError";
     Object.setPrototypeOf(this, BusinessLogicError.prototype);
   }
+}
+
+// ─── Exhaustive Check ───────────────────────────────────────────────────────
+
+/**
+ * Compile-time exhaustiveness guard for switch/if-else chains.
+ * Place in the `default` branch — TypeScript will error if any case is unhandled.
+ *
+ * @example
+ * switch (err.code) {
+ *   case "auth:forbidden": …; break;
+ *   case "system:unknown-error": …; break;
+ *   default: assertNever(err.code);
+ * }
+ */
+export function assertNever(value: never): never {
+  throw new Error(`Unhandled discriminant: ${String(value)}`);
 }
