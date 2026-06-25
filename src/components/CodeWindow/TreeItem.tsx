@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown, ChevronRight, FileIcon, FolderOpen } from "lucide-react";
+import { useState } from "react";
 import { FileNode, TabId } from "./types";
 
 export function TreeItem({
@@ -36,11 +36,7 @@ export function TreeItem({
       >
         <span className="mr-1 flex w-4 justify-center">
           {!isFile &&
-            (isOpen ? (
-              <ChevronDown className="h-3 w-3" />
-            ) : (
-              <ChevronRight className="h-3 w-3" />
-            ))}
+            (isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />)}
         </span>
         <span className="mr-1.5 flex h-4 w-4 items-center justify-center">
           {node.icon ||

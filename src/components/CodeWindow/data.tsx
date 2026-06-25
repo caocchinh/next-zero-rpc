@@ -1,15 +1,11 @@
-import {
-  Terminal,
-  Code2,
-  FileJson,
-  FileType,
-} from "lucide-react";
+import { Code2, FileJson, FileType, Terminal } from "lucide-react";
 import {
   API_CLIENT_CODE,
   API_REGISTRY_CODE,
   RESPONSES_CODE,
-  UPDATE_REGISTRY_CODE,
   ROUTE_TS_CODE,
+  CLIENT_TSX_CODE,
+  UPDATE_REGISTRY_CODE,
 } from "../CodeData";
 import { FileNode, TabId } from "./types";
 

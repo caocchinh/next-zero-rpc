@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronRight, X } from "lucide-react";
-import { FILE_TREE, TAB_DATA } from "./data";
-import { TabId } from "./types";
-import { TreeItem } from "./TreeItem";
+import { useState } from "react";
 import { CodeContent } from "./CodeContent";
+import { FILE_TREE, TAB_DATA } from "./data";
+import { TreeItem } from "./TreeItem";
+import { TabId } from "./types";
 
 export function CodeWindow() {
   const [activeTab, setActiveTab] = useState<TabId>("client.tsx");
@@ -44,22 +44,17 @@ export function CodeWindow() {
         {/* Sidebar */}
         <div className="flex w-56 flex-col border-r border-zinc-800 bg-[#252526]">
           <div className="px-4 py-2 text-xs font-semibold text-zinc-400">EXPLORER</div>
-          <div className="flex-1 overflow-y-auto overflow-x-hidden pt-1">
+          <div className="flex-1 overflow-x-hidden overflow-y-auto pt-1">
             {FILE_TREE.map((node) => (
-              <TreeItem
-                key={node.id}
-                node={node}
-                onSelect={handleTabClick}
-                activeTab={activeTab}
-              />
+              <TreeItem key={node.id} node={node} onSelect={handleTabClick} activeTab={activeTab} />
             ))}
           </div>
         </div>
 
         {/* Editor Area */}
-        <div className="flex flex-1 flex-col bg-[#1e1e1e] min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col bg-[#1e1e1e]">
           {/* Tabs */}
-          <div className="flex flex-none overflow-x-auto bg-[#252526] scrollbar-none">
+          <div className="flex flex-none scrollbar-none overflow-x-auto bg-[#252526]">
             {openTabs.map((tabId) => {
               const tab = TAB_DATA[tabId];
               const isActive = activeTab === tabId;
