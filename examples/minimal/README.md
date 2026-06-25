@@ -2,6 +2,8 @@
 
 Type-safe fetch for Next.js — zero runtime, zero config, zero dependencies.
 
+[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
+
 ```bash
 npx next-zero-rpc init
 ```
@@ -506,6 +508,20 @@ Since you own all the source files, you can customize anything:
 - **Add request body types** — Extend the type inference in `apiClient.ts`
 - **Change the output path** — Update `REGISTRY_FILE` in `update-api-registry.mjs`
 - **Override the generator** — The `withApiRegistry` plugin and `updateApiRegistry()` function are fully yours to modify
+
+## Try it locally
+
+```bash
+# Clone just this example (no git history)
+npx degit caocchinh/next-zero-rpc/examples/minimal my-app
+cd my-app
+npm install
+npm run dev
+```
+
+Or open it instantly in the browser:
+
+[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
 
 ## CLI Usage
 
