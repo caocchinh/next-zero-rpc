@@ -1,8 +1,14 @@
 import fs from "fs";
 import path from "path";
 
-const API_DIR = path.join(process.cwd(), "src/app/api");
-const REGISTRY_FILE = path.join(process.cwd(), "src/lib/next-zero-rpc/apiRegistry.ts");
+function detectBaseDir() {
+  const cwd = process.cwd();
+  return fs.existsSync(path.join(cwd, "src")) ? "src" : ".";
+}
+
+const BASE_DIR = detectBaseDir();
+const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
+const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
 const BRACKET_DOT_REGEX = /[\[\].]/g;
 
 function getRouteFiles(dir, fileList = []) {
@@ -56,6 +62,7 @@ export function updateApiRegistry() {
     const importPath =
       posixRouteDir === "." ? "@/app/api/route" : `@/app/api/${posixRouteDir}/route`;
 
+
     routes.push({ importName, importPath, routePath });
   }
 
@@ -93,6 +100,7 @@ export function updateApiRegistry() {
 
   const generatedBlock = `// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
+// Run your dev server or \`node ${BASE_DIR === "." ? "" : BASE_DIR + "/"}lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
 ${importLines.join("\n")}
 
 ${typeLines.length === 0 ? "// eslint-disable-next-line @typescript-eslint/no-empty-object-type" : ""}

@@ -11,7 +11,7 @@
     "type-check:file": "node scripts/tsc-to-html.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
+    "infer-api": "node src/lib/next-zero-rpc/update-api-registry.mjs"
   },
   "dependencies": {
     "next": "16.2.9",

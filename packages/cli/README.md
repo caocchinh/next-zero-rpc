@@ -46,7 +46,7 @@ const [data, err] = await apiFetch("/api/users/123", { method: "DELETE" }); // â
 npx next-zero-rpc init
 ```
 
-This copies 4 files into `src/lib/next-zero-rpc/`:
+This copies 4 files into `lib/next-zero-rpc/` (or `src/lib/next-zero-rpc/` if your project uses the `src/` directory):
 
 | File                      | Purpose                    | Ships to browser? |
 | ------------------------- | -------------------------- | ----------------- |
@@ -58,7 +58,11 @@ This copies 4 files into `src/lib/next-zero-rpc/`:
 ### 2. Add the plugin to `next.config.ts`
 
 ```typescript
+// If using src/ directory:
 import { withApiRegistry } from "./src/lib/next-zero-rpc/update-api-registry.mjs";
+
+// If NOT using src/ directory:
+import { withApiRegistry } from "./lib/next-zero-rpc/update-api-registry.mjs";
 
 const nextConfig = {};
 
@@ -70,7 +74,7 @@ export default withApiRegistry(nextConfig);
 **In your route handlers** â€” use `createApiSuccess` / `createApiError`:
 
 ```typescript
-// src/app/api/users/[userId]/route.ts
+// app/api/users/[userId]/route.ts  (or src/app/api/users/[userId]/route.ts)
 import { createApiSuccess, createApiError, HTTP_STATUS_ERROR } from "@/lib/next-zero-rpc/responses";
 
 export async function GET(req: Request, { params }: { params: Promise<{ userId: string }> }) {
@@ -102,7 +106,7 @@ if (err) {
 
 ## How it works
 
-1. The `withApiRegistry` plugin scans your `src/app/api` directory for `route.ts` files
+1. The `withApiRegistry` plugin scans your `app/api` (or `src/app/api`) directory for `route.ts` files
 2. It generates type imports in `apiRegistry.ts` mapping each route path to its module type
 3. TypeScript infers the available methods and response types from each route's exports
 4. `apiFetch` uses these types to validate paths, methods, and infer response shapes at compile time

@@ -35,12 +35,12 @@ const HELP_TEXT = `
 ${BOLD}next-zero-rpc${RESET} — Type-safe fetch for Next.js
 
 ${BOLD}Usage:${RESET}
-  npx next-zero-rpc init         Install files into your Next.js project
-  npx next-zero-rpc init --force Overwrite existing files
-  npx next-zero-rpc --help       Show this help message
+  npx next-zero-rpc               Install files into your Next.js project
+  npx next-zero-rpc --force        Overwrite existing files
+  npx next-zero-rpc --help         Show this help message
 
 ${BOLD}What it does:${RESET}
-  Copies 4 files into ${CYAN}src/lib/next-zero-rpc/${RESET}:
+  Copies 4 files into ${CYAN}lib/next-zero-rpc/${RESET} (or ${CYAN}src/lib/next-zero-rpc/${RESET} if src/ exists):
     • apiClient.ts         — Type-safe fetch wrapper (2 KB runtime)
     • apiRegistry.ts       — Auto-generated route type registry
     • responses.ts         — Error/success response helpers
@@ -70,25 +70,26 @@ function detectProjectRoot() {
     process.exit(1);
   }
 
-  // Detect src directory
+  // Detect src directory — works with or without it
   const hasSrc = fs.existsSync(path.join(cwd, "src"));
-  if (!hasSrc) {
-    error("Expected a 'src/' directory. next-zero-rpc requires the src/ directory convention.");
-    process.exit(1);
-  }
 
-  return cwd;
+  return { root: cwd, hasSrc };
 }
 
-function init(flags) {
+async function init(flags) {
   const force = flags.includes("--force");
 
   log("");
   log(`${BOLD}${CYAN}next-zero-rpc${RESET} ${DIM}v${getVersion()}${RESET}`);
   log("");
 
-  const root = detectProjectRoot();
-  const targetDir = path.join(root, "src", "lib", "next-zero-rpc");
+  const { root, hasSrc } = detectProjectRoot();
+  const baseDir = hasSrc ? "src" : ".";
+  const targetDir = path.join(root, baseDir, "lib", "next-zero-rpc");
+  const configImportPrefix = hasSrc ? "./src" : ".";
+
+  log(`${DIM}Detected project layout: ${hasSrc ? "src/" : "root (no src/)"} ${RESET}`);
+  log("");
 
   // Create target directory
   fs.mkdirSync(targetDir, { recursive: true });
@@ -113,6 +114,35 @@ function init(flags) {
     written++;
   }
 
+  // Run update-api-registry once to populate the registry with existing routes
+  try {
+    const registryScript = path.join(targetDir, "update-api-registry.mjs");
+    const { updateApiRegistry } = await import(registryScript);
+    updateApiRegistry();
+    success("API registry updated");
+  } catch (e) {
+    warn(`Could not auto-update registry: ${e.message}`);
+  }
+
+  // Add "infer-api" script to package.json (safely, no overwrite)
+  try {
+    const pkgPath = path.join(root, "package.json");
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+    const scriptCmd = `node ${baseDir === "." ? "" : baseDir + "/"}lib/next-zero-rpc/update-api-registry.mjs`;
+
+    if (!pkg.scripts) pkg.scripts = {};
+
+    if (pkg.scripts["infer-api"]) {
+      log(`${DIM}infer-api script already exists in package.json${RESET}`);
+    } else {
+      pkg.scripts["infer-api"] = scriptCmd;
+      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n", "utf-8");
+      success(`Added ${BOLD}"infer-api"${RESET}${GREEN} script to package.json${RESET}`);
+    }
+  } catch (e) {
+    warn(`Could not update package.json: ${e.message}`);
+  }
+
   log("");
 
   if (written === 0 && skipped > 0) {
@@ -127,7 +157,7 @@ function init(flags) {
   log(`  ${CYAN}1.${RESET} Update your ${BOLD}next.config.ts${RESET}:`);
   log("");
   log(
-    `     ${DIM}import { withApiRegistry } from "./src/lib/next-zero-rpc/update-api-registry.mjs";${RESET}`,
+    `     ${DIM}import { withApiRegistry } from "${configImportPrefix}/lib/next-zero-rpc/update-api-registry.mjs";${RESET}`,
   );
   log(`     ${DIM}export default withApiRegistry(nextConfig);${RESET}`);
   log("");
@@ -164,13 +194,17 @@ function getVersion() {
 const args = process.argv.slice(2);
 const command = args[0];
 
-if (!command || command === "--help" || command === "-h") {
+if (command === "--help" || command === "-h") {
   log(HELP_TEXT);
   process.exit(0);
 }
 
-if (command === "init") {
-  init(args.slice(1));
+// Default: run init (with or without "init" subcommand)
+if (!command || command === "init") {
+  init(args.slice(command === "init" ? 1 : 0));
+} else if (command === "--force") {
+  // Allow: npx next-zero-rpc --force
+  init(args);
 } else {
   error(`Unknown command: ${command}`);
   log(`Run ${CYAN}npx next-zero-rpc --help${RESET} for usage.`);

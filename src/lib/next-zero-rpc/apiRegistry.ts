@@ -1,5 +1,6 @@
 // --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
+// Run your dev server or `node src/lib/next-zero-rpc/update-api-registry.mjs` to regenerate.
 // /api/auth
 import type * as AuthLoginRoute from "@/app/api/auth/login/route";
 
