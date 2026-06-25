@@ -243,10 +243,11 @@ export function createServiceSuccess<T>(data?: T): ServiceResponse<T | undefined
  * Place in the `default` branch — TypeScript will error if any case is unhandled.
  *
  * @example
- * switch (err.code) {
+ * const code = err.code;
+ * switch (code) {
  *   case "auth:forbidden": …; break;
  *   case "system:unknown-error": …; break;
- *   default: assertNever(err.code);
+ *   default: assertNever(code);
  * }
  */
 export function assertNever(value: never): never {
