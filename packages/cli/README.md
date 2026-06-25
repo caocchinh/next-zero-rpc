@@ -518,9 +518,11 @@ npx next-zero-rpc --help       # Show help
 
 ## Requirements
 
-- Next.js (App Router)
-- TypeScript
-- Node.js ≥ 18
+| Requirement | Minimum Version | Reason |
+| ----------- | --------------- | ------ |
+| Next.js | **14.0** | App Router (stable since 14.0) |
+| TypeScript | **4.9** | `satisfies` keyword used in `responses.ts` |
+| Node.js | **18** | Native `fetch` API required by `apiFetch` |
 
 ## License
 

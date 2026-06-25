@@ -343,16 +343,17 @@ export default withApiRegistry(nextConfig);`,
     "dev": "next dev",
     "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
   },
+  "//": "Minimum supported versions — any version above these is compatible",
   "dependencies": {
-    "next": "14.2.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "next": "14.0.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
   },
   "devDependencies": {
-    "@types/node": "20.14.9",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "typescript": "5.5.3"
+    "@types/node": "18.0.0",
+    "@types/react": "18.0.0",
+    "@types/react-dom": "18.0.0",
+    "typescript": "4.9.0"
   }
 }`,
     language: "json",
