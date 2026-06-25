@@ -2,7 +2,11 @@
 
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { API_CLIENT_CODE, RESPONSES_CODE, UPDATE_REGISTRY_CODE } from "../CodeData";
+import {
+  LIB_NEXT_ZERO_RPC_APICLIENT_TS_CODE as API_CLIENT_CODE,
+  LIB_NEXT_ZERO_RPC_RESPONSES_TS_CODE as RESPONSES_CODE,
+  LIB_NEXT_ZERO_RPC_UPDATE_API_REGISTRY_MJS_CODE as UPDATE_REGISTRY_CODE,
+} from "../CodeData";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);

@@ -1,4 +1,480 @@
-export const RESPONSES_CODE = `/**
+export const APP_API_CORE_STATUS_ROUTE_TS_CODE = `import { NextResponse } from "next/server";
+
+export async function GET() {
+  return NextResponse.json({
+    success: true,
+    message: "This route is inside a route group (core)!",
+    data: "system operational",
+  });
+}
+`;
+
+export const APP_API_AUTH_LOGIN_ROUTE_TS_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    if (!body.email || !body.password) {
+      return createApiError("validation:missing-required-fields", 400);
+    }
+
+    if (body.email !== "admin@vinschool.edu.vn" || body.password !== "password") {
+      return createApiError("auth:unauthorized", 401);
+    }
+
+    return createApiSuccess({
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI...",
+      user: { id: "123", email: body.email },
+    });
+  } catch {
+    return createApiError("validation:invalid-payload", 400);
+  }
+}
+`;
+
+export const APP_API_EXTREME_ORGID_PROJECTS_PROJECTID_TASKS_CATCHALL_ROUTE_TS_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ orgId: string; projectId: string; catchall: string[] }> },
+) {
+  const p = await params;
+
+  const payload = {
+    resolvedOrgId: p.orgId,
+    resolvedProjectId: p.projectId,
+    dynamicSegments: p.catchall,
+    deeplyNestedMatrix: {
+      layer1: {
+        layer2: {
+          layer3: [
+            [
+              { x: 1, y: 2 },
+              { x: 3, y: 4 },
+            ],
+            [
+              { x: 5, y: 6 },
+              { x: 7, y: 8 },
+            ],
+          ] as const,
+        },
+      },
+    },
+  };
+
+  return createApiSuccess(payload);
+}
+`;
+
+export const APP_API_EXTREME_COMPLEX_TYPES_ROUTE_TS_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
+
+// We create insanely complicated types to test TypeScript's limits
+type DiscriminatedUnion =
+  | { type: "success"; payload: { id: string; metrics: Record<string, number[]> } }
+  | { type: "failure"; reason: string; code: number };
+
+type RecursiveTree<T> = {
+  value: T;
+  children?: RecursiveTree<T>[];
+};
+
+type IntersectionTest = { base: string } & ({ variantA: number } | { variantB: boolean });
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    if (body.triggerError) {
+      return createApiError("system:internal-server-error", 500);
+    }
+
+    const unionData: DiscriminatedUnion = {
+      type: "success",
+      payload: { id: "idx-999", metrics: { cpu: [10, 20, 30], mem: [50, 60] } },
+    };
+
+    const tree: RecursiveTree<DiscriminatedUnion> = {
+      value: unionData,
+      children: [
+        {
+          value: { type: "failure", reason: "timeout", code: 408 },
+          children: [],
+        },
+      ],
+    };
+
+    const intersection: IntersectionTest = {
+      base: "test",
+      variantB: true,
+    };
+
+    const payload = {
+      union: unionData,
+      tree,
+      intersection,
+      matrixStringTuple: ["a", "b", "c"] as const,
+      nullableField: null,
+      optionalField: undefined as string | undefined,
+      bigIntSimulate: "9007199254740991",
+    };
+
+    return createApiSuccess(payload);
+  } catch {
+    return createApiError("validation:invalid-payload", 400);
+  }
+}
+`;
+
+export const APP_API_EXTREME_METHODS_ROUTE_TS_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
+
+export async function GET() {
+  const payload = { method: "GET" as const, data: [1, 2, 3] };
+  return createApiSuccess(payload);
+}
+
+export async function POST() {
+  const payload = { method: "POST" as const, createdId: 42 };
+
+  return createApiSuccess(payload);
+}
+
+export async function PUT() {
+  const payload = { method: "PUT" as const, updated: true };
+  return createApiSuccess(payload);
+}
+
+export async function DELETE() {
+  const payload = { method: "DELETE" as const, deleted: true };
+  return createApiSuccess(payload);
+}
+
+export async function PATCH() {
+  const payload = { method: "PATCH" as const, patchedFields: ["name"] };
+  return createApiSuccess(payload);
+}
+
+export async function HEAD() {
+  // HEAD typically doesn't return a body but we can see what typescript infers
+  return new Response(null, { status: 200 });
+}
+
+export async function OPTIONS() {
+  // OPTIONS might return some allow headers
+  return new Response(null, {
+    status: 204,
+    headers: { Allow: "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS" },
+  });
+}
+`;
+
+export const APP_API_USERS_USERID_ROUTE_TS_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
+import { NextRequest } from "next/server";
+
+type Params = { params: Promise<{ userId: string }> };
+
+export async function GET(req: NextRequest, { params }: Params) {
+  const { userId } = await params;
+
+  if (userId === "not-found") {
+    return createApiError("system:database-error", 404, {
+      details: {
+        userId: ["User not found in the database"],
+      },
+    });
+  }
+
+  return createApiSuccess({
+    id: userId,
+    name: "John Doe",
+    role: "student",
+  });
+}
+
+export async function PUT(req: NextRequest, { params }: Params) {
+  const { userId } = await params;
+
+  try {
+    const body = await req.json();
+
+    if (!body.name) {
+      return createApiError("validation:missing-required-fields", 400);
+    }
+
+    return createApiSuccess({
+      id: userId,
+      name: body.name,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch {
+    return createApiError("validation:invalid-payload", 400);
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: Params) {
+  const { userId } = await params;
+
+  if (userId === "admin") {
+    return createApiError("auth:forbidden", 403, {
+      details: {
+        userId: ["Cannot delete admin user"],
+      },
+    });
+  }
+
+  // Returning 204 No Content
+  return createApiSuccess(undefined, 204);
+}
+`;
+
+export const CLIENT_TS_CODE = `import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
+import { assertNever } from "@/lib/next-zero-rpc/responses";
+
+export async function TypeInferenceDemo() {
+  // 1. Basic Route: Hover over \`err1.code\` to see narrowed errors!
+  const [res1, err1] = await apiFetch("/api/status", { method: "GET" });
+
+  if (err1) {
+    switch (err1.code) {
+      case "system:unknown-error":
+        console.error("A system error occurred:", err1.message);
+        break;
+      // You'll get a TypeScript error here if you forget to handle an error code
+      // defined in your backend route!
+      default:
+        assertNever(err1.code);
+    }
+  } else {
+    // res1 is strictly typed!
+    console.log(res1.message);
+  }
+
+  // 2. Complex Types: Hover to see deep nested interfaces
+  const [res2, err2] = await apiFetch("/api/extreme/complex-types", {
+    method: "POST",
+    body: JSON.stringify({ triggerError: false }),
+  });
+
+  if (res2) {
+    console.log(res2.tree.children?.[0].value);
+  }
+
+  // 3. Deeply Nested Catchall Route
+  const [res3, err3] = await apiFetch("/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]", {
+    method: "GET",
+  });
+
+  // 4. Dynamic Params
+  const [res4, err4] = await apiFetch("/api/users/[userId]", {
+    method: "GET",
+  });
+
+  // 5. Auth Payload Inference
+  const [res5, err5] = await apiFetch("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ username: "admin", password: "123" }),
+  });
+
+  // 6. Strict Method Checking
+  // TypeScript will error if you try to use an unsupported HTTP method!
+  const [res6, err6] = await apiFetch("/api/extreme/methods", {
+    method: "DELETE", 
+  });
+}
+`;
+
+export const LIB_NEXT_ZERO_RPC_APICLIENT_TS_CODE = `import { NextResponse } from "next/server";
+import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
+import { ApiErrorPayload, ErrorCode, isApiErrorPayload } from "./responses";
+
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+
+// ─── Type Inference ─────────────────────────────────────────────────────────
+
+/**
+ * Extracts the inner payload type U from a route handler returning NextResponse<U>.
+ */
+type UnwrapNextResponse<T> = T extends (...args: never[]) => infer R
+  ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
+    ? U
+    : never
+  : never;
+
+type ResolveRoute<Path extends string> =
+  FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
+
+type RouteHandler<Path extends string, M extends HttpMethod> =
+  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]];
+
+type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
+
+type RouteSuccessResult<Path extends string, M extends HttpMethod> = Exclude<
+  UnwrapNextResponse<RouteHandler<Path, M>>,
+  ApiErrorPayload<ErrorCode>
+>;
+
+type RouteErrorResult<Path extends string, M extends HttpMethod> = Extract<
+  UnwrapNextResponse<RouteHandler<Path, M>>,
+  ApiErrorPayload<ErrorCode>
+>;
+
+export async function apiFetch<
+  Path extends string,
+  Method extends RouteMethods<Path> = RouteMethods<Path>,
+>(
+  path: Path extends CheckPath<Path> ? Path : CheckPath<Path>,
+  options: RequestInit & { method: Method },
+): Promise<
+  | [RouteSuccessResult<Path, Method>, null]
+  | [null, RouteErrorResult<Path, Method> | ApiErrorPayload<"system:unknown-error">]
+>;
+
+export async function apiFetch(
+  path: string,
+  options: RequestInit & { method: string },
+): Promise<unknown> {
+  try {
+    const res = await fetch(path, options);
+
+    // 1. Read the body as text first to safely handle empty responses.
+    const text = await res.text();
+
+    let payload;
+    // An empty HTTP body resolves to an empty string "" (falsy).
+    // Valid JSON primitives like \`0\`, \`null\`, \`false\`, or \`""\` serialize to 
+    // length > 0 strings (e.g. \`"0"\`, \`"null"\`, \`'""'\`), which are all truthy.
+    // This perfectly catches empty responses (like 204) while preserving valid JSON.
+    if (!text) {
+      payload = undefined;
+    } else {
+      // 2. Parse the payload safely based on Content-Type
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          payload = JSON.parse(text);
+        } catch {
+          return [
+            null,
+            {
+              code: "system:unknown-error",
+              message: "Server returned malformed JSON.",
+            },
+          ];
+        }
+      } else {
+        // For non-JSON responses, return the raw text
+        payload = text;
+      }
+    }
+
+    // 3. Strict error validation
+    if (!res.ok) {
+      return [
+        null,
+        isApiErrorPayload(payload)
+          ? payload
+          : {
+              code: "system:unknown-error",
+              message: "An error occurred but the server returned an unrecognized format.",
+            },
+      ];
+    }
+
+    // 4. Return the full response payload directly to the developer
+    return [payload, null];
+  } catch (error) {
+    // Network errors (like offline), CORS errors, etc.
+    return [
+      null,
+      {
+        code: "system:unknown-error",
+        message: error instanceof Error ? error.message : "A network error occurred.",
+      },
+    ];
+  }
+}
+`;
+
+export const LIB_NEXT_ZERO_RPC_APIREGISTRY_TS_CODE = `// --- BEGIN GENERATED API REGISTRY ---
+// This section is auto-generated. Do not edit manually.
+// Run your dev server or \`node src/lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
+// /api/status
+import type * as StatusRoute from "@/app/api/(core)/status/route";
+
+// /api/auth
+import type * as AuthLoginRoute from "@/app/api/auth/login/route";
+
+// /api/extreme
+import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
+import type * as ExtremeComplexTypesRoute from "@/app/api/extreme/complex-types/route";
+import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
+
+// /api/users
+import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
+
+export type KnownRoutes = {
+  // Static Routes & Autocomplete Hints
+  // /api/auth
+  "/api/auth/login": typeof AuthLoginRoute;
+
+  // /api/extreme
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
+  "/api/extreme/complex-types": typeof ExtremeComplexTypesRoute;
+  "/api/extreme/methods": typeof ExtremeMethodsRoute;
+
+  // /api/status
+  "/api/status": typeof StatusRoute;
+
+  // /api/users
+  "/api/users/[userId]": typeof UsersUserIdRoute;
+};
+// --- END GENERATED API REGISTRY ---
+
+type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`
+  ? [Head, ...Split<Tail>]
+  : [S];
+
+type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`
+  ? P extends ""
+    ? false
+    : true
+  : K extends P
+    ? true
+    : false;
+
+type MatchSegments<P extends string[], K extends string[]> = K extends []
+  ? P extends []
+    ? true
+    : false
+  : K extends [\`[...\${string}]\`]
+    ? true
+    : [P, K] extends [
+          [infer PH extends string, ...infer PT extends string[]],
+          [infer KH extends string, ...infer KT extends string[]],
+        ]
+      ? MatchSegment<PH, KH> extends true
+        ? MatchSegments<PT, KT>
+        : false
+      : false;
+
+type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\` ? Base : Path;
+
+export type FindMatchingRoute<Path extends string> = {
+  [K in keyof KnownRoutes & string]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
+    ? K
+    : never;
+}[keyof KnownRoutes & string];
+
+export type CheckPath<Path extends string> = Path extends ""
+  ? keyof KnownRoutes
+  : FindMatchingRoute<Path> extends never
+    ? keyof KnownRoutes
+    : Path;
+`;
+
+export const LIB_NEXT_ZERO_RPC_RESPONSES_TS_CODE = `/**
  * next-zero-rpc — Response helpers for API routes and server actions.
  * Customize the error codes below to match your application's domain.
  */
@@ -161,21 +637,23 @@ export function createApiError<C extends ErrorCode>(
  * return createApiSuccess({ users: [...] });
  * return createApiSuccess(undefined, HTTP_STATUS_SUCCESS.NO_CONTENT);
  */
-export function createApiSuccess<T>(data: T, statusCode?: SuccessHttpStatusCode): NextResponse<T>;
+export function createApiSuccess<T>(
+  data: T,
+  statusCode?: Exclude<SuccessHttpStatusCode, typeof HTTP_STATUS_SUCCESS.NO_CONTENT>,
+): NextResponse<T>;
 export function createApiSuccess(
   data?: undefined,
   statusCode?: typeof HTTP_STATUS_SUCCESS.NO_CONTENT,
 ): NextResponse<undefined>;
 export function createApiSuccess<T>(
   data?: T,
-  statusCode: SuccessHttpStatusCode = HTTP_STATUS_SUCCESS.OK,
+  statusCode?: SuccessHttpStatusCode,
 ): NextResponse<T | undefined> {
-  // 204 No Content must not have a body per HTTP spec
-  if (statusCode === HTTP_STATUS_SUCCESS.NO_CONTENT) {
-    return new NextResponse(null, { status: 204 }) as NextResponse<T | undefined>;
+  if (data === undefined || statusCode === HTTP_STATUS_SUCCESS.NO_CONTENT) {
+    return new NextResponse(null, { status: statusCode ?? 204 });
   }
 
-  return NextResponse.json(data, { status: statusCode });
+  return NextResponse.json(data, { status: statusCode ?? 200 });
 }
 
 /**
@@ -259,439 +737,7 @@ export function assertNever(value: never): never {
 }
 `;
 
-export const ROUTE_TS_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
-import { NextRequest } from "next/server";
-
-type Params = { params: Promise<{ userId: string }> };
-
-export async function GET(req: NextRequest, { params }: Params) {
-  const { userId } = await params;
-
-  if (userId === "not-found") {
-    return createApiError("resource:not-found", 404, {
-      details: {
-        userId: ["User not found in the database"],
-      },
-    });
-  }
-
-  return createApiSuccess({
-    id: userId,
-    name: "John Doe",
-    role: "student",
-  });
-}
-
-export async function PUT(req: NextRequest, { params }: Params) {
-  const { userId } = await params;
-
-  try {
-    const body = await req.json();
-
-    if (!body.name) {
-      return createApiError("validation:missing-required-fields", 400);
-    }
-
-    return createApiSuccess({
-      id: userId,
-      name: body.name,
-      updatedAt: new Date().toISOString(),
-    });
-  } catch {
-    return createApiError("validation:invalid-payload", 400);
-  }
-}
-
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const { userId } = await params;
-
-  if (userId === "admin") {
-    return createApiError("auth:forbidden", 403, {
-      details: {
-        userId: ["Cannot delete admin user"],
-      },
-    });
-  }
-
-  // Returning 204 No Content
-  return createApiSuccess(undefined, 204);
-}
-`;
-
-export const COMPLEX_TYPES_ROUTE_CODE = `import { createApiError, createApiSuccess } from "@/lib/next-zero-rpc/responses";
-import { NextRequest } from "next/server";
-
-// We create insanely complicated types to test TypeScript's limits
-type DiscriminatedUnion =
-  | { type: "success"; payload: { id: string; metrics: Record<string, number[]> } }
-  | { type: "failure"; reason: string; code: number };
-
-type RecursiveTree<T> = {
-  value: T;
-  children?: RecursiveTree<T>[];
-};
-
-type IntersectionTest = { base: string } & ({ variantA: number } | { variantB: boolean });
-
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-
-    if (body.triggerError) {
-      return createApiError("system:internal-server-error", 500);
-    }
-
-    const unionData: DiscriminatedUnion = {
-      type: "success",
-      payload: { id: "idx-999", metrics: { cpu: [10, 20, 30], mem: [50, 60] } },
-    };
-
-    const tree: RecursiveTree<DiscriminatedUnion> = {
-      value: unionData,
-      children: [
-        {
-          value: { type: "failure", reason: "timeout", code: 408 },
-          children: [],
-        },
-      ],
-    };
-
-    const intersection: IntersectionTest = {
-      base: "test",
-      variantB: true,
-    };
-
-    const payload = {
-      union: unionData,
-      tree,
-      intersection,
-      matrixStringTuple: ["a", "b", "c"] as const,
-      nullableField: null,
-      optionalField: undefined as string | undefined,
-      bigIntSimulate: "9007199254740991",
-    };
-
-    return createApiSuccess(payload);
-  } catch {
-    return createApiError("validation:invalid-payload", 400);
-  }
-}
-`;
-
-export const METHODS_ROUTE_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
-
-export async function GET() {
-  const payload = { method: "GET" as const, data: [1, 2, 3] };
-  return createApiSuccess(payload);
-}
-
-export async function POST() {
-  const payload = { method: "POST" as const, createdId: 42 };
-  return createApiSuccess(payload);
-}
-
-export async function PUT() {
-  const payload = { method: "PUT" as const, updated: true };
-  return createApiSuccess(payload);
-}
-
-export async function DELETE() {
-  const payload = { method: "DELETE" as const, deleted: true };
-  return createApiSuccess(payload);
-}
-
-export async function PATCH() {
-  const payload = { method: "PATCH" as const, patchedFields: ["name"] };
-  return createApiSuccess(payload);
-}
-
-export async function HEAD() {
-  return new Response(null, { status: 200 });
-}
-
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: { Allow: "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS" },
-  });
-}
-`;
-
-export const CATCHALL_ROUTE_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
-import { NextRequest } from "next/server";
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ orgId: string; projectId: string; catchall: string[] }> },
-) {
-  const p = await params;
-
-  const payload = {
-    resolvedOrgId: p.orgId,
-    resolvedProjectId: p.projectId,
-    dynamicSegments: p.catchall,
-    deeplyNestedMatrix: {
-      layer1: {
-        layer2: {
-          layer3: [
-            [
-              { x: 1, y: 2 },
-              { x: 3, y: 4 },
-            ],
-            [
-              { x: 5, y: 6 },
-              { x: 7, y: 8 },
-            ],
-          ] as const,
-        },
-      },
-    },
-  };
-
-  return createApiSuccess(payload);
-}
-`;
-
-export const BRUH_ROUTE_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
-
-export async function GET() {
-  return createApiSuccess({
-    success: true,
-    message: "This route is inside a route group (skibidi)!",
-    data: "skibidi toilet",
-  });
-}
-`;
-
-export const CLIENT_TSX_CODE = `import { apiFetch } from "@/lib/next-zero-rpc/apiClient";
-import { assertNever } from "@/lib/next-zero-rpc/responses";
-
-// 1. Precise Error Type Narrowing
-const [ data, err ] = await apiFetch("/api/users/123", { method: "GET" });
-
-if (err) {
-  // TypeScript narrows the error code specifically to this route!
-  switch (err.code) {
-    case "resource:not-found":
-      console.error("User not found!");
-      break;
-    case "system:unknown-error":
-      console.error("Network error");
-      break;
-    default:
-      assertNever(err.code); // TS Error if you miss a case!
-  }
-} else {
-  console.log(data.name);
-}
-
-// 2. Extreme Recursive Type Inference
-const [ res2, err2 ] = await apiFetch("/api/extreme/complex-types", { method: "POST" });
-
-// 3. Deeply Nested Catch-All Routes
-const [ res3, err3 ] = await apiFetch(
-  "/api/extreme/acme/projects/xyz/tasks/a/b/c",
-  { method: "GET" }
-);
-
-// 4. Strict Method Matching
-const [ resGet, errGet ] = await apiFetch("/api/extreme/methods", { method: "GET" });
-
-// 5. Route Groups Support
-const [ resBruh, errBruh ] = await apiFetch("/api/bruh", { method: "GET" });
-`;
-
-export const API_REGISTRY_CODE = `// --- BEGIN GENERATED API REGISTRY ---
-// This section is auto-generated. Do not edit manually.
-// Run your dev server or \`node src/lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
-// /api/auth
-import type * as AuthLoginRoute from "@/app/api/auth/login/route";
-
-// /api/bruh
-import type * as BruhRoute from "@/app/api/(skibidi)/bruh/route";
-
-// /api/extreme
-import type * as ExtremeOrgIdProjectsProjectIdTasksCatchallRoute from "@/app/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]/route";
-import type * as ExtremeComplexTypesRoute from "@/app/api/extreme/complex-types/route";
-import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
-
-// /api/users
-import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
-
-export type KnownRoutes = {
-  // Static Routes & Autocomplete Hints
-  // /api/auth
-  "/api/auth/login": typeof AuthLoginRoute;
-
-  // /api/bruh
-  "/api/bruh": typeof BruhRoute;
-
-  // /api/extreme
-  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
-  "/api/extreme/complex-types": typeof ExtremeComplexTypesRoute;
-  "/api/extreme/methods": typeof ExtremeMethodsRoute;
-
-  // /api/users
-  "/api/users/[userId]": typeof UsersUserIdRoute;
-};
-// --- END GENERATED API REGISTRY ---
-
-type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`
-  ? [Head, ...Split<Tail>]
-  : [S];
-
-type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`
-  ? P extends ""
-    ? false
-    : true
-  : K extends P
-    ? true
-    : false;
-
-type MatchSegments<P extends string[], K extends string[]> = K extends []
-  ? P extends []
-    ? true
-    : false
-  : K extends [\`[...\${string}]\`]
-    ? true
-    : [P, K] extends [
-          [infer PH extends string, ...infer PT extends string[]],
-          [infer KH extends string, ...infer KT extends string[]],
-        ]
-      ? MatchSegment<PH, KH> extends true
-        ? MatchSegments<PT, KT>
-        : false
-      : false;
-
-type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\` ? Base : Path;
-
-export type FindMatchingRoute<Path extends string> = {
-  [K in keyof KnownRoutes & string]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
-    ? K
-    : never;
-}[keyof KnownRoutes & string];
-
-export type CheckPath<Path extends string> = Path extends ""
-  ? keyof KnownRoutes
-  : FindMatchingRoute<Path> extends never
-    ? keyof KnownRoutes
-    : Path;
-`;
-
-export const API_CLIENT_CODE = `import { NextResponse } from "next/server";
-import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
-import { ApiErrorPayload, ErrorCode, isApiErrorPayload } from "./responses";
-
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
-
-// ─── Type Inference ─────────────────────────────────────────────────────────
-
-/**
- * Extracts the inner payload type U from a route handler returning NextResponse<U>.
- */
-type UnwrapNextResponse<T> = T extends (...args: never[]) => infer R
-  ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
-    ? U
-    : never
-  : never;
-
-type ResolveRoute<Path extends string> =
-  FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
-
-type RouteHandler<Path extends string, M extends HttpMethod> =
-  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]];
-
-type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
-
-type RouteSuccessResult<Path extends string, M extends HttpMethod> = Exclude<
-  UnwrapNextResponse<RouteHandler<Path, M>>,
-  ApiErrorPayload<ErrorCode>
->;
-
-type RouteErrorResult<Path extends string, M extends HttpMethod> = Extract<
-  UnwrapNextResponse<RouteHandler<Path, M>>,
-  ApiErrorPayload<ErrorCode>
->;
-
-
-
-export async function apiFetch<
-  Path extends string,
-  Method extends RouteMethods<Path> = RouteMethods<Path>,
->(
-  path: Path extends CheckPath<Path> ? Path : CheckPath<Path>,
-  options: RequestInit & { method: Method },
-): Promise<
-  | [RouteSuccessResult<Path, Method>, null]
-  | [null, RouteErrorResult<Path, Method> | ApiErrorPayload<"system:unknown-error">]
->;
-
-export async function apiFetch(
-  path: string,
-  options: RequestInit & { method: string },
-): Promise<unknown> {
-  try {
-    const res = await fetch(path, options);
-
-    // 1. Handle 204 No Content gracefully
-    if (res.status === 204) {
-      return [undefined, null];
-    }
-
-    // 2. Parse the payload safely based on Content-Type
-    let payload;
-    const contentType = res.headers.get("content-type");
-
-    if (contentType && contentType.includes("application/json")) {
-      try {
-        payload = await res.json();
-      } catch {
-        return [
-          null,
-          {
-            code: "system:unknown-error",
-            message: "Server returned malformed JSON.",
-          },
-        ];
-      }
-    } else {
-      // For non-JSON responses, try returning text or null
-      try {
-        payload = await res.text();
-      } catch {
-        payload = null;
-      }
-    }
-
-    // 3. Strict error validation
-    if (!res.ok) {
-      return [
-        null,
-        isApiErrorPayload(payload)
-          ? payload
-          : {
-              code: "system:unknown-error",
-              message: "An error occurred but the server returned an unrecognized format.",
-            },
-      ];
-    }
-
-    // 4. Return the full response payload directly to the developer
-    return [payload, null];
-  } catch (error) {
-    // Network errors (like offline), CORS errors, etc.
-    return [
-      null,
-      {
-        code: "system:unknown-error",
-        message: error instanceof Error ? error.message : "A network error occurred.",
-      },
-    ];
-  }
-}
-`;
-
-export const UPDATE_REGISTRY_CODE = `import fs from "fs";
+export const LIB_NEXT_ZERO_RPC_UPDATE_API_REGISTRY_MJS_CODE = `import fs from "fs";
 import path from "path";
 
 function detectBaseDir() {
@@ -702,7 +748,7 @@ function detectBaseDir() {
 const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
 const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
-const BRACKET_DOT_REGEX = /[\[\].()]/g;
+const BRACKET_DOT_REGEX = /[\\[\\].()]/g;
 
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
@@ -735,7 +781,9 @@ export function updateApiRegistry() {
     const posixRouteDir = routeDir.split(path.sep).join("/");
 
     // Construct route path, ignoring Next.js route groups like (groupName)
-    const urlSegments = posixRouteDir.split("/").filter(segment => !(segment.startsWith("(") && segment.endsWith(")")));
+    const urlSegments = posixRouteDir
+      .split("/")
+      .filter((segment) => !(segment.startsWith("(") && segment.endsWith(")")));
     const urlRouteDir = urlSegments.join("/");
     const routePath = urlRouteDir === "" || urlRouteDir === "." ? "/api" : \`/api/\${urlRouteDir}\`;
 
@@ -915,3 +963,4 @@ export function withApiRegistry(nextConfig = {}) {
   return nextConfig;
 }
 `;
+

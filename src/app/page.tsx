@@ -1,5 +1,6 @@
 import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
 import { QuickStartCommand } from "@/components/QuickStartCommand";
+import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 
 export default function Home() {
   return (
@@ -34,7 +35,7 @@ export default function Home() {
             <p className="mb-8 max-w-2xl text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
               Hover over the variables in{" "}
               <span className="mx-1 bg-[oklch(0.85_0.01_250)] px-2 py-1 font-mono text-sm text-[oklch(0.15_0.01_250)]">
-                client.tsx
+                client.ts
               </span>{" "}
               to observe absolute type inference across the network boundary.
             </p>
@@ -51,14 +52,7 @@ export default function Home() {
             </div>
 
             <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
-              <iframe
-                loading="lazy"
-                src="https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal?embed=1&file=/src/client.ts"
-                className="h-[800px] max-h-[90vh] w-full overflow-hidden rounded-lg border-0 opacity-100 shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-opacity duration-1000"
-                title="next-zero-rpc codebase"
-                allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-                sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-              ></iframe>
+              <CodeWindow />
             </div>
           </div>
         </section>
