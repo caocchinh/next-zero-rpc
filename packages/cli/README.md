@@ -25,18 +25,18 @@ const [data, err] = await apiFetch("/api/users/123", { method: "DELETE" }); // �
 
 ### How it compares
 
-| Feature | next-zero-rpc | tRPC | raw fetch |
-|---|---|---|---|
-| Type-safe paths | ✅ | ✅ | ❌ |
-| Type-safe responses | ✅ | ✅ | ❌ |
-| Type-safe methods | ✅ | N/A | ❌ |
-| Zero runtime cost | ✅ (2 KB) | ❌ (~14 KB) | ✅ |
-| Zero config | ✅ | ❌ | ✅ |
-| Works with existing routes | ✅ | ❌ | ✅ |
-| Dynamic params `[id]` | ✅ | ✅ | N/A |
-| Catch-all `[...slug]` | ✅ | ✅ | N/A |
-| Go-style error handling | ✅ | ❌ | ❌ |
-| Dependencies | 0 | 5+ | 0 |
+| Feature                    | next-zero-rpc | tRPC        | raw fetch |
+| -------------------------- | ------------- | ----------- | --------- |
+| Type-safe paths            | ✅            | ✅          | ❌        |
+| Type-safe responses        | ✅            | ✅          | ❌        |
+| Type-safe methods          | ✅            | N/A         | ❌        |
+| Zero runtime cost          | ✅ (2 KB)     | ❌ (~14 KB) | ✅        |
+| Zero config                | ✅            | ❌          | ✅        |
+| Works with existing routes | ✅            | ❌          | ✅        |
+| Dynamic params `[id]`      | ✅            | ✅          | N/A       |
+| Catch-all `[...slug]`      | ✅            | ✅          | N/A       |
+| Go-style error handling    | ✅            | ❌          | ❌        |
+| Dependencies               | 0             | 5+          | 0         |
 
 ## Setup
 
@@ -48,12 +48,12 @@ npx next-zero-rpc init
 
 This copies 4 files into `src/lib/next-zero-rpc/`:
 
-| File | Purpose | Ships to browser? |
-|---|---|---|
-| `apiClient.ts` | Type-safe fetch wrapper | ✅ (~2 KB) |
-| `apiRegistry.ts` | Auto-generated route types | ❌ (types only) |
-| `responses.ts` | Error/success helpers | ❌ (server only) |
-| `update-api-registry.mjs` | Code generator + plugin | ❌ (dev only) |
+| File                      | Purpose                    | Ships to browser? |
+| ------------------------- | -------------------------- | ----------------- |
+| `apiClient.ts`            | Type-safe fetch wrapper    | ✅ (~2 KB)        |
+| `apiRegistry.ts`          | Auto-generated route types | ❌ (types only)   |
+| `responses.ts`            | Error/success helpers      | ❌ (server only)  |
+| `update-api-registry.mjs` | Code generator + plugin    | ❌ (dev only)     |
 
 ### 2. Add the plugin to `next.config.ts`
 

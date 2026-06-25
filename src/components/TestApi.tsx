@@ -18,7 +18,7 @@ export default function TestApi() {
       });
 
       if (loginRes) {
-        addLog(`[POST /api/auth/login] Success:\n${JSON.stringify(loginRes.data, null, 2)}`);
+        addLog(`[POST /api/auth/login] Success:\n${JSON.stringify(loginRes, null, 2)}`);
       } else if (loginErr) {
         addLog(`[POST /api/auth/login] Error:\n${JSON.stringify(loginErr, null, 2)}`);
       }
@@ -29,7 +29,7 @@ export default function TestApi() {
       });
 
       if (userRes) {
-        addLog(`[GET /api/users/123] Success:\n${JSON.stringify(userRes.data, null, 2)}`);
+        addLog(`[GET /api/users/123] Success:\n${JSON.stringify(userRes, null, 2)}`);
       } else if (userErr) {
         addLog(`[GET /api/users/123] Error:\n${JSON.stringify(userErr, null, 2)}`);
       }
@@ -52,7 +52,7 @@ export default function TestApi() {
       });
 
       if (orderRes) {
-        addLog(`[POST /api/orders/checkout] Success:\n${JSON.stringify(orderRes.data, null, 2)}`);
+        addLog(`[POST /api/orders/checkout] Success:\n${JSON.stringify(orderRes, null, 2)}`);
       } else if (orderErr) {
         addLog(`[POST /api/orders/checkout] Error:\n${JSON.stringify(orderErr, null, 2)}`);
       }

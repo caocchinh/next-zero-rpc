@@ -10,11 +10,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (body.qrCode === "already-used") {
-      return createApiError("checkin:already-checked-in", 409);
+      return createApiError("validation:invalid-payload", 409);
     }
 
     if (body.qrCode === "invalid") {
-      return createApiError("checkin:not-verified", 403);
+      return createApiError("auth:forbidden", 403);
     }
 
     return createApiSuccess({

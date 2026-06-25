@@ -93,12 +93,7 @@ function init(flags) {
   // Create target directory
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const files = [
-    "apiClient.ts",
-    "apiRegistry.ts",
-    "responses.ts",
-    "update-api-registry.mjs",
-  ];
+  const files = ["apiClient.ts", "apiRegistry.ts", "responses.ts", "update-api-registry.mjs"];
 
   let skipped = 0;
   let written = 0;
@@ -131,18 +126,26 @@ function init(flags) {
   log("");
   log(`  ${CYAN}1.${RESET} Update your ${BOLD}next.config.ts${RESET}:`);
   log("");
-  log(`     ${DIM}import { withApiRegistry } from "./src/lib/next-zero-rpc/update-api-registry.mjs";${RESET}`);
+  log(
+    `     ${DIM}import { withApiRegistry } from "./src/lib/next-zero-rpc/update-api-registry.mjs";${RESET}`,
+  );
   log(`     ${DIM}export default withApiRegistry(nextConfig);${RESET}`);
   log("");
   log(`  ${CYAN}2.${RESET} Use ${BOLD}apiFetch${RESET} in your client components:`);
   log("");
   log(`     ${DIM}import { apiFetch } from "@/lib/next-zero-rpc/apiClient";${RESET}`);
   log("");
-  log(`     ${DIM}const [data, err] = await apiFetch("/api/users/123", { method: "GET" });${RESET}`);
+  log(
+    `     ${DIM}const [data, err] = await apiFetch("/api/users/123", { method: "GET" });${RESET}`,
+  );
   log("");
-  log(`  ${CYAN}3.${RESET} Use ${BOLD}createApiSuccess${RESET} / ${BOLD}createApiError${RESET} in your route handlers:`);
+  log(
+    `  ${CYAN}3.${RESET} Use ${BOLD}createApiSuccess${RESET} / ${BOLD}createApiError${RESET} in your route handlers:`,
+  );
   log("");
-  log(`     ${DIM}import { createApiSuccess, createApiError } from "@/lib/next-zero-rpc/responses";${RESET}`);
+  log(
+    `     ${DIM}import { createApiSuccess, createApiError } from "@/lib/next-zero-rpc/responses";${RESET}`,
+  );
   log("");
   log(`${DIM}The registry auto-updates when you create/delete route.ts files.${RESET}`);
   log("");
@@ -150,9 +153,7 @@ function init(flags) {
 
 function getVersion() {
   try {
-    const pkg = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf-8")
-    );
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf-8"));
     return pkg.version;
   } catch {
     return "0.0.0";

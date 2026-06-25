@@ -10,13 +10,13 @@ export async function POST(req: NextRequest) {
     }
 
     if (body.quantity > 5) {
-      return createApiError("order:max-tickets-reached", 400, {
+      return createApiError("validation:invalid-payload", 400, {
         quantity: ["You can only buy up to 5 tickets at once."],
       });
     }
 
     if (body.ticketId === "sold-out") {
-      return createApiError("order:tickets-sold-out", 409);
+      return createApiError("validation:invalid-payload", 409);
     }
 
     return createApiSuccess(

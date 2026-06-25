@@ -20,7 +20,7 @@ export function TestApiExtreme() {
         );
       } else if (res1) {
         addLog(
-          `[GET /api/extreme/.../catch/all/segments] Success:\n${JSON.stringify(res1.data, null, 2)}`,
+          `[GET /api/extreme/.../catch/all/segments] Success:\n${JSON.stringify(res1, null, 2)}`,
         );
       }
 
@@ -33,33 +33,33 @@ export function TestApiExtreme() {
       if (err2) {
         addLog(`[POST /api/extreme/complex-types] Error:\n${JSON.stringify(err2, null, 2)}`);
       } else if (res2) {
-        addLog(`[POST /api/extreme/complex-types] Success:\n${JSON.stringify(res2.data, null, 2)}`);
+        addLog(`[POST /api/extreme/complex-types] Success:\n${JSON.stringify(res2, null, 2)}`);
       }
 
       // 3. Methods check
       const [resGet, errGet] = await apiFetch("/api/extreme/methods", { method: "GET" });
       addLog(
-        `[GET /api/extreme/methods] ${resGet ? "Success:" : "Error:"}\n${JSON.stringify(resGet?.data || errGet, null, 2)}`,
+        `[GET /api/extreme/methods] ${resGet ? "Success:" : "Error:"}\n${JSON.stringify(resGet || errGet, null, 2)}`,
       );
 
       const [resPost, errPost] = await apiFetch("/api/extreme/methods", { method: "POST" });
       addLog(
-        `[POST /api/extreme/methods] ${resPost ? "Success:" : "Error:"}\n${JSON.stringify(resPost?.data || errPost, null, 2)}`,
+        `[POST /api/extreme/methods] ${resPost ? "Success:" : "Error:"}\n${JSON.stringify(resPost || errPost, null, 2)}`,
       );
 
       const [resPut, errPut] = await apiFetch("/api/extreme/methods", { method: "PUT" });
       addLog(
-        `[PUT /api/extreme/methods] ${resPut ? "Success:" : "Error:"}\n${JSON.stringify(resPut?.data || errPut, null, 2)}`,
+        `[PUT /api/extreme/methods] ${resPut ? "Success:" : "Error:"}\n${JSON.stringify(resPut || errPut, null, 2)}`,
       );
 
       const [resDelete, errDelete] = await apiFetch("/api/extreme/methods", { method: "DELETE" });
       addLog(
-        `[DELETE /api/extreme/methods] ${resDelete ? "Success:" : "Error:"}\n${JSON.stringify(resDelete?.data || errDelete, null, 2)}`,
+        `[DELETE /api/extreme/methods] ${resDelete ? "Success:" : "Error:"}\n${JSON.stringify(resDelete || errDelete, null, 2)}`,
       );
 
       const [resPatch, errPatch] = await apiFetch("/api/extreme/methods", { method: "PATCH" });
       addLog(
-        `[PATCH /api/extreme/methods] ${resPatch ? "Success:" : "Error:"}\n${JSON.stringify(resPatch?.data || errPatch, null, 2)}`,
+        `[PATCH /api/extreme/methods] ${resPatch ? "Success:" : "Error:"}\n${JSON.stringify(resPatch || errPatch, null, 2)}`,
       );
 
       // Since HEAD / OPTIONS return simple raw responses or No Content handling

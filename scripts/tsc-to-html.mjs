@@ -23,7 +23,7 @@ try {
 } catch (error) {
   // TSC returns non-zero exit code when there are errors
   const output = error.stdout || error.stderr || error.message;
-  
+
   // Try to parse error count from output
   let errorCount = 0;
   const match = output.match(/Found (\d+) error/);
@@ -33,7 +33,7 @@ try {
     // Fallback: count occurrences of "error TS"
     errorCount = (output.match(/error TS\d+:/g) || []).length;
   }
-  
+
   generateHTML(output, false, errorCount);
 }
 
@@ -239,15 +239,18 @@ function generateHTML(content, success, errorCount) {
         </h1>
         <p>Project type checking results</p>
       </div>
-      <div class="status-badge ${success ? 'status-success' : 'status-error'}">
-        ${success ? 
-          `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Passed` : 
-          `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> ${errorCount > 0 ? `${errorCount} Error${errorCount > 1 ? 's' : ''}` : 'Failed'}`
+      <div class="status-badge ${success ? "status-success" : "status-error"}">
+        ${
+          success
+            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Passed`
+            : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> ${errorCount > 0 ? `${errorCount} Error${errorCount > 1 ? "s" : ""}` : "Failed"}`
         }
       </div>
     </div>
     <div class="content">
-      ${success ? `
+      ${
+        success
+          ? `
         <div class="success-message">
           <div class="success-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -255,7 +258,8 @@ function generateHTML(content, success, errorCount) {
           <div class="success-text">No type errors found!</div>
           <p style="color: var(--text-muted); font-size: 0.875rem;">Your codebase is fully typed and ready to go.</p>
         </div>
-      ` : `
+      `
+          : `
         <div class="output-container">
           <div class="output-header">
             <div class="mac-btn mac-close"></div>
@@ -264,7 +268,8 @@ function generateHTML(content, success, errorCount) {
           </div>
           <div class="output">${htmlContent}</div>
         </div>
-      `}
+      `
+      }
     </div>
     <div class="timestamp">
       <span>Command: <code>tsc --noEmit</code></span>

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (body.email !== "admin@vinschool.edu.vn" || body.password !== "password") {
-      return createApiError("auth:invalid-student-credentials", 401);
+      return createApiError("auth:unauthorized", 401);
     }
 
     return createApiSuccess({

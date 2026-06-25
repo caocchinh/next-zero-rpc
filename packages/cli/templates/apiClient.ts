@@ -3,9 +3,8 @@ import { ApiErrorPayload, InferApiResponse, isApiErrorPayload } from "./response
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
 
-type ResolveRoute<Path extends string> = FindMatchingRoute<Path> extends keyof KnownRoutes
-  ? FindMatchingRoute<Path>
-  : never;
+type ResolveRoute<Path extends string> =
+  FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
 
 type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
 
