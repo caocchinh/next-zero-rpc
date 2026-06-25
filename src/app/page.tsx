@@ -53,7 +53,7 @@ export default function Home() {
             <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
               <iframe
                 loading="lazy"
-                src="https://stackblitz.com/github/caocchinh/next-zero-rpc/tree/main/examples/minimal?embed=1&file=src%2Fcomponents%2FTestApiExtreme.tsx&file=src%2Fapp%2Fapi%2Fextreme%2Fcomplex-types%2Froute.ts&file=src%2Fapp%2Fapi%2Fextreme%2Fmethods%2Froute.ts&file=src%2Fapp%2Fapi%2Fusers%2F%5BuserId%5D%2Froute.ts&hideNavigation=1&terminalHeight=1&showSidebar=0&view=editor&theme=dark"
+                src="https://stackblitz.com/github/caocchinh/next-zero-rpc/tree/main/examples/minimal?embed=1&file=src%2Fclient.ts&file=src%2Fapp%2Fapi%2Fextreme%2Fcomplex-types%2Froute.ts&hideNavigation=1&terminalHeight=1&showSidebar=0&view=editor&theme=dark"
                 className="h-[800px] max-h-[90vh] w-full border-0 bg-[#1e1e1e] opacity-100 transition-opacity duration-1000"
                 title="next-zero-rpc codebase"
                 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
