@@ -154,7 +154,6 @@ export function createApiError(
 
 /**
  * Create a consistent API success response.
- * Returns the payload directly — no `{ data }` wrapper.
  *
  * @example
  * return createApiSuccess({ users: [...] });
@@ -176,18 +175,6 @@ export function createApiSuccess<T>(
 
   return NextResponse.json(data, { status: statusCode });
 }
-
-// ─── Type Inference ─────────────────────────────────────────────────────────
-
-/**
- * Infer the success response type from an API route handler function.
- * Filters out ApiErrorPayload to only return the success payload.
- */
-export type InferApiResponse<T, E = never> = T extends (...args: never[]) => infer R
-  ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
-    ? Exclude<U, E>
-    : never
-  : never;
 
 /**
  * Type guard to check if an unknown payload is an ApiErrorPayload.

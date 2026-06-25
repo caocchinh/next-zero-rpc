@@ -1,7 +1,20 @@
+import { NextResponse } from "next/server";
 import type { CheckPath, FindMatchingRoute, KnownRoutes } from "./apiRegistry";
-import { ApiErrorPayload, InferApiResponse, isApiErrorPayload } from "./responses";
+import { ApiErrorPayload, isApiErrorPayload } from "./responses";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+
+// ─── Type Inference ─────────────────────────────────────────────────────────
+
+/**
+ * Infer the success response type from an API route handler function.
+ * Filters out ApiErrorPayload to only return the success payload.
+ */
+type InferApiResponse<T, E = never> = T extends (...args: never[]) => infer R
+  ? Extract<Awaited<R>, NextResponse<unknown>> extends NextResponse<infer U>
+    ? Exclude<U, E>
+    : never
+  : never;
 
 type ResolveRoute<Path extends string> =
   FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
