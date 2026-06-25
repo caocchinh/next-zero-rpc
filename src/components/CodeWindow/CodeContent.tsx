@@ -42,7 +42,7 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <HoverTooltip
             tooltip={`const err:
   ApiErrorPayload<"system:unknown-error"> |
-  ApiErrorPayload<"resource:not-found"> |
+  ApiErrorPayload<"system:database-error"> |
   null`}
           >
             <span className="text-[#9cdcfe]">err</span>
@@ -69,7 +69,7 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <br />
           {"    "}
           <span className="text-[#c586c0]">case</span>{" "}
-          <span className="text-[#ce9178]">&quot;resource:not-found&quot;</span>:
+          <span className="text-[#ce9178]">&quot;system:database-error&quot;</span>:
           <br />
           {"      "}
           <span className="text-[#4ec9b0]">console</span>.
@@ -117,12 +117,10 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <AutocompleteTooltip
             items={[
               "/api/auth/login",
-              "/api/checkin/verify",
-              "/api/extreme/[orgId]/projects/[projectId]/...",
+              "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]",
               "/api/extreme/complex-types",
               "/api/extreme/methods",
-              "/api/orders/checkout",
-              "/api/system/health",
+              "/api/status",
               "/api/users/[userId]",
             ]}
             selectedIndex={0}
@@ -168,7 +166,7 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <br />
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
-          <span className="text-[#ce9178]">&quot;/api/extreme/methods&quot;</span>, {"{"} method:{" "}
+          <span className="text-[#ce9178]">&quot;/api/status&quot;</span>, {"{"} method:{" "}
           <HoverTooltip tooltip={`Type '"POST"' is not assignable to type '"GET"'.`} isError>
             <span className="text-[#ce9178]">&quot;POST&quot;</span>
           </HoverTooltip>

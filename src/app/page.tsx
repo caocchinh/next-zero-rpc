@@ -1,6 +1,6 @@
+import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
 import { QuickStartCommand } from "@/components/QuickStartCommand";
-import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 
 export default function Home() {
   return (
@@ -51,7 +51,7 @@ export default function Home() {
               {"//"}
             </div>
 
-            <div className="relative z-10 w-full border-2 border-[#0a0a0a] bg-[#0a0a0a] shadow-[16px_16px_0_0_oklch(0.6_0.2_40)] transition-transform">
+            <div className="relative z-10 w-full rounded-xl bg-transparent shadow-[16px_16px_0_0_oklch(0.6_0.2_40)]">
               <CodeWindow />
             </div>
           </div>

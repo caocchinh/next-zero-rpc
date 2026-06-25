@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, PanelLeft, X } from "lucide-react";
 import { useState } from "react";
 import { CodeContent } from "./CodeContent";
 import { FILE_TREE, TAB_DATA } from "./data";
@@ -10,6 +10,7 @@ import { TabId } from "./types";
 export function CodeWindow() {
   const [activeTab, setActiveTab] = useState<TabId>("client.ts");
   const [openTabs, setOpenTabs] = useState<TabId[]>(["app/api/(core)/status/route.ts", "client.ts"]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleTabClick = (tabId: TabId) => {
     setActiveTab(tabId);
@@ -31,25 +32,36 @@ export function CodeWindow() {
     <div className="flex h-[870px] w-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-[#1e1e1e] font-sans shadow-2xl">
       {/* Title Bar */}
       <div className="flex flex-none items-center justify-between border-b border-zinc-800 bg-[#323233] px-4 py-2">
-        <div className="flex gap-2">
-          <div className="h-3 w-3 rounded-full bg-red-500/80"></div>
-          <div className="h-3 w-3 rounded-full bg-yellow-500/80"></div>
-          <div className="h-3 w-3 rounded-full bg-green-500/80"></div>
+        <div className="flex w-24 items-center gap-4">
+          <div className="flex gap-2">
+            <div className="h-3 w-3 rounded-full bg-red-500/80"></div>
+            <div className="h-3 w-3 rounded-full bg-yellow-500/80"></div>
+            <div className="h-3 w-3 rounded-full bg-green-500/80"></div>
+          </div>
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-zinc-400 transition-colors hover:text-white focus:outline-none"
+            title="Toggle Sidebar"
+          >
+            <PanelLeft className="h-4 w-4" />
+          </button>
         </div>
         <div className="text-xs text-zinc-400">next-zero-rpc - Code</div>
-        <div className="w-12"></div>
+        <div className="w-24"></div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="flex w-56 flex-col border-r border-zinc-800 bg-[#252526]">
-          <div className="px-4 py-2 text-xs font-semibold text-zinc-400">EXPLORER</div>
-          <div className="custom-scrollbar flex-1 overflow-x-hidden overflow-y-auto pt-1">
-            {FILE_TREE.map((node) => (
-              <TreeItem key={node.id} node={node} onSelect={handleTabClick} activeTab={activeTab} />
-            ))}
+        {isSidebarOpen && (
+          <div className="flex w-56 flex-col border-r border-zinc-800 bg-[#252526]">
+            <div className="px-4 py-2 text-xs font-semibold text-zinc-400">EXPLORER</div>
+            <div className="custom-scrollbar flex-1 overflow-x-hidden overflow-y-auto pt-1">
+              {FILE_TREE.map((node) => (
+                <TreeItem key={node.id} node={node} onSelect={handleTabClick} activeTab={activeTab} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Editor Area */}
         <div className="flex min-w-0 flex-1 flex-col bg-[#1e1e1e]">

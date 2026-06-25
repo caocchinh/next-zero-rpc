@@ -33,7 +33,7 @@ function CodeBlock({ filename, code }: { filename: string; code: string }) {
         <span className="font-mono text-xs text-zinc-400">{filename}</span>
         <CopyButton text={code} />
       </div>
-      <div className="relative max-h-[400px] overflow-x-auto overflow-y-auto bg-[#1e1e1e] p-4">
+      <div className="custom-scrollbar relative max-h-[400px] overflow-x-auto overflow-y-auto bg-[#1e1e1e] p-4">
         <pre className="font-mono text-[13px] leading-relaxed text-[#d4d4d4] selection:bg-[#264f78]">
           <code>{code}</code>
         </pre>
