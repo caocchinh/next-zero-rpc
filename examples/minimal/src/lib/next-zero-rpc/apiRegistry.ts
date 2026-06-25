@@ -20,13 +20,13 @@ export type KnownRoutes = {
   // /api/auth
   "/api/auth/login": typeof AuthLoginRoute;
 
-  // /api/status
-  "/api/status": typeof StatusRoute;
-
   // /api/extreme
   "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": typeof ExtremeOrgIdProjectsProjectIdTasksCatchallRoute;
   "/api/extreme/complex-types": typeof ExtremeComplexTypesRoute;
   "/api/extreme/methods": typeof ExtremeMethodsRoute;
+
+  // /api/status
+  "/api/status": typeof StatusRoute;
 
   // /api/users
   "/api/users/[userId]": typeof UsersUserIdRoute;
