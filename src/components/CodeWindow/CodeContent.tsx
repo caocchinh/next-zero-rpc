@@ -166,10 +166,12 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <br />
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
-          <span className="text-[#ce9178]">&quot;/api/status&quot;</span>, {"{"} method:{" "}
+          <span className="text-[#ce9178]">&quot;/api/status&quot;</span>, {"{"}{" "}
           <HoverTooltip tooltip={`Type '"POST"' is not assignable to type '"GET"'.`} isError>
-            <span className="text-[#ce9178]">&quot;POST&quot;</span>
+            <span>method</span>
           </HoverTooltip>
+          {": "}
+          <span className="text-[#ce9178]">&quot;POST&quot;</span>
           {" }"});
           <br />
           <br />
