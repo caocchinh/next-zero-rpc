@@ -388,7 +388,7 @@ Type-safe fetch wrapper that returns Go-style `[data, error]` tuples.
 - `Path` — validated against `KnownRoutes` at compile time
 - `Method` — restricted to only the HTTP methods exported by the matched route
 
-**Returns:** `Promise<[SuccessType, null] | [null, ErrorType | ApiFetchError]>`
+**Returns:** `Promise<[SuccessType, null] | [null, ErrorType | ApiErrorPayload<"system:unknown-error">]>`
 
 - **Success:** `[data, null]` where `data` is inferred from the route handler's `createApiSuccess` calls
 - **Error:** `[null, error]` where `error.code` is narrowed to only the error codes used in that route's `createApiError` calls, plus `"system:unknown-error"` as a fallback
