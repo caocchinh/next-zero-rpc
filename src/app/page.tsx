@@ -2,6 +2,7 @@ import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
 import { Logo } from "@/components/Logo";
 import { QuickStartCommand } from "@/components/QuickStartCommand";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -15,6 +16,12 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center gap-6">
+          <Link
+            href="/docs"
+            className="font-mono text-sm tracking-widest uppercase transition-colors hover:text-[oklch(0.6_0.2_40)]"
+          >
+            Docs
+          </Link>
           <a
             href="https://www.npmjs.com/package/next-zero-rpc"
             target="_blank"
