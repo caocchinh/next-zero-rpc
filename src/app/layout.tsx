@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "next-zero-rpc | Type-Safe Fetch for Next.js",
   description:
-    "Type-safe fetch for Next.js App Router API routes with zero runtime overhead, zero config, and precise error type narrowing. Four files. Full type safety. 1.8 KB runtime.",
+    "Type-safe fetch for Next.js App Router API routes with zero dependencies, zero lock-in, and precise error type narrowing. Four files. Full type safety. 1.8 KB runtime.",
   keywords: [
     "next.js",
     "rpc",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "next-zero-rpc | Type-Safe Fetch for Next.js",
     description:
-      "Compile-time type-safe fetch for Next.js App Router API routes. Zero runtime cost. Zero config.",
+      "Compile-time type-safe fetch for Next.js App Router API routes. Zero dependencies. Zero lock-in.",
     type: "website",
   },
   twitter: {

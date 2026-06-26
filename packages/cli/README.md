@@ -1,6 +1,6 @@
 # next-zero-rpc
 
-Type-safe fetch for Next.js — zero runtime, zero config, zero dependencies.
+Type-safe fetch for Next.js — zero dependencies, zero lock-in, 1.8KB runtime.
 
 [![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
 
@@ -59,7 +59,7 @@ if (err) {
 ##### 1. next-zero-rpc (The Minimalist Bridge)
 
 - **Best for:** Teams deeply invested in the Next.js App Router who want type safety without adopting a new framework paradigm.
-- **The draw:** You write standard \`export async function GET(req)\` handlers. The library just quietly infers what you wrote. If you ever decide to remove the library, your backend code doesn't have to change at all.
+- **The draw:** You write standard `export async function GET(req)` handlers using two simple response helpers. The library just quietly infers what you wrote. If you ever decide to remove the code generator, your backend routes still run perfectly as standard Next.js endpoints.
 - **The trade-off:** You give up the robust middleware pipelines, batched requests, and automatic OpenAPI generation that larger ecosystems provide.
 
 ## When to use this

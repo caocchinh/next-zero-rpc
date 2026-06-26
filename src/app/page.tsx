@@ -8,7 +8,7 @@ export default function Home() {
       {/* Top Nav/Border */}
       <header className="fixed top-0 z-50 flex w-full items-end justify-between border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.98_0.01_250)] px-6 py-5 md:px-12">
         <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-          next-zero-rpc // v0.1.8
+          next-zero-rpc // v0.1.9
         </div>
         <div className="flex items-center gap-6">
           <a

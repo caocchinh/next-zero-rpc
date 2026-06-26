@@ -2,7 +2,7 @@
   "name": "next-zero-rpc",
   "displayName": "next-zero-rpc",
   "description": "Ctrl+Click any apiFetch() route string to jump directly to its route.ts handler",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "publisher": "caocchinh",
   "icon": "icon.png",
   "license": "MIT",
