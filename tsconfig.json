@@ -31,5 +31,5 @@
     "**/*.mts",
     "examples/minimal/next.config.mjs"
   ],
-  "exclude": ["node_modules", "packages/cli/templates", "examples"]
+  "exclude": ["node_modules", "packages", "examples"]
 }

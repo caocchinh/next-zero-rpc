@@ -1,8 +1,7 @@
-export const APP_API_CORE_STATUS_ROUTE_TS_CODE = `import { NextResponse } from "next/server";
+export const APP_API_CORE_STATUS_ROUTE_TS_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
 
 export async function GET() {
-  return NextResponse.json({
-    success: true,
+  return createApiSuccess({
     message: "This route is inside a route group (core)!",
     data: "system operational",
   });
