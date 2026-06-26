@@ -946,6 +946,11 @@ export const LIB_NEXT_ZERO_RPC_PATH_INFERENCE_TEST_TS_CODE = `/**
  *   /api/users/[userId]                                           GET PUT DELETE
  *   /api/users/active                                             GET
  *
+ * Covered route patterns:
+ *   [param]       — single dynamic segment
+ *   [...catchall] — catch-all (1+ segments)
+ *   [[...slug]]   — optional catch-all (0+ segments)
+ *
  * Run: pnpm test (from repo root)
  */
 
@@ -1122,6 +1127,41 @@ describe("MatchSegments<P, K>", () => {
 
   it("returns false when path is empty but pattern is not", () => {
     assertType<Equals<MatchSegments<[], ["/api"]>, false>>(true);
+  });
+
+  // ── [[...slug]] optional catch-all ──────────────────────────────────────
+
+  it("[[...slug]] matches zero remaining segments (the 'optional' case)", () => {
+    // When a path ends before the optional segment, the pattern still matches.
+    assertType<Equals<MatchSegments<[], ["[[...slug]]"]>, true>>(true);
+  });
+
+  it("[[...slug]] matches a single remaining segment", () => {
+    assertType<Equals<MatchSegments<["intro"], ["[[...slug]]"]>, true>>(true);
+  });
+
+  it("[[...slug]] matches multiple remaining segments", () => {
+    assertType<
+      Equals<MatchSegments<["getting-started", "installation", "quickstart"], ["[[...slug]]"]>, true>
+    >(true);
+  });
+
+  it("[[...slug]] matches after a static prefix — with segments", () => {
+    assertType<
+      Equals<
+        MatchSegments<
+          ["", "api", "docs", "getting-started", "intro"],
+          ["", "api", "docs", "[[...slug]]"]
+        >,
+        true
+      >
+    >(true);
+  });
+
+  it("[[...slug]] matches after a static prefix — zero extra segments", () => {
+    assertType<
+      Equals<MatchSegments<["", "api", "docs"], ["", "api", "docs", "[[...slug]]"]>, true>
+    >(true);
   });
 });
 
