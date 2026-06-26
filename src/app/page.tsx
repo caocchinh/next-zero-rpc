@@ -12,7 +12,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <Logo className="h-8 w-auto text-[oklch(0.6_0.2_40)]" />
           <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-            next-zero-rpc // v0.1.14
+            next-zero-rpc // v0.1.15
           </div>
         </div>
         <div className="flex items-center gap-6">
