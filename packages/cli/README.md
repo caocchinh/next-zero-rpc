@@ -272,6 +272,10 @@ const [data, err] = await apiFetch("/api/extreme/org1/projects/proj1/tasks/a/b/c
   method: "POST",
 });
 
+// Optional catch-all segments: [[...slug]] (zero or more segments)
+const [data, err] = await apiFetch("/api/docs", { method: "GET" }); // zero segments
+const [data, err] = await apiFetch("/api/docs/getting-started/intro", { method: "GET" }); // multiple segments
+
 // Query strings are stripped before matching
 const [data, err] = await apiFetch("/api/users/123?include=profile", { method: "GET" });
 ```
@@ -459,7 +463,7 @@ Auto-generated file containing:
 2. **Path matching types** — Recursive template literal types that resolve runtime paths (with dynamic segments) to their registry entries:
    - `Split<S>` — Splits a path string into a tuple of segments
    - `MatchSegment<P, K>` — Matches a runtime segment against a route pattern segment (supports `[param]`)
-   - `MatchSegments<P, K>` — Recursively matches all segments (supports `[...catchall]`)
+   - `MatchSegments<P, K>` — Recursively matches all segments (supports `[...catchall]` and `[[...slug]]`)
    - `StripQuery<Path>` — Strips query string before matching
    - `FindMatchingRoute<Path>` — Resolves a runtime path to its `KnownRoutes` key (using an O(1) fast-path for static routes)
    - `CheckPath<Path>` — Validates a path at compile time, falling back to autocomplete hints on mismatch

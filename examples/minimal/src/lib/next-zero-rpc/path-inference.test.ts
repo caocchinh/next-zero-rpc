@@ -48,7 +48,7 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
   ? P extends []
     ? true
     : false
-  : K extends [`[...${string}]`]
+  : K extends [`[...${string}]`] | [`[[...${string}]]`]
     ? true
     : [P, K] extends [
           [infer PH extends string, ...infer PT extends string[]],

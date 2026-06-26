@@ -82,8 +82,6 @@ export const ERROR_CODES = [
   ...UPLOAD_ERRORS,
 ] as const;
 
-const ERROR_CODE_SET: ReadonlySet<string> = new Set(ERROR_CODES);
-
 // ─── HTTP Status Codes ──────────────────────────────────────────────────────
 
 export const HTTP_STATUS_SUCCESS = {
@@ -147,7 +145,10 @@ export function createApiError<C extends ErrorCode>(
       code,
       details: options?.details,
       message: options?.message,
-    },
+      // Inject a hidden marker so the client knows this error definitively came from our helper.
+      // This allows us to safely narrow errors without shipping all error strings to the client.
+      _z_: true,
+    } as unknown as ApiErrorPayload<C>,
     {
       status: statusCode,
     },
@@ -188,7 +189,7 @@ export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload<
 
   const p = payload as Record<string, unknown>;
 
-  return typeof p.code === "string" && ERROR_CODE_SET.has(p.code);
+  return p._z_ === true;
 }
 
 // ─── Server Action Helpers ──────────────────────────────────────────────────

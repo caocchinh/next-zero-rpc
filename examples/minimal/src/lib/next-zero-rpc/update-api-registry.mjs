@@ -133,7 +133,7 @@ ${typeLines.join("\n")}
     "  ? P extends []",
     "    ? true",
     "    : false",
-    "  : K extends [`[...${string}]`]",
+    "  : K extends [`[...${string}]`] | [`[[...${string}]]`]",
     "    ? true",
     "    : [P, K] extends [",
     "          [infer PH extends string, ...infer PT extends string[]],",
