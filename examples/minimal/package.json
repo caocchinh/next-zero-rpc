@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
+    "infer-api": "node src/lib/next-zero-rpc/update-api-registry.mjs",
+    "test": "vitest run"
   },
   "//": "Minimum supported versions — any version above these is compatible",
   "dependencies": {
@@ -19,6 +20,7 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "eslint": "^8",
-    "eslint-config-next": "14.2.35"
+    "eslint-config-next": "14.2.35",
+    "vitest": "^4.1.9"
   }
 }

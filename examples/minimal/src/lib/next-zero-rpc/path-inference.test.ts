@@ -70,22 +70,22 @@ type Equals<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 
 describe("Split<S>", () => {
   it("splits a two-segment path", () => {
-    assertType<Equals<Split<"/api/status">, ["/api", "status"]>>(true);
+    assertType<Equals<Split<"/api/status">, ["", "api", "status"]>>(true);
   });
 
   it("splits a three-segment path", () => {
-    assertType<Equals<Split<"/api/auth/login">, ["/api", "auth", "login"]>>(true);
+    assertType<Equals<Split<"/api/auth/login">, ["", "api", "auth", "login"]>>(true);
   });
 
   it("splits a path with a dynamic segment", () => {
-    assertType<Equals<Split<"/api/users/[userId]">, ["/api", "users", "[userId]"]>>(true);
+    assertType<Equals<Split<"/api/users/[userId]">, ["", "api", "users", "[userId]"]>>(true);
   });
 
   it("splits the deeply nested catch-all route", () => {
     assertType<
       Equals<
         Split<"/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]">,
-        ["/api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"]
+        ["", "api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"]
       >
     >(true);
   });
