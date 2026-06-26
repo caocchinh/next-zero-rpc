@@ -630,9 +630,9 @@ export function isApiErrorPayload(payload: unknown): payload is ApiErrorPayload<
 /**
  * Error object structure for server actions.
  */
-export interface ServiceError {
+export interface ServiceError<C extends ErrorCode = ErrorCode> {
   message: string;
-  code: ErrorCode;
+  code: C;
   details?: Record<string, string[]>;
 }
 
@@ -648,13 +648,13 @@ type ServiceResponse<S, E = ServiceError> = [S, null] | [null, E];
  * return createServiceError("validation:invalid-payload");
  * return createServiceError("validation:invalid-payload", { message: "Custom message" });
  */
-export function createServiceError(
-  code: ErrorCode,
+export function createServiceError<C extends ErrorCode>(
+  code: C,
   options?: {
     details?: Record<string, string[]>;
     message?: string;
   },
-): ServiceResponse<null, ServiceError> {
+): ServiceResponse<null, ServiceError<C>> {
   return [
     null,
     {

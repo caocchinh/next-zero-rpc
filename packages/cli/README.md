@@ -35,6 +35,12 @@ const [data, err] = await apiFetch("/api/typo", { method: "GET" }); // ← compi
 // ✅ TypeScript errors on invalid methods
 const [data, err] = await apiFetch("/api/users/123", { method: "DELETE" }); // ← error if DELETE not exported
 
+// ✅ Multi-variable template literals — all segments resolve independently, still fully type-safe
+const orgId = "org-1";
+const projectId = "proj-42";
+const taskId = "task-99";
+await apiFetch(`/api/orgs/${orgId}/projects/${projectId}/tasks/${taskId}`, { method: "PATCH" });
+
 // ✅ Error type narrowing — err.code autocompletes only the errors THIS route can return
 if (err) {
   const code = err.code;
@@ -164,6 +170,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ userI
   return createApiSuccess();
 }
 ```
+
+> [!IMPORTANT]
+> **Always `export` your HTTP method handlers** (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`). The registry generator checks for the presence of `export` in the file content — any route file without exports is skipped and **will not appear in `KnownRoutes`** or receive type safety.
 
 #### Client components — `apiFetch`
 
@@ -402,7 +411,7 @@ HTTP_STATUS_ERROR.GATEWAY_TIMEOUT; // 504
 | `SuccessHttpStatusCode` | `200 \| 201 \| 202 \| 204`                                                                                 |
 | `ErrorHttpStatusCode`   | `400 \| 401 \| 403 \| ... \| 504`                                                                          |
 | `ApiErrorPayload<C>`    | `{ code: C; details?: Record<string, string[]>; message?: string }` — generic over the specific error code |
-| `ServiceError`          | `{ code: ErrorCode; message: string; details?: ... }`                                                      |
+| `ServiceError<C>`       | `{ code: C; message: string; details?: ... }` — generic over the specific error code       |
 | `ServiceResponse<S, E>` | `[S, null] \| [null, E]` — Go-style tuple for server actions                                               |
 
 #### Functions
@@ -413,7 +422,7 @@ HTTP_STATUS_ERROR.GATEWAY_TIMEOUT; // 504
 | `createApiSuccess<T>`     | `(data: T, statusCode?) → NextResponse<T>`                           | Create a typed API success response   |
 | `createApiSuccess`        | `(undefined, NO_CONTENT) → NextResponse<undefined>`                  | Overload for 204 No Content           |
 | `isApiErrorPayload`       | `(payload: unknown) → payload is ApiErrorPayload<ErrorCode>`         | Runtime type guard for error payloads |
-| `createServiceError`      | `(code, options?) → [null, ServiceError]`                            | Go-style error for server actions     |
+| `createServiceError<C>`   | `(code: C, options?) → [null, ServiceError<C>]`                      | Go-style error for server actions     |
 | `createServiceSuccess<T>` | `(data?: T) → [T \| undefined, null]`                                | Go-style success for server actions   |
 | `assertNever`             | `(value: never) → never`                                             | Compile-time exhaustiveness guard     |
 
