@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "next-zero-rpc | Type-Safe Fetch for Next.js API Routes",
   description:
-    "Type-safe fetch for Next.js App Router API routes with zero dependencies, zero lock-in, and precise error type narrowing. Four files. Full type safety. 1.8 KB runtime.",
+    "Type-safe fetch for Next.js App Router API routes with zero dependencies, zero lock-in, and precise error type narrowing. Four files. Full type safety. 0.9 KB runtime.",
   keywords: [
     "next.js",
     "rpc",

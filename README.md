@@ -4,7 +4,7 @@
 
 <h1 align="center">next-zero-rpc</h1>
 
-<p align="center">Type-safe fetch for Next.js API routes — zero dependencies, zero lock-in, 1.8KB runtime.</p>
+<p align="center">Type-safe fetch for Next.js API routes — zero dependencies, zero lock-in, ~0.9KB runtime.</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/next-zero-rpc"><img src="https://img.shields.io/npm/v/next-zero-rpc.svg?style=flat-square" alt="npm version"></a>
@@ -19,7 +19,7 @@
 npx next-zero-rpc init
 ```
 
-**That's it.** Four files. Full type safety. 1.8 KB runtime.
+**That's it.** Four files. Full type safety. ~0.9 KB runtime.
 
 ## What it does
 
@@ -66,7 +66,7 @@ if (err) {
 | Next.js App Router Native   | ✅ (Zero changes to standard handlers) | ❌ (Requires tRPC adapters)       | ❌ (Requires ts-rest adapters)  | ✅                |
 | Input Validation            | Bring-your-own                         | Built-in (Zod heavily favored)    | Built-in (Zod favored)          | Bring-your-own    |
 | OpenAPI Generation          | ❌                                     | ❌ (Requires third-party plugins) | ✅ (First-class citizen)        | ❌                |
-| Client Runtime Size         | ~1.8 KB                                | ~15 KB                            | ~3-5 KB                         | 0 KB              |
+| Client Runtime Size         | ~0.9 KB                                | ~15 KB                            | ~3-5 KB                         | 0 KB              |
 | Server Actions Integration  | ✅ (Tuple-based Go-style returns)      | ✅ (Excellent RSC/Action support) | Partial (Focus remains on REST) | N/A               |
 | Non-TS Client Support       | ❌                                     | ❌                                | ✅ (Via standard REST/OpenAPI)  | ✅                |
 | Ecosystem & Community       | Niche / Lightweight                    | Massive / Enterprise-grade        | Very Strong / Standardized      | Ubiquitous        |
@@ -85,7 +85,7 @@ if (err) {
 
 - You're already writing plain Next.js App Router route handlers and want type-safe `fetch` calls _without restructuring your backend_ into tRPC procedures or ts-rest contracts
 - Per-route error code narrowing matters to you — this is genuinely not available in tRPC or ts-rest out of the box
-- You want a tiny client footprint (~1.8 KB) and zero ongoing npm dependencies
+- You want a tiny client footprint (~0.9 KB) and zero ongoing npm dependencies
 
 ## The Philosophy
 
@@ -108,14 +108,14 @@ npx next-zero-rpc init
 
 This copies 4 files into `lib/next-zero-rpc/` (or `src/lib/next-zero-rpc/` if your project uses the `src/` directory):
 
-| File                      | Purpose                             | Ships to browser?      |
-| ------------------------- | ----------------------------------- | ---------------------- |
-| `apiClient.ts`            | Type-safe fetch wrapper             | ✅ (0.6 KB minified)   |
-| `apiRegistry.ts`          | Auto-generated route type registry  | ❌ (types only)        |
-| `responses.ts`            | Error/success helpers + error codes | ✅ (1.2 KB minified)\* |
-| `update-api-registry.mjs` | Code generator + Next.js plugin     | ❌ (dev only)          |
+| File                      | Purpose                             | Client bundle         | Server bundle       |
+| ------------------------- | ----------------------------------- | --------------------- | ------------------- |
+| `apiClient.ts`            | Type-safe fetch wrapper             | ✅ (~0.7 KB minified) | ❌                  |
+| `apiRegistry.ts`          | Auto-generated route type registry  | ❌ (types only)       | ❌ (types only)     |
+| `responses.ts`            | Error/success helpers + error codes | ✅ (~0.2 KB minified) | ✅ (server helpers) |
+| `update-api-registry.mjs` | Code generator + Next.js plugin     | ❌                    | ❌ (dev only)       |
 
-_\* Only the `isApiErrorPayload` type guard and `ERROR_CODES` set are bundled to the client. The server helpers are dropped._
+_\* From `responses.ts`: Client gets `isApiErrorPayload` type guard (~50 bytes) and `assertNever` helper (~50 bytes). Server gets `createApiError`, `createApiSuccess`, `createServiceError`, `createServiceSuccess`, and HTTP status constants. `ERROR_CODES` are types only and erased at runtime, though some bundlers may include them until production tree-shaking removes them. Total client runtime: **~0.9 KB minified**._
 
 The CLI also:
 
@@ -497,7 +497,7 @@ Code generator and Next.js plugin:
 └─────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────────────────────────────────────────────┐
-│                         Runtime (1.8 KB)                          │
+│                         Runtime (~0.9 KB)                         │
 │                                                                   │
 │  apiFetch("/api/users/123", { method: "GET" })                    │
 │       │                                                           │

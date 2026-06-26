@@ -41,7 +41,7 @@ ${BOLD}Usage:${RESET}
 
 ${BOLD}What it does:${RESET}
   Copies 4 files into ${CYAN}lib/next-zero-rpc/${RESET} (or ${CYAN}src/lib/next-zero-rpc/${RESET} if src/ exists):
-    • apiClient.ts         — Type-safe fetch wrapper (1.8 KB runtime)
+    • apiClient.ts         — Type-safe fetch wrapper (0.9 KB runtime)
     • apiRegistry.ts       — Auto-generated route type registry
     • responses.ts         — Error/success response helpers
     • update-api-registry.mjs — Code generator + Next.js plugin
