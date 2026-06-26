@@ -452,7 +452,7 @@ Auto-generated file containing:
    - `MatchSegment<P, K>` — Matches a runtime segment against a route pattern segment (supports `[param]`)
    - `MatchSegments<P, K>` — Recursively matches all segments (supports `[...catchall]`)
    - `StripQuery<Path>` — Strips query string before matching
-   - `FindMatchingRoute<Path>` — Resolves a runtime path to its `KnownRoutes` key
+   - `FindMatchingRoute<Path>` — Resolves a runtime path to its `KnownRoutes` key (using an O(1) fast-path for static routes)
    - `CheckPath<Path>` — Validates a path at compile time, falling back to autocomplete hints on mismatch
 
 ### `update-api-registry.mjs`

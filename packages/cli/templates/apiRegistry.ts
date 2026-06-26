@@ -37,8 +37,8 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
 
 type StripQuery<Path extends string> = Path extends `${infer Base}?${string}` ? Base : Path;
 
-export type FindMatchingRoute<Path extends string> = Path extends keyof KnownRoutes
-  ? Path
+export type FindMatchingRoute<Path extends string> = StripQuery<Path> extends keyof KnownRoutes
+  ? StripQuery<Path>
   : {
       [K in keyof KnownRoutes & string]: MatchSegments<
         Split<StripQuery<Path>>,
