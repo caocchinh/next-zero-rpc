@@ -9,7 +9,7 @@
  */
 
 import { readFileSync, writeFileSync } from "fs";
-import { resolve, dirname } from "path";
+import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -33,15 +33,14 @@ const FILES = [
   {
     path: resolve(root, "src/app/page.tsx"),
     label: "src/app/page.tsx",
-    update: (content, next) =>
-      content.replace(/v\d+\.\d+\.\d+/, `v${next}`),
+    update: (content, next) => content.replace(/v\d+\.\d+\.\d+/, `v${next}`),
   },
   {
     path: resolve(root, "packages/cli/templates/responses.ts"),
     label: "packages/cli/templates/responses.ts",
     update: (content, next) =>
       content.replace(/next-zero-rpc — .+? v\d+\.\d+\.\d+/, (m) =>
-        m.replace(/v\d+\.\d+\.\d+/, `v${next}`)
+        m.replace(/v\d+\.\d+\.\d+/, `v${next}`),
       ),
   },
 ];
@@ -51,9 +50,12 @@ const FILES = [
 function bumpVersion(current, type) {
   const [major, minor, patch] = current.split(".").map(Number);
   switch (type) {
-    case "major": return `${major + 1}.0.0`;
-    case "minor": return `${major}.${minor + 1}.0`;
-    case "patch": return `${major}.${minor}.${patch + 1}`;
+    case "major":
+      return `${major + 1}.0.0`;
+    case "minor":
+      return `${major}.${minor + 1}.0`;
+    case "patch":
+      return `${major}.${minor}.${patch + 1}`;
     default:
       if (/^\d+\.\d+\.\d+$/.test(type)) return type;
       throw new Error(`Invalid bump type or version: "${type}". Use patch | minor | major | x.y.z`);

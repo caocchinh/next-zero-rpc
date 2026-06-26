@@ -1,14 +1,11 @@
-import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
+import * as vscode from "vscode";
+import { ApiFetchCodeActionProvider } from "./codeActions";
 import { detectProjectRoot, resolveRouteToFile } from "./routeResolver";
 import { getRouteAtPosition } from "./utils";
-import { ApiFetchCodeActionProvider } from "./codeActions";
 
-function resolveRoute(
-  document: vscode.TextDocument,
-  route: string,
-): vscode.Uri | undefined {
+function resolveRoute(document: vscode.TextDocument, route: string): vscode.Uri | undefined {
   const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
   for (const folder of workspaceFolders) {
     const resolved = resolveRouteToFile(route, folder.uri.fsPath);
@@ -39,10 +36,7 @@ class ApiFetchDefinitionProvider implements vscode.DefinitionProvider {
 }
 
 class ApiFetchHoverProvider implements vscode.HoverProvider {
-  provideHover(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-  ): vscode.Hover | undefined {
+  provideHover(document: vscode.TextDocument, position: vscode.Position): vscode.Hover | undefined {
     const hit = getRouteAtPosition(document, position);
     if (!hit) return undefined;
 
@@ -51,7 +45,10 @@ class ApiFetchHoverProvider implements vscode.HoverProvider {
 
     for (const folder of workspaceFolders) {
       const r = resolveRouteToFile(hit.route, folder.uri.fsPath);
-      if (r) { resolved = r; break; }
+      if (r) {
+        resolved = r;
+        break;
+      }
     }
 
     if (!resolved) {

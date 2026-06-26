@@ -1,8 +1,8 @@
-import * as vscode from "vscode";
-import * as path from "path";
 import * as fs from "fs";
-import { getRouteAtPosition } from "./utils";
+import * as path from "path";
+import * as vscode from "vscode";
 import { detectProjectRoot, resolveRouteToFile } from "./routeResolver";
+import { getRouteAtPosition } from "./utils";
 
 const ROUTE_TEMPLATE = `import { createApiSuccess, createApiError } from "@/lib/next-zero-rpc/responses";
 
@@ -65,13 +65,13 @@ export class ApiFetchCodeActionProvider implements vscode.CodeActionProvider {
     // Default to app/api
     const isSrc = fs.existsSync(path.join(projectRoot, "src", "app"));
     const baseAppDir = path.join(projectRoot, isSrc ? "src/app" : "app");
-    
+
     // Strip query strings and clean up the path
     const cleanRoute = hit.route.split("?")[0].replace(/^\/+/, ""); // e.g. "api/users/34"
-    
+
     // Check if it has obvious dynamic segments (like numbers) that should be [id]
     // A simple heuristic: if a segment is purely numeric, suggest a dynamic param
-    const segments = cleanRoute.split("/").map(seg => {
+    const segments = cleanRoute.split("/").map((seg) => {
       if (/^\d+$/.test(seg)) return "[id]";
       return seg;
     });
@@ -84,7 +84,7 @@ export class ApiFetchCodeActionProvider implements vscode.CodeActionProvider {
       title: "Create Route",
       arguments: [targetFile],
     };
-    
+
     // Make this the preferred action
     action.isPreferred = true;
 

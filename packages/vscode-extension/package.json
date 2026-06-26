@@ -48,8 +48,12 @@
       "properties": {
         "nextZeroRpc.apiFetchFunctionNames": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": ["apiFetch"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "apiFetch"
+          ],
           "description": "Function names to treat as apiFetch-style route callers. Add your own wrappers here."
         }
       }

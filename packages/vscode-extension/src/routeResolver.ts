@@ -52,10 +52,17 @@ function walkDir(
 
   // 3. Dynamic [param]
   const dynamicMatch = dirs.find(
-    (c) => c.name.startsWith("[") && !c.name.startsWith("[...") && !c.name.startsWith("[[...") && c.name.endsWith("]"),
+    (c) =>
+      c.name.startsWith("[") &&
+      !c.name.startsWith("[...") &&
+      !c.name.startsWith("[[...") &&
+      c.name.endsWith("]"),
   );
   if (dynamicMatch) {
-    const result = walkDir(path.join(dir, dynamicMatch.name), segments, depth + 1, [...routeKeyParts, dynamicMatch.name]);
+    const result = walkDir(path.join(dir, dynamicMatch.name), segments, depth + 1, [
+      ...routeKeyParts,
+      dynamicMatch.name,
+    ]);
     if (result) return result;
   }
 
@@ -65,7 +72,10 @@ function walkDir(
     for (const ext of ["route.ts", "route.js"]) {
       const candidate = path.join(dir, optionalCatchAll.name, ext);
       if (fs.existsSync(candidate)) {
-        return { filePath: candidate, routeKey: "/" + [...routeKeyParts, optionalCatchAll.name].join("/") };
+        return {
+          filePath: candidate,
+          routeKey: "/" + [...routeKeyParts, optionalCatchAll.name].join("/"),
+        };
       }
     }
   }
@@ -90,10 +100,7 @@ export function resolveRouteToFile(
 ): ResolvedRoute | undefined {
   const cleanPath = routeString.split("?")[0];
 
-  const appDirs = [
-    path.join(projectRoot, "src", "app"),
-    path.join(projectRoot, "app"),
-  ];
+  const appDirs = [path.join(projectRoot, "src", "app"), path.join(projectRoot, "app")];
 
   for (const appDir of appDirs) {
     if (!fs.existsSync(appDir)) continue;

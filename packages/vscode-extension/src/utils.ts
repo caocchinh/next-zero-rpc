@@ -21,10 +21,7 @@ export function getRouteAtPosition(
   const functionNames = getApiFetchNames();
 
   for (const fnName of functionNames) {
-    const pattern = new RegExp(
-      `${fnName}\\s*\\(\\s*(['"\`])(/[^'"\`]*)\\1`,
-      "g",
-    );
+    const pattern = new RegExp(`${fnName}\\s*\\(\\s*(['"\`])(/[^'"\`]*)\\1`, "g");
 
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(line)) !== null) {

@@ -49,7 +49,6 @@ ${BOLD}What it does:${RESET}
 ${DIM}Zero dependencies. Zero runtime overhead. Full type safety.${RESET}
 `;
 
-
 function detectProjectRoot() {
   const cwd = process.cwd();
 
