@@ -9,8 +9,10 @@ import {
   APP_API_USERS_USERID_ROUTE_TS_CODE,
   LIB_NEXT_ZERO_RPC_APICLIENT_TS_CODE,
   LIB_NEXT_ZERO_RPC_APIREGISTRY_TS_CODE,
+  LIB_NEXT_ZERO_RPC_PATH_INFERENCE_TEST_TS_CODE,
   LIB_NEXT_ZERO_RPC_RESPONSES_TS_CODE,
   LIB_NEXT_ZERO_RPC_UPDATE_API_REGISTRY_MJS_CODE,
+  VITEST_CONFIG_TS_CODE,
 } from "../CodeData";
 import { FileNode, TabId } from "./types";
 
@@ -223,6 +225,12 @@ export const FILE_TREE: FileNode[] = [
                     icon: <FileType className="h-3.5 w-3.5 text-blue-400" />,
                   },
                   {
+                    id: "lib/next-zero-rpc/path-inference.test.ts",
+                    name: "path-inference.test.ts",
+                    type: "file",
+                    icon: <FileType className="h-3.5 w-3.5 text-blue-400" />,
+                  },
+                  {
                     id: "lib/next-zero-rpc/update-api-registry.mjs",
                     name: "update-api-registry.mjs",
                     type: "file",
@@ -257,6 +265,12 @@ export const FILE_TREE: FileNode[] = [
         name: "tsconfig.json",
         type: "file",
         icon: <FileJson className="h-3.5 w-3.5 text-yellow-400" />,
+      },
+      {
+        id: "vitest.config.ts",
+        name: "vitest.config.ts",
+        type: "file",
+        icon: <FileType className="h-3.5 w-3.5 text-blue-400" />,
       },
     ],
   },
@@ -324,6 +338,12 @@ export const TAB_DATA: Record<
     code: LIB_NEXT_ZERO_RPC_APIREGISTRY_TS_CODE,
     language: "typescript",
   },
+  "lib/next-zero-rpc/path-inference.test.ts": {
+    name: "path-inference.test.ts",
+    icon: <FileType className="h-3.5 w-3.5 text-blue-400" />,
+    code: LIB_NEXT_ZERO_RPC_PATH_INFERENCE_TEST_TS_CODE,
+    language: "typescript",
+  },
   "lib/next-zero-rpc/responses.ts": {
     name: "responses.ts",
     icon: <FileType className="h-3.5 w-3.5 text-blue-400" />,
@@ -363,7 +383,8 @@ export default withApiRegistry(nextConfig);`,
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "infer": "node src/lib/next-zero-rpc/update-api-registry.mjs"
+    "infer-api": "node src/lib/next-zero-rpc/update-api-registry.mjs",
+    "test": "vitest run"
   },
   "//": "Minimum supported versions — any version above these is compatible",
   "dependencies": {
@@ -379,7 +400,8 @@ export default withApiRegistry(nextConfig);`,
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "eslint": "^8",
-    "eslint-config-next": "14.2.35"
+    "eslint-config-next": "14.2.35",
+    "vitest": "^4.1.9"
   }
 }`,
     language: "json",
@@ -410,5 +432,11 @@ export default withApiRegistry(nextConfig);`,
   "exclude": ["node_modules"]
 }`,
     language: "json",
+  },
+  "vitest.config.ts": {
+    name: "vitest.config.ts",
+    icon: <FileType className="h-3.5 w-3.5 text-blue-400" />,
+    code: VITEST_CONFIG_TS_CODE,
+    language: "typescript",
   },
 };
