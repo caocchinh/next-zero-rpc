@@ -67,51 +67,55 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Feature Highlights Grid */}
-        <section className="grid grid-cols-1 border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.95_0.01_250)] md:grid-cols-3">
-          <div className="border-b border-[oklch(0.85_0.01_250)] p-8 transition-colors hover:bg-[oklch(0.98_0.01_250)] md:border-r md:border-b-0 md:p-12 lg:p-16">
-            <div className="mb-8 font-mono text-6xl font-black tracking-tighter text-[oklch(0.6_0.2_40)] opacity-80 lg:text-8xl">
-              01
+        {/* Philosophy Section */}
+        <section className="border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.6_0.2_40)] p-8 text-[oklch(0.98_0.01_250)] md:p-12 lg:p-16 xl:p-20">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="mb-12 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter uppercase">
+              The Philosophy
+            </h2>
+            <div className="grid gap-12 md:grid-cols-2 lg:gap-16">
+              <div>
+                <h3 className="mb-4 font-mono text-xl font-bold tracking-widest text-[oklch(0.9_0.1_40)] uppercase">
+                  You Own The Code
+                </h3>
+                <p className="text-lg leading-relaxed opacity-90">
+                  next-zero-rpc is not a black-box framework—it&apos;s a paradigm. When you run
+                  init, we drop four files into your project. From that moment on, they are yours to
+                  modify, extend, or delete. Zero vendor lock-in.
+                </p>
+              </div>
+              <div>
+                <h3 className="mb-4 font-mono text-xl font-bold tracking-widest text-[oklch(0.9_0.1_40)] uppercase">
+                  Architectural Freedom
+                </h3>
+                <p className="text-lg leading-relaxed opacity-90">
+                  Because we don&apos;t take over your Next.js server, you are free to mix and match
+                  architectures. Need Server-Sent Events (SSE), WebSockets, or GraphQL alongside it?
+                  Go ahead. Study our generated files to verify this—there is no hidden framework
+                  magic.
+                </p>
+              </div>
+              <div>
+                <h3 className="mb-4 font-mono text-xl font-bold tracking-widest text-[oklch(0.9_0.1_40)] uppercase">
+                  Zero Boilerplate
+                </h3>
+                <p className="text-lg leading-relaxed opacity-90">
+                  You write standard Next.js API route handlers. No decorators, no schema
+                  registrations, no complex abstractions. The codegen reads what already exists and
+                  builds the type bridge automatically.
+                </p>
+              </div>
+              <div>
+                <h3 className="mb-4 font-mono text-xl font-bold tracking-widest text-[oklch(0.9_0.1_40)] uppercase">
+                  Validation Is Yours
+                </h3>
+                <p className="text-lg leading-relaxed opacity-90">
+                  Input validation stays inside your route handler where it belongs. This library
+                  doesn&apos;t impose a validation layer—that&apos;s a deliberate design choice to
+                  keep things non-invasive.
+                </p>
+              </div>
             </div>
-            <h3 className="mb-6 text-2xl leading-tight font-black tracking-tight uppercase lg:text-3xl">
-              Error Type
-              <br />
-              Narrowing
-            </h3>
-            <p className="text-lg leading-relaxed text-[oklch(0.4_0.01_250)]">
-              TypeScript narrows the error union to only the specific error codes your route handler
-              can return. Total precision.
-            </p>
-          </div>
-
-          <div className="border-b border-[oklch(0.85_0.01_250)] p-8 transition-colors hover:bg-[oklch(0.98_0.01_250)] md:border-r md:border-b-0 md:p-12 lg:p-16">
-            <div className="mb-8 font-mono text-6xl font-black tracking-tighter text-[oklch(0.6_0.2_40)] opacity-80 lg:text-8xl">
-              02
-            </div>
-            <h3 className="mb-6 text-2xl leading-tight font-black tracking-tight uppercase lg:text-3xl">
-              Zero
-              <br />
-              Boilerplate
-            </h3>
-            <p className="text-lg leading-relaxed text-[oklch(0.4_0.01_250)]">
-              Write standard Next.js API routes using simple response helpers. No decorators, no
-              schema registrations, no complex abstractions.
-            </p>
-          </div>
-
-          <div className="p-8 transition-colors hover:bg-[oklch(0.98_0.01_250)] md:p-12 lg:p-16">
-            <div className="mb-8 font-mono text-6xl font-black tracking-tighter text-[oklch(0.6_0.2_40)] opacity-80 lg:text-8xl">
-              03
-            </div>
-            <h3 className="mb-6 text-2xl leading-tight font-black tracking-tight uppercase lg:text-3xl">
-              You Own
-              <br />
-              The Code
-            </h3>
-            <p className="text-lg leading-relaxed text-[oklch(0.4_0.01_250)]">
-              Not a locked-in framework. It&apos;s a philosophy and a paradigm. We give you four
-              files, you own them completely. No vendor lock-in.
-            </p>
           </div>
         </section>
 

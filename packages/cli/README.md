@@ -70,7 +70,7 @@ if (err) {
 - Per-route error code narrowing matters to you — this is genuinely not available in tRPC or ts-rest out of the box
 - You want a tiny client footprint (~1.8 KB) and zero ongoing npm dependencies
 
-## Philosophy
+## The Philosophy
 
 **You own the code, not the library.** `next-zero-rpc` is not a locked-in framework—it's a philosophy, a paradigm, and a set of methods for doing things. When you run `init`, we give you four files. From that moment on, they are _yours_ to modify, extend, or delete.
 
@@ -79,6 +79,7 @@ if (err) {
 - **Not a framework** — It's a type bridge. It infers what your route handlers return and gives your client code full type safety over those responses.
 - **Validation is yours** — Input validation (Zod, Valibot, Arktype, manual checks) stays inside your route handler where it belongs. This library doesn't impose a validation layer — that's a deliberate design choice.
 - **Non-invasive** — Unlike tRPC or ts-rest, you don't adopt a new API definition pattern. Your routes are regular Next.js routes. The library is invisible.
+- **Architectural freedom** — Want to use Server-Sent Events (SSE), WebSockets, GraphQL, or custom streaming patterns alongside it? Go ahead. `next-zero-rpc` just drops four plain files (`apiClient.ts`, `apiRegistry.ts`, `responses.ts`, `update-api-registry.mjs`) into your project; it doesn't take over your Next.js server. Study the generated files yourself to verify this claim—there's no hidden magic.
 
 ## Setup
 
