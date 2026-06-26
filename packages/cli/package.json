@@ -1,6 +1,6 @@
 {
   "name": "next-zero-rpc",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Type-safe fetch for Next.js API routes — zero dependencies, zero lock-in, 1.8KB runtime.",
   "keywords": [
     "nextjs",

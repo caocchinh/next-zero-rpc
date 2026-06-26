@@ -10,6 +10,11 @@ const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
 const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
 
+function splitRoutePath(routePath) {
+  // Mirrors TypeScript Split<S>: "/api/foo" -> ["", "api", "foo"]
+  return routePath.split("/");
+}
+
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -103,6 +108,30 @@ export function updateApiRegistry() {
     typeLines.push(`  "${r.routePath}": typeof ${r.importName};`);
   }
 
+  const segmentLines = [];
+  let currentSegmentGroup = "";
+  for (let i = 0; i < typeRoutes.length; i++) {
+    const r = typeRoutes[i];
+    const group = r.routePath.split("/")[2] || "root";
+    if (group !== currentSegmentGroup) {
+      if (currentSegmentGroup !== "") segmentLines.push("");
+      segmentLines.push(`  // /api/${group}`);
+      currentSegmentGroup = group;
+    }
+    const segments = splitRoutePath(r.routePath);
+    segmentLines.push(`  "${r.routePath}": [${segments.map((s) => `"${s}"`).join(", ")}];`);
+  }
+
+  const knownRouteSegmentsBlock =
+    segmentLines.length === 0
+      ? `// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type KnownRouteSegments = {};`
+      : `// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+export type KnownRouteSegments = {
+${segmentLines.join("\n")}
+};`;
+
   const generatedBlock = `// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
 // Run your dev server or \`node ${BASE_DIR === "." ? "" : BASE_DIR + "/"}lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
@@ -113,6 +142,8 @@ export type KnownRoutes = {
   // Static Routes & Autocomplete Hints
 ${typeLines.join("\n")}
 };
+
+${knownRouteSegmentsBlock}
 // --- END GENERATED API REGISTRY ---`.replace(/\n\n+/g, "\n\n");
 
   const staticTypes = [
@@ -120,6 +151,12 @@ ${typeLines.join("\n")}
     "type Split<S extends string> = S extends `${infer Head}/${infer Tail}`",
     "  ? [Head, ...Split<Tail>]",
     "  : [S];",
+    "",
+    "type FindBySegments<PathSegments extends string[]> = {",
+    "  [K in keyof KnownRouteSegments]: MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
+    "    ? K",
+    "    : never;",
+    "}[keyof KnownRouteSegments];",
     "",
     "type MatchSegment<P extends string, K extends string> = K extends `[${string}]`",
     '  ? P extends ""',
@@ -155,11 +192,7 @@ ${typeLines.join("\n")}
     "export type FindMatchingRoute<Path extends string> =",
     "  StripQuery<Path> extends keyof KnownRoutes",
     "    ? StripQuery<Path>",
-    "    : {",
-    "        [K in keyof KnownRoutes]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true",
-    "          ? K",
-    "          : never;",
-    "      }[keyof KnownRoutes];",
+    "    : FindBySegments<Split<StripQuery<Path>>>;",
     "",
     'export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"',
     "  ? keyof KnownRoutes",
@@ -185,9 +218,9 @@ ${typeLines.join("\n")}
     const endIndex = registryContent.indexOf(endMarker, startIndex);
     if (endIndex !== -1) {
       newContent =
-        registryContent.slice(0, startIndex) +
+        (startIndex > 0 ? registryContent.slice(0, startIndex) : "") +
         generatedBlock +
-        registryContent.slice(endIndex + endMarker.length);
+        staticTypes;
     } else {
       console.warn(`[API Registry] End marker missing in apiRegistry.ts. Rebuilding file...`);
       newContent = generatedBlock + "\n" + staticTypes;

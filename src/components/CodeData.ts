@@ -369,6 +369,7 @@ import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
 
 // /api/users
 import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
+import type * as UsersActiveRoute from "@/app/api/users/active/route";
 
 export type KnownRoutes = {
   // Static Routes & Autocomplete Hints
@@ -385,12 +386,36 @@ export type KnownRoutes = {
 
   // /api/users
   "/api/users/[userId]": typeof UsersUserIdRoute;
+  "/api/users/active": typeof UsersActiveRoute;
+};
+
+// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+export type KnownRouteSegments = {
+  // /api/auth
+  "/api/auth/login": ["", "api", "auth", "login"];
+
+  // /api/extreme
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": ["", "api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"];
+  "/api/extreme/complex-types": ["", "api", "extreme", "complex-types"];
+  "/api/extreme/methods": ["", "api", "extreme", "methods"];
+
+  // /api/status
+  "/api/status": ["", "api", "status"];
+
+  // /api/users
+  "/api/users/[userId]": ["", "api", "users", "[userId]"];
+  "/api/users/active": ["", "api", "users", "active"];
 };
 // --- END GENERATED API REGISTRY ---
-
 type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`
   ? [Head, ...Split<Tail>]
   : [S];
+
+type FindBySegments<PathSegments extends string[]> = {
+  [K in keyof KnownRouteSegments]: MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
+    ? K
+    : never;
+}[keyof KnownRouteSegments];
 
 type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`
   ? P extends ""
@@ -426,18 +451,13 @@ type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\
 export type FindMatchingRoute<Path extends string> =
   StripQuery<Path> extends keyof KnownRoutes
     ? StripQuery<Path>
-    : {
-        [K in keyof KnownRoutes]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
-          ? K
-          : never;
-      }[keyof KnownRoutes];
+    : FindBySegments<Split<StripQuery<Path>>>;
 
 export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"
   ? keyof KnownRoutes
   : FindMatchingRoute<Path> extends never
     ? keyof KnownRoutes
-    : Path;
-`;
+    : Path;`;;
 
 export const LIB_NEXT_ZERO_RPC_RESPONSES_TS_CODE = `/**
  * next-zero-rpc — Response helpers for API routes and server actions.
@@ -714,7 +734,11 @@ function detectBaseDir() {
 const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
 const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
-const BRACKET_DOT_REGEX = /[\\[\\].()]/g;
+
+function splitRoutePath(routePath) {
+  // Mirrors TypeScript Split<S>: "/api/foo" -> ["", "api", "foo"]
+  return routePath.split("/");
+}
 
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
@@ -757,7 +781,7 @@ export function updateApiRegistry() {
     const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
-      const cleanPart = parts[j].replace(BRACKET_DOT_REGEX, "");
+      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_$\\u00C0-\\uFFFF]+/g, "-");
       const words = cleanPart.split("-");
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
@@ -767,6 +791,9 @@ export function updateApiRegistry() {
       }
     }
     importName += "Route";
+    if (/^\\d/.test(importName)) {
+      importName = "_" + importName;
+    }
 
     const importPath =
       posixRouteDir === "." ? "@/app/api/route" : \`@/app/api/\${posixRouteDir}/route\`;
@@ -806,6 +833,30 @@ export function updateApiRegistry() {
     typeLines.push(\`  "\${r.routePath}": typeof \${r.importName};\`);
   }
 
+  const segmentLines = [];
+  let currentSegmentGroup = "";
+  for (let i = 0; i < typeRoutes.length; i++) {
+    const r = typeRoutes[i];
+    const group = r.routePath.split("/")[2] || "root";
+    if (group !== currentSegmentGroup) {
+      if (currentSegmentGroup !== "") segmentLines.push("");
+      segmentLines.push(\`  // /api/\${group}\`);
+      currentSegmentGroup = group;
+    }
+    const segments = splitRoutePath(r.routePath);
+    segmentLines.push(\`  "\${r.routePath}": [\${segments.map((s) => \`"\${s}"\`).join(", ")}];\`);
+  }
+
+  const knownRouteSegmentsBlock =
+    segmentLines.length === 0
+      ? \`// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type KnownRouteSegments = {};\`
+      : \`// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+export type KnownRouteSegments = {
+\${segmentLines.join("\\n")}
+};\`;
+
   const generatedBlock = \`// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
 // Run your dev server or \\\`node \${BASE_DIR === "." ? "" : BASE_DIR + "/"}lib/next-zero-rpc/update-api-registry.mjs\\\` to regenerate.
@@ -816,6 +867,8 @@ export type KnownRoutes = {
   // Static Routes & Autocomplete Hints
 \${typeLines.join("\\n")}
 };
+
+\${knownRouteSegmentsBlock}
 // --- END GENERATED API REGISTRY ---\`.replace(/\\n\\n+/g, "\\n\\n");
 
   const staticTypes = [
@@ -823,6 +876,12 @@ export type KnownRoutes = {
     "type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`",
     "  ? [Head, ...Split<Tail>]",
     "  : [S];",
+    "",
+    "type FindBySegments<PathSegments extends string[]> = {",
+    "  [K in keyof KnownRouteSegments]: MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
+    "    ? K",
+    "    : never;",
+    "}[keyof KnownRouteSegments];",
     "",
     "type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`",
     '  ? P extends ""',
@@ -836,28 +895,31 @@ export type KnownRoutes = {
     "  ? P extends []",
     "    ? true",
     "    : false",
-    "  : K extends [\`[...\${string}]\`] | [\`[[...\${string}]]\`]",
-    "    ? true",
-    "    : [P, K] extends [",
-    "          [infer PH extends string, ...infer PT extends string[]],",
-    "          [infer KH extends string, ...infer KT extends string[]],",
-    "        ]",
-    "      ? MatchSegment<PH, KH> extends true",
-    "        ? MatchSegments<PT, KT>",
-    "        : false",
-    "      : false;",
+    "  : K extends [\`[[...\${string}]]\`]",
+    '    ? P extends [""]',
+    "      ? false",
+    "      : true",
+    "    : K extends [\`[...\${string}]\`]",
+    '      ? P extends [""] | []',
+    "        ? false",
+    "        : true",
+    "      : [P, K] extends [",
+    "            [infer PH extends string, ...infer PT extends string[]],",
+    "            [infer KH extends string, ...infer KT extends string[]],",
+    "          ]",
+    "        ? MatchSegment<PH, KH> extends true",
+    "          ? MatchSegments<PT, KT>",
+    "          : false",
+    "        : false;",
     "",
     "type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\` ? Base : Path;",
     "",
-    "export type FindMatchingRoute<Path extends string> = StripQuery<Path> extends keyof KnownRoutes",
-    "  ? StripQuery<Path>",
-    "  : {",
-    "      [K in keyof KnownRoutes & string]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true",
-    "        ? K",
-    "        : never;",
-    "    }[keyof KnownRoutes & string];",
+    "export type FindMatchingRoute<Path extends string> =",
+    "  StripQuery<Path> extends keyof KnownRoutes",
+    "    ? StripQuery<Path>",
+    "    : FindBySegments<Split<StripQuery<Path>>>;",
     "",
-    'export type CheckPath<Path extends string> = Path extends ""',
+    'export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"',
     "  ? keyof KnownRoutes",
     "  : FindMatchingRoute<Path> extends never",
     "    ? keyof KnownRoutes",
@@ -881,9 +943,9 @@ export type KnownRoutes = {
     const endIndex = registryContent.indexOf(endMarker, startIndex);
     if (endIndex !== -1) {
       newContent =
-        registryContent.slice(0, startIndex) +
+        (startIndex > 0 ? registryContent.slice(0, startIndex) : "") +
         generatedBlock +
-        registryContent.slice(endIndex + endMarker.length);
+        staticTypes;
     } else {
       console.warn(\`[API Registry] End marker missing in apiRegistry.ts. Rebuilding file...\`);
       newContent = generatedBlock + "\\n" + staticTypes;
@@ -930,7 +992,7 @@ export function withApiRegistry(nextConfig = {}) {
   }
   return nextConfig;
 }
-`;
+`;;
 
 export const LIB_NEXT_ZERO_RPC_PATH_INFERENCE_TEST_TS_CODE = `/**
  * Unit tests for next-zero-rpc path inference types.

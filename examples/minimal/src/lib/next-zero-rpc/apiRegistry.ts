@@ -33,11 +33,34 @@ export type KnownRoutes = {
   "/api/users/[userId]": typeof UsersUserIdRoute;
   "/api/users/active": typeof UsersActiveRoute;
 };
-// --- END GENERATED API REGISTRY ---
 
+// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+export type KnownRouteSegments = {
+  // /api/auth
+  "/api/auth/login": ["", "api", "auth", "login"];
+
+  // /api/extreme
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": ["", "api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"];
+  "/api/extreme/complex-types": ["", "api", "extreme", "complex-types"];
+  "/api/extreme/methods": ["", "api", "extreme", "methods"];
+
+  // /api/status
+  "/api/status": ["", "api", "status"];
+
+  // /api/users
+  "/api/users/[userId]": ["", "api", "users", "[userId]"];
+  "/api/users/active": ["", "api", "users", "active"];
+};
+// --- END GENERATED API REGISTRY ---
 type Split<S extends string> = S extends `${infer Head}/${infer Tail}`
   ? [Head, ...Split<Tail>]
   : [S];
+
+type FindBySegments<PathSegments extends string[]> = {
+  [K in keyof KnownRouteSegments]: MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
+    ? K
+    : never;
+}[keyof KnownRouteSegments];
 
 type MatchSegment<P extends string, K extends string> = K extends `[${string}]`
   ? P extends ""
@@ -73,11 +96,7 @@ type StripQuery<Path extends string> = Path extends `${infer Base}?${string}` ? 
 export type FindMatchingRoute<Path extends string> =
   StripQuery<Path> extends keyof KnownRoutes
     ? StripQuery<Path>
-    : {
-        [K in keyof KnownRoutes]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
-          ? K
-          : never;
-      }[keyof KnownRoutes];
+    : FindBySegments<Split<StripQuery<Path>>>;
 
 export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"
   ? keyof KnownRoutes

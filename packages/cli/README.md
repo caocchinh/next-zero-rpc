@@ -460,8 +460,10 @@ Type-safe fetch wrapper that returns Go-style `[data, error]` tuples.
 Auto-generated file containing:
 
 1. **`KnownRoutes`** — A type map from route path strings to their `typeof` module types
-2. **Path matching types** — Recursive template literal types that resolve runtime paths (with dynamic segments) to their registry entries:
-   - `Split<S>` — Splits a path string into a tuple of segments
+2. **`KnownRouteSegments`** — Pre-computed segment tuples for each route (codegen output; avoids per-route `Split<K>` work at type-check time)
+3. **Path matching types** — Template literal types that resolve runtime paths (with dynamic segments) to their registry entries:
+   - `Split<S>` — Splits the input path string into a tuple of segments (used once per lookup, not per route)
+   - `FindBySegments<PathSegments>` — Matches input segments against pre-computed `KnownRouteSegments` entries
    - `MatchSegment<P, K>` — Matches a runtime segment against a route pattern segment (supports `[param]`)
    - `MatchSegments<P, K>` — Recursively matches all segments (supports `[...catchall]` and `[[...slug]]`)
    - `StripQuery<Path>` — Strips query string before matching
@@ -472,7 +474,7 @@ Auto-generated file containing:
 
 Code generator and Next.js plugin:
 
-- **`updateApiRegistry()`** — Scans `app/api/` for `route.ts` files, generates type imports and the `KnownRoutes` map
+- **`updateApiRegistry()`** — Scans `app/api/` for `route.ts` files, generates type imports and the `KnownRoutes` / `KnownRouteSegments` maps
 - **`withApiRegistry(nextConfig)`** — Next.js plugin that runs the generator on startup and watches for changes in development mode
 - Automatically detects `src/` vs root directory layout
 - Groups imports and type entries by top-level API directory
@@ -489,7 +491,7 @@ Code generator and Next.js plugin:
 │                               │                                 │
 │                               ▼                                 │
 │                         apiRegistry.ts                          │
-│                         (KnownRoutes type map)                  │
+│              (KnownRoutes + KnownRouteSegments maps)            │
 │                               │                                 │
 │                               ▼                                 │
 │  apiClient.ts ◄──── TypeScript infers paths, methods,           │
