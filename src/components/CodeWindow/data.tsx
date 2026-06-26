@@ -367,15 +367,19 @@ export default withApiRegistry(nextConfig);`,
   },
   "//": "Minimum supported versions — any version above these is compatible",
   "dependencies": {
-    "next": "14.2.29",
-    "react": "18.0.0",
-    "react-dom": "18.0.0"
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.2.35"
   },
   "devDependencies": {
-    "@types/node": "18.0.0",
-    "@types/react": "18.0.0",
-    "@types/react-dom": "18.0.0",
-    "typescript": "4.9.3"
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35"
   }
 }`,
     language: "json",
