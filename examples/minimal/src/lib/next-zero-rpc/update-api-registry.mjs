@@ -51,7 +51,7 @@ export function updateApiRegistry() {
     const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
-      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_$\\u00C0-\\uFFFF]+/g, "-");
+      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_$\u00C0-\uFFFF]+/g, "-");
       const words = cleanPart.split("-");
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
