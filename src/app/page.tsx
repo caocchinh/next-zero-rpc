@@ -1,5 +1,5 @@
 import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
-import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
+import { InstallSteps } from "./docs/InstallSteps";
 import { Logo } from "@/components/Logo";
 import { QuickStartCommand } from "@/components/QuickStartCommand";
 import Link from "next/link";
@@ -126,23 +126,17 @@ export default function Home() {
         </section>
 
         {/* Installation */}
-        <section id="installation" className="grid grid-cols-1 xl:grid-cols-12">
-          <div className="flex flex-col justify-start border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:col-span-4 xl:border-r xl:border-b-0 xl:p-20">
-            <h2 className="mb-8 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter text-[oklch(0.6_0.2_40)] uppercase">
-              System
-              <br />
-              Install
-            </h2>
-            <p className="text-xl leading-relaxed text-[oklch(0.4_0.01_250)]">
-              Execute the deployment sequence. Use the CLI tool or inject manually into your Next.js
-              architecture.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-center p-4 md:p-12 lg:p-20 xl:col-span-8">
-            <div className="w-full max-w-6xl">
-              <InstallTabs />
+        <section id="installation" className="border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-12">
+            <div className="border-b border-[oklch(0.85_0.01_250)] pb-6">
+              <h2 className="text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter text-[oklch(0.6_0.2_40)] uppercase">
+                Installation
+              </h2>
+              <p className="mt-4 text-xl text-[oklch(0.4_0.01_250)]">
+                Deploy the type-safe bridge into your architecture.
+              </p>
             </div>
+            <InstallSteps />
           </div>
         </section>
       </main>

@@ -10,6 +10,7 @@ export function PlainEditor({
 }) {
   return (
     <SyntaxHighlighter
+      className="custom-scrollbar"
       language={language}
       style={vscDarkPlus}
       customStyle={{

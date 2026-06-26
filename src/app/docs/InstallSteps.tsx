@@ -1,10 +1,12 @@
 "use client";
 import { PlainEditor } from "@/components/CodeWindow/PlainEditor";
-import { Code2, Terminal } from "lucide-react";
+import { Code2, Terminal, Copy, Check } from "lucide-react";
 import { useState } from "react";
+import { showToast } from "@/components/Toast";
 
 export function InstallSteps() {
   const [tab, setTab] = useState<"cli" | "manual">("cli");
+  const [copiedCli, setCopiedCli] = useState(false);
 
   return (
     <div className="flex flex-col gap-12">
@@ -49,8 +51,21 @@ export function InstallSteps() {
           {/* CLI Tab */}
           {tab === "cli" && (
             <div className="flex flex-col gap-3">
-              <div className="overflow-hidden rounded-lg border border-zinc-800 bg-[#1e1e1e] shadow-xl">
-                <PlainEditor code="$ npx next-zero-rpc init" language="bash" />
+              <div
+                onClick={() => {
+                  navigator.clipboard.writeText("npx next-zero-rpc init");
+                  setCopiedCli(true);
+                  showToast("Command copied to clipboard!");
+                  setTimeout(() => setCopiedCli(false), 2000);
+                }}
+                className="group relative cursor-pointer overflow-hidden rounded-lg border border-zinc-800 bg-[#1e1e1e] shadow-xl transition-all hover:border-zinc-500"
+              >
+                <div className="pointer-events-none">
+                  <PlainEditor code="$ npx next-zero-rpc init" language="bash" />
+                </div>
+                <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center rounded bg-zinc-800/80 p-1.5 text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100 backdrop-blur-sm">
+                  {copiedCli ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </div>
               </div>
               <p className="text-sm text-[oklch(0.4_0.01_250)]">
                 Creates{" "}

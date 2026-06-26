@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-[oklch(0.98_0.01_250)] font-sans text-[oklch(0.15_0.01_250)] selection:bg-[oklch(0.6_0.2_40)] selection:text-[oklch(0.98_0.01_250)]">
+    <div className="custom-scrollbar h-screen overflow-y-auto bg-[oklch(0.98_0.01_250)] font-sans text-[oklch(0.15_0.01_250)] selection:bg-[oklch(0.6_0.2_40)] selection:text-[oklch(0.98_0.01_250)]">
       {/* Header */}
       <header className="sticky top-0 z-50 flex w-full items-center justify-between border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.98_0.01_250)] px-6 py-5 md:px-12">
         <div className="flex items-center gap-3">
