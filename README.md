@@ -1,6 +1,10 @@
-# next-zero-rpc
+<p align="center">
+  <img src="./logo.svg" width="60" alt="next-zero-rpc logo" />
+</p>
 
-Type-safe fetch for Next.js — zero dependencies, zero lock-in, 1.8KB runtime.
+<h1 align="center">next-zero-rpc</h1>
+
+<p align="center">Type-safe fetch for Next.js — zero dependencies, zero lock-in, 1.8KB runtime.</p>
 
 [![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
 

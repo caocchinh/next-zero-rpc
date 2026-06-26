@@ -1,14 +1,18 @@
 import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
 import { InstallTabs } from "@/components/InstallTabs/InstallTabs";
+import { Logo } from "@/components/Logo";
 import { QuickStartCommand } from "@/components/QuickStartCommand";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[oklch(0.98_0.01_250)] font-sans text-[oklch(0.15_0.01_250)] selection:bg-[oklch(0.6_0.2_40)] selection:text-[oklch(0.98_0.01_250)]">
       {/* Top Nav/Border */}
-      <header className="fixed top-0 z-50 flex w-full items-end justify-between border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.98_0.01_250)] px-6 py-5 md:px-12">
-        <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-          next-zero-rpc // v0.1.9
+      <header className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-[oklch(0.85_0.01_250)] bg-[oklch(0.98_0.01_250)] px-6 py-5 md:px-12">
+        <div className="flex items-center gap-3">
+          <Logo className="h-8 w-auto text-[oklch(0.6_0.2_40)]" />
+          <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
+            next-zero-rpc // v0.1.9
+          </div>
         </div>
         <div className="flex items-center gap-6">
           <a
@@ -30,15 +34,10 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col">
+      <main className="mx-auto mt-5 flex w-full max-w-[1800px] flex-1 flex-col">
         {/* Simulator & Code Section */}
         <section className="flex flex-col border-b border-[oklch(0.85_0.01_250)]">
           <div className="flex flex-col border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
-            <div className="mb-8 inline-block">
-              <span className="border border-[oklch(0.6_0.2_40)] px-3 py-1 font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-                Simulation
-              </span>
-            </div>
             <h2 className="mb-8 text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter uppercase">
               Witness The Magic
             </h2>
