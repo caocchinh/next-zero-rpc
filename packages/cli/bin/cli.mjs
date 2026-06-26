@@ -32,7 +32,7 @@ function error(msg) {
 }
 
 const HELP_TEXT = `
-${BOLD}next-zero-rpc${RESET} — Type-safe fetch for Next.js
+${BOLD}next-zero-rpc${RESET} — Type-safe fetch for Next.js API routes
 
 ${BOLD}Usage:${RESET}
   npx next-zero-rpc               Install files into your Next.js project
