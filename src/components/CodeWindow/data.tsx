@@ -243,6 +243,12 @@ export const FILE_TREE: FileNode[] = [
         ],
       },
       {
+        id: ".eslintrc.json",
+        name: ".eslintrc.json",
+        type: "file",
+        icon: <FileJson className="h-3.5 w-3.5 text-yellow-400" />,
+      },
+      {
         id: "next-env.d.ts",
         name: "next-env.d.ts",
         type: "file",
@@ -355,6 +361,14 @@ export const TAB_DATA: Record<
     icon: <FileJson className="h-3.5 w-3.5 text-yellow-400" />,
     code: LIB_NEXT_ZERO_RPC_UPDATE_API_REGISTRY_MJS_CODE,
     language: "javascript",
+  },
+  ".eslintrc.json": {
+    name: ".eslintrc.json",
+    icon: <FileJson className="h-3.5 w-3.5 text-yellow-400" />,
+    code: `{
+  "extends": "next/core-web-vitals"
+}`,
+    language: "json",
   },
   "next-env.d.ts": {
     name: "next-env.d.ts",
