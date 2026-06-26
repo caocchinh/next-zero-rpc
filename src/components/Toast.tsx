@@ -8,8 +8,8 @@ export function Toast() {
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-    const handler = (e: any) => {
-      setMessage(e.detail);
+    const handler = (e: Event) => {
+      setMessage((e as CustomEvent<string>).detail);
       clearTimeout(timeout);
       timeout = setTimeout(() => setMessage(""), 3000);
     };

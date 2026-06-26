@@ -9,7 +9,6 @@ function detectBaseDir() {
 const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
 const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
-const BRACKET_DOT_REGEX = /[\[\].()]/g;
 
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
@@ -52,7 +51,7 @@ export function updateApiRegistry() {
     const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
-      const cleanPart = parts[j].replace(BRACKET_DOT_REGEX, "");
+      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_$\\u00C0-\\uFFFF]+/g, "-");
       const words = cleanPart.split("-");
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
@@ -62,6 +61,9 @@ export function updateApiRegistry() {
       }
     }
     importName += "Route";
+    if (/^\d/.test(importName)) {
+      importName = "_" + importName;
+    }
 
     const importPath =
       posixRouteDir === "." ? "@/app/api/route" : `@/app/api/${posixRouteDir}/route`;
