@@ -6,7 +6,7 @@
 
 <p align="center">Type-safe fetch for Next.js API routes — zero dependencies, zero lock-in, 1.8KB runtime.</p>
 
-[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
+<a href="https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal" target="_blank"><img src="https://codesandbox.io/static/img/play-codesandbox.svg" alt="Open in CodeSandbox"></a>
 
 ```bash
 npx next-zero-rpc init
@@ -544,7 +544,7 @@ Since you own all the source files, you can customize anything:
 
 ### Try it online
 
-[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
+<a href="https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal" target="_blank"><img src="https://codesandbox.io/static/img/play-codesandbox.svg" alt="Open in CodeSandbox"></a>
 
 Opens [`examples/minimal`](./examples/minimal) — a self-contained Next.js app with a working `apiFetch` client and two example API routes.
 

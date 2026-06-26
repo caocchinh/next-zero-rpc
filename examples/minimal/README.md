@@ -14,7 +14,7 @@ npm run dev
 
 Or open it instantly in the browser:
 
-[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal)
+<a href="https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal" target="_blank"><img src="https://codesandbox.io/static/img/play-codesandbox.svg" alt="Open in CodeSandbox"></a>
 
 ---
 
