@@ -6,7 +6,14 @@
 
 <p align="center">Type-safe fetch for Next.js API routes — zero dependencies, zero lock-in, 1.8KB runtime.</p>
 
-<a href="https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal" target="_blank"><img src="https://codesandbox.io/static/img/play-codesandbox.svg" alt="Open in CodeSandbox"></a>
+<p align="center">
+  <a href="https://www.npmjs.com/package/next-zero-rpc"><img src="https://img.shields.io/npm/v/next-zero-rpc.svg?style=flat-square" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/next-zero-rpc"><img src="https://img.shields.io/npm/dm/next-zero-rpc.svg?style=flat-square" alt="npm downloads"></a>
+</p>
+
+<p align="center">
+  <a href="https://codesandbox.io/p/sandbox/github/caocchinh/next-zero-rpc/tree/main/examples/minimal" target="_blank"><img src="https://codesandbox.io/static/img/play-codesandbox.svg" alt="Open in CodeSandbox"></a>
+</p>
 
 ```bash
 npx next-zero-rpc init
