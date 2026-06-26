@@ -32,9 +32,10 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#ce9178]">&quot;@/lib/next-zero-rpc/responses&quot;</span>;
           <br />
           <br />
-
           {/* ── 1. Happy Path ── */}
-          <span className="text-[#6a9955]">{"// 1. Happy Path — response is fully typed from your route handler"}</span>
+          <span className="text-[#6a9955]">
+            {"// 1. Happy Path — response is fully typed from your route handler"}
+          </span>
           <br />
           <span className="text-[#569cd6]">const</span> [{" "}
           <HoverTooltip tooltip="{ id: string; name: string; role: string } | null">
@@ -63,7 +64,9 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#c586c0]">else</span> {"{"}
           <br />
           {"  "}
-          <span className="text-[#6a9955]">{"// data.name, data.id, data.role — inferred directly from the route!"}</span>
+          <span className="text-[#6a9955]">
+            {"// data.name, data.id, data.role — inferred directly from the route!"}
+          </span>
           <br />
           {"  "}
           <span className="text-[#4ec9b0]">console</span>.
@@ -74,13 +77,16 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           {"}"}
           <br />
           <br />
-
           {/* ── 2. Exhaustive Error Narrowing ── */}
           <span className="text-[#6a9955]">{"// 2. Exhaustive Error Narrowing"}</span>
           <br />
-          <span className="text-[#6a9955]">{"// TypeScript narrows err.code to exactly the codes this route can return."}</span>
+          <span className="text-[#6a9955]">
+            {"// TypeScript narrows err.code to exactly the codes this route can return."}
+          </span>
           <br />
-          <span className="text-[#6a9955]">{"// assertNever() is a compile-time guard — remove any case and TS errors."}</span>
+          <span className="text-[#6a9955]">
+            {"// assertNever() is a compile-time guard — remove any case and TS errors."}
+          </span>
           <br />
           <span className="text-[#569cd6]">const</span> [{" "}
           <HoverTooltip tooltip="{ id: string; name: string; role: string } | null">
@@ -142,7 +148,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           {"}"}
           <br />
           <br />
-
           {/* ── 3. Invalid Route ── */}
           <span className="text-[#6a9955]">
             {"// 3. TypeScript Catches Typos — compile error on an invalid route path"}
@@ -159,7 +164,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           , {"{"} method: <span className="text-[#ce9178]">&quot;DELETE&quot;</span> {"}"});
           <br />
           <br />
-
           {/* ── 4. Invalid Method ── */}
           <span className="text-[#6a9955]">
             {"// 4. TypeScript Catches Wrong Methods — POST is not exported from /api/status"}
@@ -176,11 +180,12 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           {" }"});
           <br />
           <br />
-
           {/* ── 5a. IntelliSense: Available Routes ── */}
           <span className="text-[#6a9955]">{"// 5a. IDE IntelliSense: Available Routes"}</span>
           <br />
-          <span className="text-[#6a9955]">{"// Place cursor inside the string — your IDE lists every registered route."}</span>
+          <span className="text-[#6a9955]">
+            {"// Place cursor inside the string — your IDE lists every registered route."}
+          </span>
           <br />
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
@@ -203,11 +208,12 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           );
           <br />
           <br />
-
           {/* ── 5b. IntelliSense: Allowed Methods ── */}
           <span className="text-[#6a9955]">{"// 5b. IDE IntelliSense: Allowed Methods"}</span>
           <br />
-          <span className="text-[#6a9955]">{"// Place cursor inside method — your IDE narrows to only what this route exports."}</span>
+          <span className="text-[#6a9955]">
+            {"// Place cursor inside method — your IDE narrows to only what this route exports."}
+          </span>
           <br />
           <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
@@ -220,7 +226,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           {" }"});
           <br />
           <br />
-
           {/* ── 6. Static vs Dynamic Route Precedence ── */}
           <span className="text-[#6a9955]">{"// 6. Static vs Dynamic Route Precedence"}</span>
           <br />
@@ -266,7 +271,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
           <br />
           <br />
-
           {/* ── 7. Multi-Variable Template Literals ── */}
           <span className="text-[#6a9955]">{"// 7. Multi-Variable Template Literals"}</span>
           <br />
@@ -321,7 +325,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           );
           <br />
           <br />
-
           {/* ── 8. Deeply Nested Catch-All Routes ── */}
           <span className="text-[#6a9955]">{"// 8. Deeply Nested Catch-All Routes"}</span>
           <br />
@@ -349,16 +352,13 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           );
           <br />
           <br />
-
           {/* ── 9. Strict Method Matching ── */}
           <span className="text-[#6a9955]">
             {"// 9. Strict Method Matching — each method has its own unique response type"}
           </span>
           <br />
           <span className="text-[#569cd6]">const</span> [{" "}
-          <HoverTooltip
-            tooltip={`const resGet: {\n  method: "GET";\n  data: number[];\n} | null`}
-          >
+          <HoverTooltip tooltip={`const resGet: {\n  method: "GET";\n  data: number[];\n} | null`}>
             <span className="text-[#9cdcfe]">resGet</span>
           </HoverTooltip>
           ,{" "}
@@ -371,7 +371,6 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
           <br />
           <br />
-
           {/* ── 10. Extreme Recursive Type Inference ── */}
           <span className="text-[#6a9955]">{"// 10. Extreme Recursive Type Inference"}</span>
           <br />
@@ -397,9 +396,10 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           method: <span className="text-[#ce9178]">&quot;POST&quot;</span> {"}"});
           <br />
           <br />
-
           {/* ── 11. Query Strings ── */}
-          <span className="text-[#6a9955]">{"// 11. Query Strings — safely stripped before validating the route path"}</span>
+          <span className="text-[#6a9955]">
+            {"// 11. Query Strings — safely stripped before validating the route path"}
+          </span>
           <br />
           <span className="text-[#569cd6]">const</span> [{" "}
           <HoverTooltip
@@ -415,8 +415,8 @@ export function CodeContent({ activeTab }: { activeTab: TabId }) {
           </HoverTooltip>{" "}
           ] = <span className="text-[#c586c0]">await</span>{" "}
           <span className="text-[#dcdcaa]">apiFetch</span>(
-          <span className="text-[#ce9178]">&quot;/api/users/123?include=profile&quot;</span>, {"{"} method:{" "}
-          <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
+          <span className="text-[#ce9178]">&quot;/api/users/123?include=profile&quot;</span>, {"{"}{" "}
+          method: <span className="text-[#ce9178]">&quot;GET&quot;</span> {"}"});
         </pre>
       </div>
     );

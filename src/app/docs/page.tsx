@@ -197,7 +197,7 @@ if (err) {
                 Server Actions & Services
               </h3>
               <p className="leading-relaxed text-[oklch(0.4_0.01_250)]">
-                For backend functions that aren't API Routes (like Server Actions), use the{" "}
+                For backend functions that aren&apos;t API Routes (like Server Actions), use the{" "}
                 <code className="rounded bg-[oklch(0.95_0.01_250)] px-1 text-[oklch(0.6_0.2_40)]">
                   createServiceSuccess
                 </code>{" "}

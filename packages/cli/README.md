@@ -411,7 +411,7 @@ HTTP_STATUS_ERROR.GATEWAY_TIMEOUT; // 504
 | `SuccessHttpStatusCode` | `200 \| 201 \| 202 \| 204`                                                                                 |
 | `ErrorHttpStatusCode`   | `400 \| 401 \| 403 \| ... \| 504`                                                                          |
 | `ApiErrorPayload<C>`    | `{ code: C; details?: Record<string, string[]>; message?: string }` — generic over the specific error code |
-| `ServiceError<C>`       | `{ code: C; message: string; details?: ... }` — generic over the specific error code       |
+| `ServiceError<C>`       | `{ code: C; message: string; details?: ... }` — generic over the specific error code                       |
 | `ServiceResponse<S, E>` | `[S, null] \| [null, E]` — Go-style tuple for server actions                                               |
 
 #### Functions
