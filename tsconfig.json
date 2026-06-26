@@ -16,9 +16,6 @@
     "plugins": [
       {
         "name": "next"
-      },
-      {
-        "name": "./packages/ts-plugin/dist/index.js"
       }
     ],
     "paths": {
@@ -34,5 +31,5 @@
     "**/*.mts",
     "examples/minimal/next.config.mjs"
   ],
-  "exclude": ["node_modules", "packages/cli/templates", "packages/ts-plugin", "examples"]
+  "exclude": ["node_modules", "packages/cli/templates", "examples"]
 }

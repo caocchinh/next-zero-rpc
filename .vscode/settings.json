@@ -1,8 +1,0 @@
-{
-  // Tell VS Code to use the project's own TypeScript instead of the built-in one.
-  // This is REQUIRED for language service plugins (like next-zero-rpc-ts-plugin) to load.
-  "typescript.tsdk": "node_modules/typescript/lib",
-
-  // Enable the workspace TypeScript version automatically (no prompt)
-  "typescript.enablePromptUseWorkspaceTsdk": true
-}

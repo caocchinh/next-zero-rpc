@@ -1,8 +1,12 @@
 # Build output
 dist/
+out/
 
 # Dependencies
 node_modules/
+
+# Package
+*.vsix
 
 # Misc
 *.tsbuildinfo

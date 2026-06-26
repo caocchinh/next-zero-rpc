@@ -367,7 +367,7 @@ export default withApiRegistry(nextConfig);`,
   },
   "//": "Minimum supported versions — any version above these is compatible",
   "dependencies": {
-    "next": "14.0.0",
+    "next": "14.2.29",
     "react": "18.0.0",
     "react-dom": "18.0.0"
   },
@@ -375,7 +375,7 @@ export default withApiRegistry(nextConfig);`,
     "@types/node": "18.0.0",
     "@types/react": "18.0.0",
     "@types/react-dom": "18.0.0",
-    "typescript": "4.9.0"
+    "typescript": "4.9.3"
   }
 }`,
     language: "json",
