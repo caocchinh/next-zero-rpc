@@ -51,16 +51,22 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
   ? P extends []
     ? true
     : false
-  : K extends [`[...${string}]`] | [`[[...${string}]]`]
-    ? true
-    : [P, K] extends [
-          [infer PH extends string, ...infer PT extends string[]],
-          [infer KH extends string, ...infer KT extends string[]],
-        ]
-      ? MatchSegment<PH, KH> extends true
-        ? MatchSegments<PT, KT>
-        : false
-      : false;
+  : K extends [`[[...${string}]]`]
+    ? P extends [""]
+      ? false
+      : true
+    : K extends [`[...${string}]`]
+      ? P extends [""] | []
+        ? false
+        : true
+      : [P, K] extends [
+            [infer PH extends string, ...infer PT extends string[]],
+            [infer KH extends string, ...infer KT extends string[]],
+          ]
+        ? MatchSegment<PH, KH> extends true
+          ? MatchSegments<PT, KT>
+          : false
+        : false;
 
 type StripQuery<Path extends string> = Path extends `${infer Base}?${string}` ? Base : Path;
 
@@ -68,15 +74,12 @@ export type FindMatchingRoute<Path extends string> =
   StripQuery<Path> extends keyof KnownRoutes
     ? StripQuery<Path>
     : {
-        [K in keyof KnownRoutes & string]: MatchSegments<
-          Split<StripQuery<Path>>,
-          Split<K>
-        > extends true
+        [K in keyof KnownRoutes]: MatchSegments<Split<StripQuery<Path>>, Split<K>> extends true
           ? K
           : never;
-      }[keyof KnownRoutes & string];
+      }[keyof KnownRoutes];
 
-export type CheckPath<Path extends string> = Path extends ""
+export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"
   ? keyof KnownRoutes
   : FindMatchingRoute<Path> extends never
     ? keyof KnownRoutes

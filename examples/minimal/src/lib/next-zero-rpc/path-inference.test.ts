@@ -53,16 +53,22 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
   ? P extends []
     ? true
     : false
-  : K extends [`[...${string}]`] | [`[[...${string}]]`]
-    ? true
-    : [P, K] extends [
-          [infer PH extends string, ...infer PT extends string[]],
-          [infer KH extends string, ...infer KT extends string[]],
-        ]
-      ? MatchSegment<PH, KH> extends true
-        ? MatchSegments<PT, KT>
-        : false
-      : false;
+  : K extends [`[[...${string}]]`]
+    ? P extends [""]
+      ? false
+      : true
+    : K extends [`[...${string}]`]
+      ? P extends [""] | []
+        ? false
+        : true
+      : [P, K] extends [
+            [infer PH extends string, ...infer PT extends string[]],
+            [infer KH extends string, ...infer KT extends string[]],
+          ]
+        ? MatchSegment<PH, KH> extends true
+          ? MatchSegments<PT, KT>
+          : false
+        : false;
 
 type StripQuery<Path extends string> = Path extends `${infer Base}?${string}` ? Base : Path;
 
@@ -215,7 +221,10 @@ describe("MatchSegments<P, K>", () => {
 
   it("[[...slug]] matches multiple remaining segments", () => {
     assertType<
-      Equals<MatchSegments<["getting-started", "installation", "quickstart"], ["[[...slug]]"]>, true>
+      Equals<
+        MatchSegments<["getting-started", "installation", "quickstart"], ["[[...slug]]"]>,
+        true
+      >
     >(true);
   });
 

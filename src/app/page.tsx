@@ -1,8 +1,8 @@
 import { CodeWindow } from "@/components/CodeWindow/CodeWindow";
-import { InstallSteps } from "./docs/InstallSteps";
 import { Logo } from "@/components/Logo";
 import { QuickStartCommand } from "@/components/QuickStartCommand";
 import Link from "next/link";
+import { InstallSteps } from "./docs/InstallSteps";
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <Logo className="h-8 w-auto text-[oklch(0.6_0.2_40)]" />
           <div className="font-mono text-sm font-bold tracking-widest text-[oklch(0.6_0.2_40)] uppercase">
-            next-zero-rpc // v0.1.18
+            next-zero-rpc // v0.1.19
           </div>
         </div>
         <div className="flex items-center gap-6">
@@ -126,7 +126,10 @@ export default function Home() {
         </section>
 
         {/* Installation */}
-        <section id="installation" className="border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20">
+        <section
+          id="installation"
+          className="border-b border-[oklch(0.85_0.01_250)] p-8 md:p-12 lg:p-16 xl:p-20"
+        >
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-12">
             <div className="border-b border-[oklch(0.85_0.01_250)] pb-6">
               <h2 className="text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] font-black tracking-tighter text-[oklch(0.6_0.2_40)] uppercase">

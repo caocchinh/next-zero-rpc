@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 export function Toast() {
   const [message, setMessage] = useState("");
@@ -28,7 +28,7 @@ export function Toast() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="fixed bottom-6 right-6 z-[100] flex items-center gap-3 rounded bg-[oklch(0.95_0.01_250)] px-4 py-3 font-mono text-sm font-bold text-[#0a0a0a] shadow-[4px_4px_0_0_oklch(0.6_0.2_40)] border-2 border-[#0a0a0a]"
+          className="fixed right-6 bottom-6 z-[100] flex items-center gap-3 rounded border-2 border-[#0a0a0a] bg-[oklch(0.95_0.01_250)] px-4 py-3 font-mono text-sm font-bold text-[#0a0a0a] shadow-[4px_4px_0_0_oklch(0.6_0.2_40)]"
         >
           <Check className="h-5 w-5 text-green-500" />
           {message}
