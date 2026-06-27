@@ -117,8 +117,6 @@ type TrieLookup<
 type CheckCatchallsInNode<
   Node extends Record<string, unknown>,
   Head extends string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Tail extends string[],
 > = {
   [K in keyof Node]: K extends `[[...${string}]]`
     ? // Optional catchall: matches one or more non-empty segments
@@ -150,7 +148,7 @@ type TrieWalk<Node, Segs extends string[]> =
           ? Node["__terminal__"]
           : never
       : Segs extends [infer Head extends string, ...infer Tail extends string[]]
-        ? CheckCatchallsInNode<Node, Head, Tail> extends infer CR
+        ? CheckCatchallsInNode<Node, Head> extends infer CR
           ? [CR] extends [never]
             ? // No catchall matched — step into next segment
               TrieWalk<TrieLookup<Node, Head>, Tail>
