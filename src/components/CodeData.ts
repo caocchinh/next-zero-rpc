@@ -356,6 +356,7 @@ export async function apiFetch(
 export const LIB_NEXT_ZERO_RPC_APIREGISTRY_TS_CODE = `// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
 // Run your dev server or \`node src/lib/next-zero-rpc/update-api-registry.mjs\` to regenerate.
+
 // /api/status
 import type * as StatusRoute from "@/app/api/(core)/status/route";
 
@@ -371,8 +372,9 @@ import type * as ExtremeMethodsRoute from "@/app/api/extreme/methods/route";
 import type * as UsersUserIdRoute from "@/app/api/users/[userId]/route";
 import type * as UsersActiveRoute from "@/app/api/users/active/route";
 
+// ─── Route map ────────────────────────────────────────────────────────────────
+
 export type KnownRoutes = {
-  // Static Routes & Autocomplete Hints
   // /api/auth
   "/api/auth/login": typeof AuthLoginRoute;
 
@@ -389,33 +391,43 @@ export type KnownRoutes = {
   "/api/users/active": typeof UsersActiveRoute;
 };
 
-// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
+// ─── Pre-computed segment arrays ──────────────────────────────────────────────
+
 export type KnownRouteSegments = {
   // /api/auth
-  "/api/auth/login": ["", "api", "auth", "login"];
+  "/api/auth/login":                                                        ["", "api", "auth", "login"];
 
   // /api/extreme
-  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": ["", "api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"];
-  "/api/extreme/complex-types": ["", "api", "extreme", "complex-types"];
-  "/api/extreme/methods": ["", "api", "extreme", "methods"];
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]":         ["", "api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"];
+  "/api/extreme/complex-types":                                             ["", "api", "extreme", "complex-types"];
+  "/api/extreme/methods":                                                   ["", "api", "extreme", "methods"];
 
   // /api/status
-  "/api/status": ["", "api", "status"];
+  "/api/status":                                                            ["", "api", "status"];
 
   // /api/users
-  "/api/users/[userId]": ["", "api", "users", "[userId]"];
-  "/api/users/active": ["", "api", "users", "active"];
+  "/api/users/[userId]":                                                    ["", "api", "users", "[userId]"];
+  "/api/users/active":                                                      ["", "api", "users", "active"];
 };
+
+// ─── Routes bucketed by segment depth ────────────────────────────────────────
+
+export type RoutesByDepth = {
+  3: "/api/status";
+  4: "/api/auth/login" | "/api/extreme/complex-types" | "/api/extreme/methods" | "/api/users/[userId]" | "/api/users/active";
+  8: "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]";
+};
+
+// ─── Catchall routes with their minimum required depth ───────────────────────
+
+export type CatchallRoutes = {
+  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": 8;
+};
+
 // --- END GENERATED API REGISTRY ---
 type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`
   ? [Head, ...Split<Tail>]
   : [S];
-
-type FindBySegments<PathSegments extends string[]> = {
-  [K in keyof KnownRouteSegments]: MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
-    ? K
-    : never;
-}[keyof KnownRouteSegments];
 
 type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`
   ? P extends ""
@@ -446,18 +458,56 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
           : false
         : false;
 
-type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\` ? Base : Path;
+type CheckCatchalls<PathSegments extends string[]> = {
+  [K in keyof CatchallRoutes]: PathSegments["length"] extends CatchallRoutes[K]
+    ? MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
+      ? K
+      : never
+    : PathSegments["length"] extends CatchallRoutes[K]
+      ? never
+      : PathSegments["length"] extends number
+        ? CatchallRoutes[K] extends number
+          ? PathSegments["length"] extends CatchallRoutes[K]
+            ? never
+            : MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
+              ? K
+              : never
+          : never
+        : never;
+}[keyof CatchallRoutes];
+
+type CheckByDepth<PathSegments extends string[]> =
+  PathSegments["length"] extends keyof RoutesByDepth
+    ? {
+        [K in RoutesByDepth[PathSegments["length"]]]: MatchSegments<
+          PathSegments,
+          KnownRouteSegments[K]
+        > extends true
+          ? K
+          : never;
+      }[RoutesByDepth[PathSegments["length"]]]
+    : never;
+
+type FindBySegments<PathSegments extends string[]> =
+  | CheckCatchalls<PathSegments>
+  | CheckByDepth<PathSegments>;
+
+type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\`
+  ? Base
+  : Path;
 
 export type FindMatchingRoute<Path extends string> =
-  StripQuery<Path> extends keyof KnownRoutes
-    ? StripQuery<Path>
-    : FindBySegments<Split<StripQuery<Path>>>;
+  StripQuery<Path> extends infer CleanPath extends string
+    ? CleanPath extends keyof KnownRoutes
+      ? CleanPath
+      : FindBySegments<Split<CleanPath>>
+    : never;
 
 export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"
   ? keyof KnownRoutes
   : FindMatchingRoute<Path> extends never
     ? keyof KnownRoutes
-    : Path;`;;
+    : Path;`;
 
 export const LIB_NEXT_ZERO_RPC_RESPONSES_TS_CODE = `/**
  * next-zero-rpc — Response helpers for API routes and server actions.
@@ -844,31 +894,87 @@ export function updateApiRegistry() {
       currentSegmentGroup = group;
     }
     const segments = splitRoutePath(r.routePath);
-    segmentLines.push(\`  "\${r.routePath}": [\${segments.map((s) => \`"\${s}"\`).join(", ")}];\`);
+    segmentLines.push(\`  "\${r.routePath}":\${" ".repeat(Math.max(1, 75 - r.routePath.length))}[\${segments.map((s) => \`"\${s}"\`).join(", ")}];\`);
   }
 
   const knownRouteSegmentsBlock =
     segmentLines.length === 0
-      ? \`// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type KnownRouteSegments = {};\`
-      : \`// PRE-COMPUTED BY CODEGEN: Eliminates the need for Split<K>
-export type KnownRouteSegments = {
+      : \`export type KnownRouteSegments = {
 \${segmentLines.join("\\n")}
+};\`;
+
+  // Build RoutesByDepth: group routes by their segment count
+  const depthMap = new Map();
+  for (let i = 0; i < typeRoutes.length; i++) {
+    const r = typeRoutes[i];
+    const segments = splitRoutePath(r.routePath);
+    const depth = segments.length;
+    if (!depthMap.has(depth)) {
+      depthMap.set(depth, []);
+    }
+    depthMap.get(depth).push(r.routePath);
+  }
+
+  const depthEntries = Array.from(depthMap.entries()).sort((a, b) => a[0] - b[0]);
+  const routesByDepthLines = depthEntries.map(([depth, paths]) => {
+    return \`  \${depth}: \${paths.map((p) => \`"\${p}"\`).join(" | ")};\`;
+  });
+
+  const routesByDepthBlock =
+    routesByDepthLines.length === 0
+      ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type RoutesByDepth = {};\`
+      : \`export type RoutesByDepth = {
+\${routesByDepthLines.join("\\n")}
+};\`;
+
+  // Build CatchallRoutes: track routes with catchall segments and their minimum depth
+  const catchallRoutes = [];
+  for (let i = 0; i < typeRoutes.length; i++) {
+    const r = typeRoutes[i];
+    const segments = splitRoutePath(r.routePath);
+    const hasCatchall = segments.some((s) => s.startsWith("[...") || s.startsWith("[[..."));
+    if (hasCatchall) {
+      catchallRoutes.push({ path: r.routePath, depth: segments.length });
+    }
+  }
+
+  const catchallLines = catchallRoutes.map((c) => \`  "\${c.path}": \${c.depth};\`);
+  const catchallRoutesBlock =
+    catchallLines.length === 0
+      ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type CatchallRoutes = {};\`
+      : \`export type CatchallRoutes = {
+\${catchallLines.join("\\n")}
 };\`;
 
   const generatedBlock = \`// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
 // Run your dev server or \\\`node \${BASE_DIR === "." ? "" : BASE_DIR + "/"}lib/next-zero-rpc/update-api-registry.mjs\\\` to regenerate.
+
 \${importLines.join("\\n")}
+
+// ─── Route map ────────────────────────────────────────────────────────────────
 
 \${typeLines.length === 0 ? "// eslint-disable-next-line @typescript-eslint/no-empty-object-type" : ""}
 export type KnownRoutes = {
-  // Static Routes & Autocomplete Hints
 \${typeLines.join("\\n")}
 };
 
+// ─── Pre-computed segment arrays ──────────────────────────────────────────────
+
 \${knownRouteSegmentsBlock}
+
+// ─── Routes bucketed by segment depth ────────────────────────────────────────
+
+\${routesByDepthBlock}
+
+// ─── Catchall routes with their minimum required depth ───────────────────────
+
+\${catchallRoutesBlock}
+
 // --- END GENERATED API REGISTRY ---\`.replace(/\\n\\n+/g, "\\n\\n");
 
   const staticTypes = [
@@ -876,12 +982,6 @@ export type KnownRoutes = {
     "type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`",
     "  ? [Head, ...Split<Tail>]",
     "  : [S];",
-    "",
-    "type FindBySegments<PathSegments extends string[]> = {",
-    "  [K in keyof KnownRouteSegments]: MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
-    "    ? K",
-    "    : never;",
-    "}[keyof KnownRouteSegments];",
     "",
     "type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`",
     '  ? P extends ""',
@@ -912,12 +1012,50 @@ export type KnownRoutes = {
     "          : false",
     "        : false;",
     "",
-    "type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\` ? Base : Path;",
+    "type CheckCatchalls<PathSegments extends string[]> = {",
+    "  [K in keyof CatchallRoutes]: PathSegments[\\"length\\"] extends CatchallRoutes[K]",
+    "    ? MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
+    "      ? K",
+    "      : never",
+    "    : PathSegments[\\"length\\"] extends CatchallRoutes[K]",
+    "      ? never",
+    "      : PathSegments[\\"length\\"] extends number",
+    "        ? CatchallRoutes[K] extends number",
+    "          ? PathSegments[\\"length\\"] extends CatchallRoutes[K]",
+    "            ? never",
+    "            : MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
+    "              ? K",
+    "              : never",
+    "          : never",
+    "        : never;",
+    "}[keyof CatchallRoutes];",
+    "",
+    "type CheckByDepth<PathSegments extends string[]> =",
+    "  PathSegments[\\"length\\"] extends keyof RoutesByDepth",
+    "    ? {",
+    "        [K in RoutesByDepth[PathSegments[\\"length\\"]]]: MatchSegments<",
+    "          PathSegments,",
+    "          KnownRouteSegments[K]",
+    "        > extends true",
+    "          ? K",
+    "          : never;",
+    "      }[RoutesByDepth[PathSegments[\\"length\\"]]]",
+    "    : never;",
+    "",
+    "type FindBySegments<PathSegments extends string[]> =",
+    "  | CheckCatchalls<PathSegments>",
+    "  | CheckByDepth<PathSegments>;",
+    "",
+    "type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\`",
+    "  ? Base",
+    "  : Path;",
     "",
     "export type FindMatchingRoute<Path extends string> =",
-    "  StripQuery<Path> extends keyof KnownRoutes",
-    "    ? StripQuery<Path>",
-    "    : FindBySegments<Split<StripQuery<Path>>>;",
+    "  StripQuery<Path> extends infer CleanPath extends string",
+    "    ? CleanPath extends keyof KnownRoutes",
+    "      ? CleanPath",
+    "      : FindBySegments<Split<CleanPath>>",
+    "    : never;",
     "",
     'export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"',
     "  ? keyof KnownRoutes",
@@ -992,7 +1130,7 @@ export function withApiRegistry(nextConfig = {}) {
   }
   return nextConfig;
 }
-`;;
+`;
 
 export const LIB_NEXT_ZERO_RPC_PATH_INFERENCE_TEST_TS_CODE = `/**
  * Unit tests for next-zero-rpc path inference types.
