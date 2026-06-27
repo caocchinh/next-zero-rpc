@@ -18,7 +18,7 @@ export type KnownRoutes = {
 //   "[...param]" keys: required catchall segments
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type RouteTrie = {};
+type RouteTrie = {};
 
 // --- END GENERATED API REGISTRY ---
 

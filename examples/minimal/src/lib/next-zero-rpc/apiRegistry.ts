@@ -44,7 +44,7 @@ export type KnownRoutes = {
 //   "[[...param]]" keys: optional catchall segments
 //   "[...param]" keys: required catchall segments
 
-export type RouteTrie = {
+type RouteTrie = {
   "": {
     "api": {
       "auth": {

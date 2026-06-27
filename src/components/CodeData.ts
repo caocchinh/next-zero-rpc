@@ -402,7 +402,7 @@ export type KnownRoutes = {
 //   "[[...param]]" keys: optional catchall segments
 //   "[...param]" keys: required catchall segments
 
-export type RouteTrie = {
+type RouteTrie = {
   "": {
     "api": {
       "auth": {
@@ -973,8 +973,8 @@ export function updateApiRegistry() {
   const routeTrieBlock =
     routePaths.length === 0
       ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type RouteTrie = {};\`
-      : \`export type RouteTrie = {
+type RouteTrie = {};\`
+      : \`type RouteTrie = {
 \${trieBody}
 };\`;
 

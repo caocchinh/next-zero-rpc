@@ -152,8 +152,8 @@ export function updateApiRegistry() {
   const routeTrieBlock =
     routePaths.length === 0
       ? `// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type RouteTrie = {};`
-      : `export type RouteTrie = {
+type RouteTrie = {};`
+      : `type RouteTrie = {
 ${trieBody}
 };`;
 
