@@ -1,3 +1,6 @@
+// AUTO-GENERATED FILE - Do not edit manually
+// Run 'pnpm update-codedata' to regenerate this file
+
 export const APP_API_CORE_STATUS_ROUTE_TS_CODE = `import { createApiSuccess } from "@/lib/next-zero-rpc/responses";
 
 export async function GET() {
@@ -261,8 +264,8 @@ type UnwrapNextResponse<T> = T extends (...args: never[]) => infer R
 type ResolveRoute<Path extends string> =
   FindMatchingRoute<Path> extends keyof KnownRoutes ? FindMatchingRoute<Path> : never;
 
-type RouteHandler<Path extends string, M extends HttpMethod> =
-  KnownRoutes[ResolveRoute<Path>][M & keyof KnownRoutes[ResolveRoute<Path>]];
+type RouteHandler<Path extends string, M extends HttpMethod> = KnownRoutes[ResolveRoute<Path>][M &
+  keyof KnownRoutes[ResolveRoute<Path>]];
 
 type RouteMethods<Path extends string> = Extract<keyof KnownRoutes[ResolveRoute<Path>], HttpMethod>;
 
@@ -299,7 +302,7 @@ export async function apiFetch(
 
     let payload;
     // An empty HTTP body resolves to an empty string "" (falsy).
-    // Valid JSON primitives like \`0\`, \`null\`, \`false\`, or \`""\` serialize to 
+    // Valid JSON primitives like \`0\`, \`null\`, \`false\`, or \`""\` serialize to
     // length > 0 strings (e.g. \`"0"\`, \`"null"\`, \`'""'\`), which are all truthy.
     // This perfectly catches empty responses (like 204) while preserving valid JSON.
     if (!text) {
@@ -442,7 +445,6 @@ export type RouteTrie = {
 };
 
 // --- END GENERATED API REGISTRY ---
-
 // ─── Trie traversal ────────────────────────────────────────────────────────
 
 // Look up one segment in a trie node.
@@ -459,7 +461,7 @@ type TrieLookup<
       ? never
       : {
           [K in keyof Node]: K extends \`[\${string}]\`
-            ? K extends \`[[...\${string}]]\` | \`[...\${string}\`
+            ? K extends \`[[\${string}]]\` | \`[...\${string}\`
               ? never // catchalls handled separately
               : Node[K]
             : never;
@@ -812,12 +814,12 @@ function detectBaseDir() {
 
 const BASE_DIR = detectBaseDir();
 const API_DIR = path.join(process.cwd(), BASE_DIR, "app/api");
-const REGISTRY_FILE = path.join(process.cwd(), BASE_DIR, "lib/next-zero-rpc/apiRegistry.ts");
+const REGISTRY_FILE = path.join(
+  process.cwd(),
+  BASE_DIR,
+  "lib/next-zero-rpc/apiRegistry.ts",
+);
 
-function splitRoutePath(routePath) {
-  // Mirrors TypeScript Split<S>: "/api/foo" -> ["", "api", "foo"]
-  return routePath.split("/");
-}
 
 function getRouteFiles(dir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
@@ -832,6 +834,47 @@ function getRouteFiles(dir, fileList = []) {
   }
   return fileList;
 }
+
+// ─── Trie builder ─────────────────────────────────────────────────────────────
+
+function buildTrie(routes) {
+  const root = { children: new Map(), terminal: null };
+  for (let i = 0; i < routes.length; i++) {
+    const segments = routes[i].split("/");
+    let node = root;
+    for (let j = 0; j < segments.length; j++) {
+      const seg = segments[j];
+      if (!node.children.has(seg)) {
+        node.children.set(seg, { children: new Map(), terminal: null });
+      }
+      node = node.children.get(seg);
+    }
+    node.terminal = routes[i];
+  }
+  return root;
+}
+
+function emitTrieType(node, depth) {
+  const indent = "  ".repeat(depth + 1);
+  const parts = [];
+  if (node.terminal !== null) {
+    parts.push(\`\${indent}"__terminal__": "\${node.terminal}"\`);
+  }
+  for (const [seg, child] of node.children) {
+    const key = JSON.stringify(seg);
+    const childBody = emitTrieType(child, depth + 1);
+    if (childBody === "") {
+      parts.push(\`\${indent}\${key}: {}\`);
+    } else {
+      parts.push(
+        \`\${indent}\${key}: {\\n\${childBody}\\n\${"  ".repeat(depth + 1)}}\`,
+      );
+    }
+  }
+  return parts.join(";\\n");
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function updateApiRegistry() {
   const routeFiles = getRouteFiles(API_DIR);
@@ -854,13 +897,16 @@ export function updateApiRegistry() {
       .split("/")
       .filter((segment) => !(segment.startsWith("(") && segment.endsWith(")")));
     const urlRouteDir = urlSegments.join("/");
-    const routePath = urlRouteDir === "" || urlRouteDir === "." ? "/api" : \`/api/\${urlRouteDir}\`;
+    const routePath =
+      urlRouteDir === "" || urlRouteDir === "."
+        ? "/api"
+        : \`/api/\${urlRouteDir}\`;
 
     // Construct import name: e.g. /api/admin/prom/verifications/[id]/presign -> AdminPromVerificationsIdPresignRoute
     const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
-      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_$\\u00C0-\\uFFFF]+/g, "-");
+      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_\$\\u00C0-\\uFFFF]+/g, "-");
       const words = cleanPart.split("-");
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
@@ -875,16 +921,22 @@ export function updateApiRegistry() {
     }
 
     const importPath =
-      posixRouteDir === "." ? "@/app/api/route" : \`@/app/api/\${posixRouteDir}/route\`;
+      posixRouteDir === "."
+        ? "@/app/api/route"
+        : \`@/app/api/\${posixRouteDir}/route\`;
 
     routes.push({ importName, importPath, routePath });
   }
 
   // Sort for types by routePath
-  const typeRoutes = routes.slice().sort((a, b) => (a.routePath < b.routePath ? -1 : 1));
+  const typeRoutes = routes
+    .slice()
+    .sort((a, b) => (a.routePath < b.routePath ? -1 : 1));
 
   // Sort for imports by importPath using simple string comparison (matches prettier-plugin-sort-imports)
-  const importRoutes = routes.slice().sort((a, b) => (a.importPath < b.importPath ? -1 : 1));
+  const importRoutes = routes
+    .slice()
+    .sort((a, b) => (a.importPath < b.importPath ? -1 : 1));
 
   const importLines = [];
   let currentImportGroup = "";
@@ -896,7 +948,9 @@ export function updateApiRegistry() {
       importLines.push(\`// /api/\${group}\`);
       currentImportGroup = group;
     }
-    importLines.push(\`import type * as \${r.importName} from "\${r.importPath}";\`);
+    importLines.push(
+      \`import type * as \${r.importName} from "\${r.importPath}";\`,
+    );
   }
 
   const typeLines = [];
@@ -912,72 +966,21 @@ export function updateApiRegistry() {
     typeLines.push(\`  "\${r.routePath}": typeof \${r.importName};\`);
   }
 
-  const segmentLines = [];
-  let currentSegmentGroup = "";
-  for (let i = 0; i < typeRoutes.length; i++) {
-    const r = typeRoutes[i];
-    const group = r.routePath.split("/")[2] || "root";
-    if (group !== currentSegmentGroup) {
-      if (currentSegmentGroup !== "") segmentLines.push("");
-      segmentLines.push(\`  // /api/\${group}\`);
-      currentSegmentGroup = group;
-    }
-    const segments = splitRoutePath(r.routePath);
-    segmentLines.push(\`  "\${r.routePath}":\${" ".repeat(Math.max(1, 75 - r.routePath.length))}[\${segments.map((s) => \`"\${s}"\`).join(", ")}];\`);
-  }
+  // ─── Build RouteTrie ────────────────────────────────────────────────────────
 
-  const knownRouteSegmentsBlock =
-    segmentLines.length === 0
+  const routePaths = typeRoutes.map((r) => r.routePath);
+  const trie = buildTrie(routePaths);
+  const trieBody = emitTrieType(trie, 0);
+
+  const routeTrieBlock =
+    routePaths.length === 0
       ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type KnownRouteSegments = {};\`
-      : \`export type KnownRouteSegments = {
-\${segmentLines.join("\\n")}
+export type RouteTrie = {};\`
+      : \`export type RouteTrie = {
+\${trieBody}
 };\`;
 
-  // Build RoutesByDepth: group routes by their segment count
-  const depthMap = new Map();
-  for (let i = 0; i < typeRoutes.length; i++) {
-    const r = typeRoutes[i];
-    const segments = splitRoutePath(r.routePath);
-    const depth = segments.length;
-    if (!depthMap.has(depth)) {
-      depthMap.set(depth, []);
-    }
-    depthMap.get(depth).push(r.routePath);
-  }
-
-  const depthEntries = Array.from(depthMap.entries()).sort((a, b) => a[0] - b[0]);
-  const routesByDepthLines = depthEntries.map(([depth, paths]) => {
-    return \`  \${depth}: \${paths.map((p) => \`"\${p}"\`).join(" | ")};\`;
-  });
-
-  const routesByDepthBlock =
-    routesByDepthLines.length === 0
-      ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type RoutesByDepth = {};\`
-      : \`export type RoutesByDepth = {
-\${routesByDepthLines.join("\\n")}
-};\`;
-
-  // Build CatchallRoutes: track routes with catchall segments and their minimum depth
-  const catchallRoutes = [];
-  for (let i = 0; i < typeRoutes.length; i++) {
-    const r = typeRoutes[i];
-    const segments = splitRoutePath(r.routePath);
-    const hasCatchall = segments.some((s) => s.startsWith("[...") || s.startsWith("[[..."));
-    if (hasCatchall) {
-      catchallRoutes.push({ path: r.routePath, depth: segments.length });
-    }
-  }
-
-  const catchallLines = catchallRoutes.map((c) => \`  "\${c.path}": \${c.depth};\`);
-  const catchallRoutesBlock =
-    catchallLines.length === 0
-      ? \`// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type CatchallRoutes = {};\`
-      : \`export type CatchallRoutes = {
-\${catchallLines.join("\\n")}
-};\`;
+  // ─── Assemble generated block ───────────────────────────────────────────────
 
   const generatedBlock = \`// --- BEGIN GENERATED API REGISTRY ---
 // This section is auto-generated. Do not edit manually.
@@ -992,98 +995,109 @@ export type KnownRoutes = {
 \${typeLines.join("\\n")}
 };
 
-// ─── Pre-computed segment arrays ──────────────────────────────────────────────
+// ─── Prefix trie ──────────────────────────────────────────────────────────────
+// Nested object type keyed by path segment. Each node may have:
+//   "__terminal__": the full route string if this node ends a route
+//   literal segment keys: static segments (e.g. "users", "api")
+//   "[param]" keys: dynamic param segments
+//   "[[...param]]" keys: optional catchall segments
+//   "[...param]" keys: required catchall segments
 
-\${knownRouteSegmentsBlock}
-
-// ─── Routes bucketed by segment depth ────────────────────────────────────────
-
-\${routesByDepthBlock}
-
-// ─── Catchall routes with their minimum required depth ───────────────────────
-
-\${catchallRoutesBlock}
+\${routeTrieBlock}
 
 // --- END GENERATED API REGISTRY ---\`.replace(/\\n\\n+/g, "\\n\\n");
 
+  // ─── Static (hand-authored) types ──────────────────────────────────────────
+
   const staticTypes = [
+    "",
+    "// ─── Trie traversal ────────────────────────────────────────────────────────",
+    "",
+    "// Look up one segment in a trie node.",
+    "// Priority: exact literal match > dynamic [param] > catchall",
+    "type TrieLookup<",
+    "  Node extends Record<string, unknown>,",
+    "  Seg extends string,",
+    "> =",
+    "  // 1. Exact static match",
+    "  Seg extends keyof Node",
+    "    ? Node[Seg]",
+    "    // 2. Dynamic [param] — any non-empty segment matches a [x] key",
+    "    : string extends Seg",
+    "      ? never",
+    "      : {",
+    "          [K in keyof Node]: K extends \`[\${string}]\`",
+    "            ? K extends \`[[\${string}]]\` | \`[...\${string}\`",
+    "              ? never // catchalls handled separately",
+    "              : Node[K]",
+    "            : never;",
+    "        }[keyof Node] extends infer R",
+    "        ? [R] extends [never]",
+    "          ? never",
+    "          : R",
+    "        : never;",
+    "",
+    "// Check if a trie node has a catchall child that matches the remaining path",
+    "type CheckCatchallsInNode<",
+    "  Node extends Record<string, unknown>,",
+    "  Head extends string,",
+    "  // eslint-disable-next-line @typescript-eslint/no-unused-vars",
+    "  Tail extends string[],",
+    "> = {",
+    "  [K in keyof Node]: K extends \`[[...\${string}]]\`",
+    "    ? // Optional catchall: matches one or more non-empty segments",
+    '      Head extends ""',
+    "      ? never",
+    "      : Node[K] extends Record<string, unknown>",
+    '        ? "__terminal__" extends keyof Node[K]',
+    '          ? Node[K]["__terminal__"]',
+    "          : never",
+    "        : never",
+    "    : K extends \`[...\${string}]\`",
+    "    ? // Required catchall: must have at least one non-empty segment",
+    '      Head extends ""',
+    "      ? never",
+    "      : Node[K] extends Record<string, unknown>",
+    '        ? "__terminal__" extends keyof Node[K]',
+    '          ? Node[K]["__terminal__"]',
+    "          : never",
+    "        : never",
+    "    : never;",
+    "}[keyof Node];",
+    "",
+    "// Walk the trie segment by segment",
+    "type TrieWalk<Node, Segs extends string[]> =",
+    "  Node extends Record<string, unknown>",
+    "    ? Segs extends []",
+    "      ? // End of path — return terminal if present",
+    '        "__terminal__" extends keyof Node',
+    '          ? Node["__terminal__"]',
+    "          : never",
+    "      : Segs extends [infer Head extends string, ...infer Tail extends string[]]",
+    "        ? CheckCatchallsInNode<Node, Head, Tail> extends infer CR",
+    "          ? [CR] extends [never]",
+    "            ? // No catchall matched — step into next segment",
+    "              TrieWalk<TrieLookup<Node, Head>, Tail>",
+    "            : CR",
+    "          : never",
+    "        : never",
+    "    : never;",
+    "",
+    "// ─── Public API ─────────────────────────────────────────────────────────────",
     "",
     "type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`",
     "  ? [Head, ...Split<Tail>]",
     "  : [S];",
-    "",
-    "type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`",
-    '  ? P extends ""',
-    "    ? false",
-    "    : true",
-    "  : K extends P",
-    "    ? true",
-    "    : false;",
-    "",
-    "type MatchSegments<P extends string[], K extends string[]> = K extends []",
-    "  ? P extends []",
-    "    ? true",
-    "    : false",
-    "  : K extends [\`[[...\${string}]]\`]",
-    '    ? P extends [""]',
-    "      ? false",
-    "      : true",
-    "    : K extends [\`[...\${string}]\`]",
-    '      ? P extends [""] | []',
-    "        ? false",
-    "        : true",
-    "      : [P, K] extends [",
-    "            [infer PH extends string, ...infer PT extends string[]],",
-    "            [infer KH extends string, ...infer KT extends string[]],",
-    "          ]",
-    "        ? MatchSegment<PH, KH> extends true",
-    "          ? MatchSegments<PT, KT>",
-    "          : false",
-    "        : false;",
-    "",
-    "type CheckCatchalls<PathSegments extends string[]> = {",
-    "  [K in keyof CatchallRoutes]: PathSegments[\\"length\\"] extends CatchallRoutes[K]",
-    "    ? MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
-    "      ? K",
-    "      : never",
-    "    : PathSegments[\\"length\\"] extends CatchallRoutes[K]",
-    "      ? never",
-    "      : PathSegments[\\"length\\"] extends number",
-    "        ? CatchallRoutes[K] extends number",
-    "          ? PathSegments[\\"length\\"] extends CatchallRoutes[K]",
-    "            ? never",
-    "            : MatchSegments<PathSegments, KnownRouteSegments[K]> extends true",
-    "              ? K",
-    "              : never",
-    "          : never",
-    "        : never;",
-    "}[keyof CatchallRoutes];",
-    "",
-    "type CheckByDepth<PathSegments extends string[]> =",
-    "  PathSegments[\\"length\\"] extends keyof RoutesByDepth",
-    "    ? {",
-    "        [K in RoutesByDepth[PathSegments[\\"length\\"]]]: MatchSegments<",
-    "          PathSegments,",
-    "          KnownRouteSegments[K]",
-    "        > extends true",
-    "          ? K",
-    "          : never;",
-    "      }[RoutesByDepth[PathSegments[\\"length\\"]]]",
-    "    : never;",
-    "",
-    "type FindBySegments<PathSegments extends string[]> =",
-    "  | CheckCatchalls<PathSegments>",
-    "  | CheckByDepth<PathSegments>;",
     "",
     "type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\`",
     "  ? Base",
     "  : Path;",
     "",
     "export type FindMatchingRoute<Path extends string> =",
-    "  StripQuery<Path> extends infer CleanPath extends string",
-    "    ? CleanPath extends keyof KnownRoutes",
-    "      ? CleanPath",
-    "      : FindBySegments<Split<CleanPath>>",
+    "  StripQuery<Path> extends infer Clean extends string",
+    "    ? Clean extends keyof KnownRoutes",
+    "      ? Clean // Fast path: exact static match (O(1) object key lookup)",
+    "      : TrieWalk<RouteTrie, Split<Clean>> // Trie walk: O(depth)",
     "    : never;",
     "",
     'export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"',
@@ -1093,9 +1107,15 @@ export type KnownRoutes = {
     "    : Path;",
   ].join("\\n");
 
+  // ─── Write file ─────────────────────────────────────────────────────────────
+
   if (!fs.existsSync(REGISTRY_FILE)) {
     console.log(\`[API Registry] File not found. Creating apiRegistry.ts...\`);
-    fs.writeFileSync(REGISTRY_FILE, generatedBlock + "\\n" + staticTypes, "utf-8");
+    fs.writeFileSync(
+      REGISTRY_FILE,
+      generatedBlock + "\\n" + staticTypes,
+      "utf-8",
+    );
     return;
   }
 
@@ -1114,11 +1134,15 @@ export type KnownRoutes = {
         generatedBlock +
         staticTypes;
     } else {
-      console.warn(\`[API Registry] End marker missing in apiRegistry.ts. Rebuilding file...\`);
+      console.warn(
+        \`[API Registry] End marker missing in apiRegistry.ts. Rebuilding file...\`,
+      );
       newContent = generatedBlock + "\\n" + staticTypes;
     }
   } else {
-    console.warn(\`[API Registry] Start marker missing in apiRegistry.ts. Rebuilding file...\`);
+    console.warn(
+      \`[API Registry] Start marker missing in apiRegistry.ts. Rebuilding file...\`,
+    );
     newContent = generatedBlock + "\\n" + staticTypes;
   }
 
@@ -1216,16 +1240,22 @@ type MatchSegments<P extends string[], K extends string[]> = K extends []
   ? P extends []
     ? true
     : false
-  : K extends [\`[...\${string}]\`] | [\`[[...\${string}]]\`]
-    ? true
-    : [P, K] extends [
-          [infer PH extends string, ...infer PT extends string[]],
-          [infer KH extends string, ...infer KT extends string[]],
-        ]
-      ? MatchSegment<PH, KH> extends true
-        ? MatchSegments<PT, KT>
-        : false
-      : false;
+  : K extends [\`[[...\${string}]]\`]
+    ? P extends [""]
+      ? false
+      : true
+    : K extends [\`[...\${string}]\`]
+      ? P extends [""] | []
+        ? false
+        : true
+      : [P, K] extends [
+            [infer PH extends string, ...infer PT extends string[]],
+            [infer KH extends string, ...infer KT extends string[]],
+          ]
+        ? MatchSegment<PH, KH> extends true
+          ? MatchSegments<PT, KT>
+          : false
+        : false;
 
 type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\` ? Base : Path;
 
@@ -1378,7 +1408,10 @@ describe("MatchSegments<P, K>", () => {
 
   it("[[...slug]] matches multiple remaining segments", () => {
     assertType<
-      Equals<MatchSegments<["getting-started", "installation", "quickstart"], ["[[...slug]]"]>, true>
+      Equals<
+        MatchSegments<["getting-started", "installation", "quickstart"], ["[[...slug]]"]>,
+        true
+      >
     >(true);
   });
 
@@ -1532,3 +1565,4 @@ export default defineConfig({
   },
 });
 `;
+
