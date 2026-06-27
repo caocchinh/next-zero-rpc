@@ -391,116 +391,145 @@ export type KnownRoutes = {
   "/api/users/active": typeof UsersActiveRoute;
 };
 
-// ─── Pre-computed segment arrays ──────────────────────────────────────────────
+// ─── Prefix trie ──────────────────────────────────────────────────────────────
+// Nested object type keyed by path segment. Each node may have:
+//   "__terminal__": the full route string if this node ends a route
+//   literal segment keys: static segments (e.g. "users", "api")
+//   "[param]" keys: dynamic param segments
+//   "[[...param]]" keys: optional catchall segments
+//   "[...param]" keys: required catchall segments
 
-export type KnownRouteSegments = {
-  // /api/auth
-  "/api/auth/login":                                                        ["", "api", "auth", "login"];
-
-  // /api/extreme
-  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]":         ["", "api", "extreme", "[orgId]", "projects", "[projectId]", "tasks", "[...catchall]"];
-  "/api/extreme/complex-types":                                             ["", "api", "extreme", "complex-types"];
-  "/api/extreme/methods":                                                   ["", "api", "extreme", "methods"];
-
-  // /api/status
-  "/api/status":                                                            ["", "api", "status"];
-
-  // /api/users
-  "/api/users/[userId]":                                                    ["", "api", "users", "[userId]"];
-  "/api/users/active":                                                      ["", "api", "users", "active"];
-};
-
-// ─── Routes bucketed by segment depth ────────────────────────────────────────
-
-export type RoutesByDepth = {
-  3: "/api/status";
-  4: "/api/auth/login" | "/api/extreme/complex-types" | "/api/extreme/methods" | "/api/users/[userId]" | "/api/users/active";
-  8: "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]";
-};
-
-// ─── Catchall routes with their minimum required depth ───────────────────────
-
-export type CatchallRoutes = {
-  "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]": 8;
+export type RouteTrie = {
+  "": {
+    "api": {
+      "auth": {
+        "login": {
+          "__terminal__": "/api/auth/login"
+        }
+      };
+      "extreme": {
+        "[orgId]": {
+          "projects": {
+            "[projectId]": {
+              "tasks": {
+                "[...catchall]": {
+                  "__terminal__": "/api/extreme/[orgId]/projects/[projectId]/tasks/[...catchall]"
+                }
+              }
+            }
+          }
+        };
+        "complex-types": {
+          "__terminal__": "/api/extreme/complex-types"
+        };
+        "methods": {
+          "__terminal__": "/api/extreme/methods"
+        }
+      };
+      "status": {
+        "__terminal__": "/api/status"
+      };
+      "users": {
+        "[userId]": {
+          "__terminal__": "/api/users/[userId]"
+        };
+        "active": {
+          "__terminal__": "/api/users/active"
+        }
+      }
+    }
+  }
 };
 
 // --- END GENERATED API REGISTRY ---
+
+// ─── Trie traversal ────────────────────────────────────────────────────────
+
+// Look up one segment in a trie node.
+// Priority: exact literal match > dynamic [param] > catchall
+type TrieLookup<
+  Node extends Record<string, unknown>,
+  Seg extends string,
+> =
+  // 1. Exact static match
+  Seg extends keyof Node
+    ? Node[Seg]
+    // 2. Dynamic [param] — any non-empty segment matches a [x] key
+    : string extends Seg
+      ? never
+      : {
+          [K in keyof Node]: K extends \`[\${string}]\`
+            ? K extends \`[[...\${string}]]\` | \`[...\${string}\`
+              ? never // catchalls handled separately
+              : Node[K]
+            : never;
+        }[keyof Node] extends infer R
+        ? [R] extends [never]
+          ? never
+          : R
+        : never;
+
+// Check if a trie node has a catchall child that matches the remaining path
+type CheckCatchallsInNode<
+  Node extends Record<string, unknown>,
+  Head extends string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Tail extends string[],
+> = {
+  [K in keyof Node]: K extends \`[[...\${string}]]\`
+    ? // Optional catchall: matches one or more non-empty segments
+      Head extends ""
+      ? never
+      : Node[K] extends Record<string, unknown>
+        ? "__terminal__" extends keyof Node[K]
+          ? Node[K]["__terminal__"]
+          : never
+        : never
+    : K extends \`[...\${string}]\`
+    ? // Required catchall: must have at least one non-empty segment
+      Head extends ""
+      ? never
+      : Node[K] extends Record<string, unknown>
+        ? "__terminal__" extends keyof Node[K]
+          ? Node[K]["__terminal__"]
+          : never
+        : never
+    : never;
+}[keyof Node];
+
+// Walk the trie segment by segment
+type TrieWalk<Node, Segs extends string[]> =
+  Node extends Record<string, unknown>
+    ? Segs extends []
+      ? // End of path — return terminal if present
+        "__terminal__" extends keyof Node
+          ? Node["__terminal__"]
+          : never
+      : Segs extends [infer Head extends string, ...infer Tail extends string[]]
+        ? CheckCatchallsInNode<Node, Head, Tail> extends infer CR
+          ? [CR] extends [never]
+            ? // No catchall matched — step into next segment
+              TrieWalk<TrieLookup<Node, Head>, Tail>
+            : CR
+          : never
+        : never
+    : never;
+
+// ─── Public API ─────────────────────────────────────────────────────────────
+
 type Split<S extends string> = S extends \`\${infer Head}/\${infer Tail}\`
   ? [Head, ...Split<Tail>]
   : [S];
-
-type MatchSegment<P extends string, K extends string> = K extends \`[\${string}]\`
-  ? P extends ""
-    ? false
-    : true
-  : K extends P
-    ? true
-    : false;
-
-type MatchSegments<P extends string[], K extends string[]> = K extends []
-  ? P extends []
-    ? true
-    : false
-  : K extends [\`[[...\${string}]]\`]
-    ? P extends [""]
-      ? false
-      : true
-    : K extends [\`[...\${string}]\`]
-      ? P extends [""] | []
-        ? false
-        : true
-      : [P, K] extends [
-            [infer PH extends string, ...infer PT extends string[]],
-            [infer KH extends string, ...infer KT extends string[]],
-          ]
-        ? MatchSegment<PH, KH> extends true
-          ? MatchSegments<PT, KT>
-          : false
-        : false;
-
-type CheckCatchalls<PathSegments extends string[]> = {
-  [K in keyof CatchallRoutes]: PathSegments["length"] extends CatchallRoutes[K]
-    ? MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
-      ? K
-      : never
-    : PathSegments["length"] extends CatchallRoutes[K]
-      ? never
-      : PathSegments["length"] extends number
-        ? CatchallRoutes[K] extends number
-          ? PathSegments["length"] extends CatchallRoutes[K]
-            ? never
-            : MatchSegments<PathSegments, KnownRouteSegments[K]> extends true
-              ? K
-              : never
-          : never
-        : never;
-}[keyof CatchallRoutes];
-
-type CheckByDepth<PathSegments extends string[]> =
-  PathSegments["length"] extends keyof RoutesByDepth
-    ? {
-        [K in RoutesByDepth[PathSegments["length"]]]: MatchSegments<
-          PathSegments,
-          KnownRouteSegments[K]
-        > extends true
-          ? K
-          : never;
-      }[RoutesByDepth[PathSegments["length"]]]
-    : never;
-
-type FindBySegments<PathSegments extends string[]> =
-  | CheckCatchalls<PathSegments>
-  | CheckByDepth<PathSegments>;
 
 type StripQuery<Path extends string> = Path extends \`\${infer Base}?\${string}\`
   ? Base
   : Path;
 
 export type FindMatchingRoute<Path extends string> =
-  StripQuery<Path> extends infer CleanPath extends string
-    ? CleanPath extends keyof KnownRoutes
-      ? CleanPath
-      : FindBySegments<Split<CleanPath>>
+  StripQuery<Path> extends infer Clean extends string
+    ? Clean extends keyof KnownRoutes
+      ? Clean // Fast path: exact static match (O(1) object key lookup)
+      : TrieWalk<RouteTrie, Split<Clean>> // Trie walk: O(depth)
     : never;
 
 export type CheckPath<Path extends string> = Path extends "" | "/" | "/a" | "/ap" | "/api" | "/api/"
