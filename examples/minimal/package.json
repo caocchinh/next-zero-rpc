@@ -4,7 +4,10 @@
   "scripts": {
     "dev": "next dev",
     "infer-api": "node src/lib/next-zero-rpc/update-api-registry.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "bench:ts": "node src/lib/next-zero-rpc/perf/run-ts-perf.mjs",
+    "bench:ts:trace": "node src/lib/next-zero-rpc/perf/run-ts-perf.mjs --trace",
+    "bench:gen": "node src/lib/next-zero-rpc/perf/generate-perf-registry.mjs"
   },
   "//": "Minimum supported versions — any version above these is compatible",
   "dependencies": {

@@ -1,0 +1,5 @@
+# Generated files — do not commit
+generated-perf-registry.ts
+perf-probe.ts
+tsconfig.perf.json
+reports/
