@@ -288,6 +288,9 @@ type StressMatrix = {
   [K in keyof KnownRoutes]: FindMatchingRoute<K>;
 };
 
+// Force TypeScript to eagerly evaluate the mapped type
+type ForcedStress = StressMatrix[keyof KnownRoutes];
+
 // Runtime no-op to prevent tree-shaking
 export const _probe = undefined;
 `;
