@@ -213,23 +213,35 @@ const relativePaths = generatePaths(rng, ROUTE_COUNT);
 
 console.log(`[perf-gen] Scaffolding ${relativePaths.length} synthetic routes...`);
 
-// 1. Create temp project
-const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "next-zero-rpc-perf-"));
-try {
-  scaffoldTempProject(tempDir, relativePaths);
+// 1. Write routes into the actual project so tsc can natively resolve them during the benchmark
+const PROJECT_DIR = path.resolve(__dirname, "../../../..");
+const PERF_API_DIR = path.join(PROJECT_DIR, "src", "app", "api", "__perf__");
 
-  // 2. Run the REAL generator from the temp project root
-  //    It will scan src/app/api/, build the trie, emit the static types,
-  //    and write src/lib/next-zero-rpc/apiRegistry.ts — all via its own logic.
+fs.rmSync(PERF_API_DIR, { recursive: true, force: true });
+fs.mkdirSync(PERF_API_DIR, { recursive: true });
+
+function scaffoldRealProject(relativePaths) {
+  const routeBody = `export const GET = () => new Response("ok");\n`;
+  for (const rel of relativePaths) {
+    const routeDir = path.join(PERF_API_DIR, rel);
+    fs.mkdirSync(routeDir, { recursive: true });
+    fs.writeFileSync(path.join(routeDir, "route.ts"), routeBody, "utf-8");
+  }
+}
+
+try {
+  scaffoldRealProject(relativePaths);
+
+  // 2. Run the REAL generator from the project root
   console.log(`[perf-gen] Running update-api-registry.mjs (the real generator)...`);
   execSync(`node "${REAL_GENERATOR}"`, {
-    cwd: tempDir,
+    cwd: PROJECT_DIR,
     encoding: "utf-8",
     stdio: "pipe",
   });
 
   // 3. Read the generated registry and copy it to the output path
-  const generatedRegistry = path.join(tempDir, "src", "lib", "next-zero-rpc", "apiRegistry.ts");
+  const generatedRegistry = path.join(PROJECT_DIR, "src", "lib", "next-zero-rpc", "apiRegistry.ts");
   if (!fs.existsSync(generatedRegistry)) {
     throw new Error(`Generator did not produce apiRegistry.ts at ${generatedRegistry}`);
   }
@@ -251,7 +263,9 @@ try {
   const sizeKB = (fs.statSync(OUT_PATH).size / 1024).toFixed(1);
   console.log(`[perf-gen] Generated ${relativePaths.length} routes → ${OUT_PATH}`);
   console.log(`[perf-gen] File size: ${sizeKB} KB`);
-} finally {
-  // 4. Always clean up the temp directory
-  fs.rmSync(tempDir, { recursive: true, force: true });
+  console.log(`[perf-gen] Note: routes were generated in src/app/api/__perf__ and will be left there for the benchmark.`);
+} catch (e) {
+  // If generation fails, try to clean up
+  fs.rmSync(PERF_API_DIR, { recursive: true, force: true });
+  throw e;
 }

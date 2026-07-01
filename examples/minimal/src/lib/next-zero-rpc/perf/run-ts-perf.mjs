@@ -40,7 +40,6 @@
 
 import { execSync, spawnSync } from "child_process";
 import fs from "fs";
-import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -48,7 +47,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PERF_DIR = __dirname;
 // perf/ is at: examples/minimal/src/lib/next-zero-rpc/perf/
 // node_modules/.bin/tsc is at: examples/minimal/node_modules/.bin/tsc
-const PROJECT_DIR = path.resolve(__dirname, "../../../../../..");
+const PROJECT_DIR = path.resolve(__dirname, "../../../..");
 
 // ─── CLI args ────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -184,7 +183,7 @@ function runTscDiag(tsconfigPath) {
   const start = Date.now();
   let output = "";
   try {
-    output = execSync(cmd, { encoding: "utf-8", stdio: "pipe" });
+    output = execSync(cmd, { encoding: "utf-8", stdio: "pipe", maxBuffer: 1024 * 1024 * 100 });
   } catch (e) {
     // tsc exits non-zero when there are type errors, but diagnostics are still printed
     output = (e.stdout || "") + (e.stderr || "");
@@ -221,6 +220,10 @@ function writePerfTsconfig(targetFile) {
       noEmit: true,
       skipLibCheck: true,
       incremental: false,  // force full typecheck every run
+      baseUrl: "../../../..",
+      paths: {
+        "@/*": ["./src/*"]
+      }
     },
     include: [targetFile, PROBE_FILE],
     exclude: ["node_modules"],
@@ -509,6 +512,24 @@ async function main() {
   grade("Check time (ms)", checkAvg,         { good: 3000, warn: 8000, bad: 15000 });
   grade("Instantiations",  instAvg,           { good: 200000, warn: 1000000, bad: 5000000 });
   grade("Memory (MB)",     avg(runResults.map((r) => r.memoryMB)), { good: 150, warn: 400, bad: 800 });
+  console.log("");
+
+  // 8. Cleanup
+  console.log(bold("  Cleanup"));
+  console.log(hr("─", 72));
+  if (fs.existsSync(PROBE_FILE)) fs.unlinkSync(PROBE_FILE);
+  if (fs.existsSync(TSCONFIG_PERF)) fs.unlinkSync(TSCONFIG_PERF);
+  const perfApiDir = path.join(PROJECT_DIR, "src", "app", "api", "__perf__");
+  if (fs.existsSync(perfApiDir)) {
+    fs.rmSync(perfApiDir, { recursive: true, force: true });
+    console.log(`  ${green("✓")} Cleaned up real route files in src/app/api/__perf__`);
+  }
+  if (!IMPL_PATH && !SKIP_GEN && fs.existsSync(GENERATED_REGISTRY)) {
+    fs.unlinkSync(GENERATED_REGISTRY);
+    console.log(`  ${green("✓")} Cleaned up generated registry and probe files`);
+  } else {
+    console.log(`  ${green("✓")} Cleaned up probe files`);
+  }
   console.log("");
 }
 

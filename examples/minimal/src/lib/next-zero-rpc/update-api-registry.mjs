@@ -100,14 +100,22 @@ export function updateApiRegistry() {
     const parts = urlRouteDir.split("/");
     let importName = "";
     for (let j = 0; j < parts.length; j++) {
-      const cleanPart = parts[j].replace(/[^a-zA-Z0-9_$\u00C0-\uFFFF]+/g, "-");
+      let rawPart = parts[j];
+      let prefix = "";
+      if (rawPart.startsWith("[[...")) prefix = "Opt";
+      else if (rawPart.startsWith("[...")) prefix = "All";
+      else if (rawPart.startsWith("[")) prefix = "By";
+
+      const cleanPart = rawPart.replace(/[^a-zA-Z0-9_$\u00C0-\uFFFF]+/g, "-");
       const words = cleanPart.split("-");
+      let partName = prefix;
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
         if (word) {
-          importName += word.charAt(0).toUpperCase() + word.slice(1);
+          partName += word.charAt(0).toUpperCase() + word.slice(1);
         }
       }
+      importName += partName;
     }
     importName += "Route";
     if (/^\d/.test(importName)) {
